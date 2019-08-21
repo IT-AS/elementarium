@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Elementarium</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="elementarium.js"></script>
+	<script type="text/javascript" src="config.js"></script>
+	<script type="text/javascript" src="global.js"></script>
+	<link rel="stylesheet" href="elementarium.css" type="text/css">
+</head>
+<body onload="game.start();">
+	<div id="header" class="header">
+		<span id="info-top"></span><br />
+		<button onclick="game.undo();">Undo</button>
+		<button onclick="game.next();">Next</button>
+		<button onclick="game.start();">Restart</button>
+	</div>
+	<div id="board" class="board"></div>
+	<div id="footer" class="footer">
+		<button onclick="game.undo();">Undo</button>
+		<button onclick="game.next();">Next</button>
+		<button onclick="game.start();">Restart</button>
+		<br />
+		<span id="info-bottom"></span>
+	</div>
+</body>
+</html>

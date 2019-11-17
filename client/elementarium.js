@@ -1,4 +1,5 @@
 function Game() {
+    this.gameId = '';
     this.players = {};
 
     this.turn = 1;
@@ -12,6 +13,7 @@ function Game() {
     }
 
     this.from = function(game) {
+        this.gameId = game.gameId;
         this.players = game.players;
         this.turn = game.turn;
         this.board = new Board(game.board);
@@ -47,6 +49,10 @@ function Board(other) {
     this.fields = other.fields.map(row => row.map(cell => cell = new Field(cell)));
     this.dimension = other.dimension;
     this.winner = other.winner;
+
+    this.inside = function(row, col) {
+        return row >= 0 && row < this.dimension && col >= 0 && col < this.dimension;
+    }
 
     this.move = function(sourceRow, sourceCol, targetRow, targetCol) {
         const sourceField = this.fields[sourceRow][sourceCol];
@@ -103,7 +109,7 @@ function Board(other) {
                     for(let colOffset=-1;colOffset<=1;colOffset++) {
                         const nextRow = row+rowOffset;
                         const nextCol = col+colOffset;
-                        if (nextRow > 0 && nextRow < this.dimension && nextCol > 0 && nextCol < this.dimension) {
+                        if (this.inside(nextRow, nextCol)) {
                             const candidate = this.fields[nextRow][nextCol].current;
                             if(candidate.type && !unit.friendly(candidate)) {
                                 for(let b=0;b<blocks[candidate.type].length;b++) {
@@ -127,8 +133,7 @@ function Board(other) {
                 const nextRow = row + offsetRow;
                 const nextCol = col + offsetCol;
         
-                if ( (nextRow >= 0 && nextRow < this.dimension) &&
-                    (nextCol >= 0 && nextCol < this.dimension) ) {
+                if ( this.inside(nextRow, nextCol) ) {
 
                     const field = this.fields[nextRow][nextCol];
                     let possible = true;
@@ -148,8 +153,8 @@ function Board(other) {
                     // Can't jump on gray
                     if (field.current.side !== "gray" && possible) {
 
-                        // Fire can jump over everything
-                        if (unit.type !== "Fire") {
+                        // Air can jump over everything
+                        if (unit.type !== "Air") {
                             // Check diagonals
                             if (Math.abs(offsetRow) > 0 && Math.abs(offsetCol) > 0 && Math.abs(offsetRow) === Math.abs(offsetCol)) {
                                 for(let d=1; d<=Math.abs(offsetRow); d++) {
@@ -201,16 +206,31 @@ function Board(other) {
 
     this.draw = function() {
         const target = document.getElementById("board");
+        const infoTop = document.getElementById("info-top");
+        const infoBottom = document.getElementById("info-bottom");
 
         while(target.firstChild){
             target.removeChild(target.firstChild);
         }
 
-        for(let row=0; row<this.dimension; row++) {
-            for(let column=0; column<this.dimension; column++) {
-                this.fields[row][column].moveHere = false;
-                this.fields[row][column].render(target);
+        if (game.players[me] === "green") {
+            for(let row=0; row<this.dimension; row++) {
+                for(let column=0; column<this.dimension; column++) {
+                    this.fields[row][column].moveHere = false;
+                    this.fields[row][column].render(target);
+                }
             }
+            infoTop.textContent = Object.keys(game.players)[1];
+            infoBottom.textContent = Object.keys(game.players)[0];
+        } else {
+            for(let row=this.dimension-1; row>=0; row--) {
+                for(let column=this.dimension-1; column>=0; column--) {
+                    this.fields[row][column].moveHere = false;
+                    this.fields[row][column].render(target);
+                }
+            }
+            infoTop.textContent = Object.keys(game.players)[0];
+            infoBottom.textContent = Object.keys(game.players)[1];
         }
     }
 }

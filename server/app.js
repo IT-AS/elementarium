@@ -1,5 +1,6 @@
 const http = require('http');
 const express = require('express');
+const bcrypt = require('bcrypt');
 
 const app = module.exports.app = express();
 const server = http.createServer(app);
@@ -8,11 +9,15 @@ const io = require('socket.io').listen(server);
 const port = 4000;
 
 const games = {};
+const pwds = {};
+
+const gameList = function() {
+    return Object.values(games).map(g => ({gameId: g.gameId, players: g.players, turn: g.turn}));
+}
 
 app.get('/', (request, response) => {
     response.send('I\'m fine, bro');
 });
-
 
 server.listen(port, () => {
     console.log(`App is running on port ${port}`);
@@ -20,36 +25,66 @@ server.listen(port, () => {
 
 io.on('connection', (socket) => {
     console.log('connected');
+
     socket.on('games', function(msg){
-        socket.emit('games', Object.keys(games));
+        socket.emit('games', gameList());
     });    
 
-    socket.on('game', function(gameId) {
-        const game = new Game();
+    socket.on('game', function(gameId, password) {
+        // Initialize new game
+        const game = new Game(gameId);
         game.start();
+
+        // Store it
         games[gameId] = game;
-        io.emit('games', Object.keys(games));
+        pwds[gameId] = bcrypt.hashSync(password, 10);
+
+        // Send updated list of games to clients
+        io.emit('games', gameList());
     });
 
     socket.on('join', function(joiner) {
         const gameId = joiner[0];
         const playerId = joiner[1];
+        const pwd = joiner[2];
+        const side = joiner[3];
         const game = games[gameId];
+        const gamePwd = pwds[gameId];
 
-        if (game.players[playerId]) {
-            socket.emit('game[' + gameId + ']', game);
-        } else {
-            if (Object.keys(game.players).length === 0) {
-                game.players[playerId] = "green";
-                socket.emit('game[' + gameId + ']', game);
-            } else if (Object.keys(game.players).length === 1) {
-                game.players[playerId] = "red";
-                socket.emit('game[' + gameId + ']', game);
+        if (game && gamePwd) {
+            if(bcrypt.compareSync(pwd, pwds[gameId])) {
+                game.players[playerId] = side;
+                io.emit('game[' + gameId + ']', game);
             } else {
-                socket.emit('game[' + gameId + ']', "");
+                socket.emit('game[' + gameId + ']', "Wrong password!");
             }
+        } else {
+            socket.emit('game[' + gameId + ']', "Unknown game!");
         }
     });
+
+    socket.on('resume', function(resumer) {
+        const gameId = resumer[0];
+        const playerId = resumer[1];
+        const pwd = resumer[2];
+        const game = games[gameId];
+        const gamePwd = pwds[gameId];
+
+        if (game && gamePwd) {
+            if(bcrypt.compareSync(pwd, pwds[gameId])) {
+                if (Object.keys(game.players).includes(playerId) ) {
+                    socket.emit('game[' + gameId + ']', game);
+                } else {
+                    socket.emit('game[' + gameId + ']', "Unknown player!");
+                }                
+            } else {
+                socket.emit('game[' + gameId + ']', "Wrong password!");
+            }
+        } else {
+            socket.emit('game[' + gameId + ']', "Unknown game!");
+        }
+    });
+
 
     socket.on('move', function(move) {
 
@@ -58,10 +93,8 @@ io.on('connection', (socket) => {
         const moves = move[2];
         const game = games[gameId];
 
-        console.log(side);
         if(moves) {
             game.moves[side] = moves;
-            console.log(game.moves);
             if(game.moves.green && game.moves.red) {
                 for(const playermoves of Object.values(game.moves)) {
                     for(let i=0; i<playermoves.length; i++) {
@@ -78,7 +111,8 @@ io.on('connection', (socket) => {
     });
 });
 
-function Game() {
+function Game(gameId) {
+    this.gameId = gameId;
     this.players = {};
     this.turn = 1;
     this.board = new Board(11);
@@ -196,12 +230,10 @@ function Board(dimension) {
 
                         if(field.greenCandidate.type === "Source") {
                             field.current = field.greenCandidate;
-                            this.fields[field.redCandidate.last.row][field.redCandidate.last.column].current = field.redCandidate;
                         }
 
                         if(field.redCandidate.type === "Source") {
                             field.current = field.redCandidate;
-                            this.fields[field.greenCandidate.last.row][field.greenCandidate.last.column].current = field.greenCandidate;
                         }
                     }
                 } else {
@@ -221,17 +253,36 @@ function Board(dimension) {
         for(let row=0; row<this.dimension;row++) {
             for(let col=0; col<this.dimension-2;col++) {
                 const field = this.fields[row][col];
-                const candidate = field.current;
+                const candidateLeft = field.current;
+                const candidateRight = this.fields[row][col+2].current;
                 const target = this.fields[row][col+1];
+
                 // Find (X 0 X) pattern
-                if(!field.empty() && candidate.same(this.fields[row][col+2].current) && (target.empty() || target.goal())) {
+                if(!field.empty() && candidateLeft.friendly(candidateRight) && (target.empty() || target.goal())) {
+
                     // Check upper candidate
-                    if(row > 0 && candidate.same(this.fields[row-1][col+1].current)) {
-                        this.spawn(field, target, this.fields[row-1][col], this.fields[row-1][col+2]);
+                    if(row > 0) {
+                        const candidateUpper = this.fields[row-1][col+1].current;
+                        if(candidateLeft.same(candidateRight) && candidateLeft.same(candidateUpper)) {
+                            this.spawn(field, target, this.fields[row-1][col], this.fields[row-1][col+2], candidateLeft.type);
+                        }
+                        if(candidateLeft.spawnable(candidateUpper) && candidateUpper.spawnable(candidateRight) && candidateRight.spawnable(candidateLeft)) {
+                            const newType = types.filter(t => !(["Source", "Obstacle", candidateLeft.type, candidateRight.type, candidateUpper.type].includes(t)))[0];
+                            this.spawn(field, target, this.fields[row-1][col], this.fields[row-1][col+2], newType);
+                        }
                     }
+
                     // Check lower candidate
-                    if( row < this.dimension-1 && candidate.same(this.fields[row+1][col+1].current)) {
-                        this.spawn(field, target, this.fields[row+1][col], this.fields[row+1][col+2]);
+                    if(row < this.dimension-1) {
+                        const candidateLower = this.fields[row+1][col+1].current;
+                        if(candidateLeft.same(candidateRight) && candidateLeft.same(candidateLower))
+                        {
+                            this.spawn(field, target, this.fields[row+1][col], this.fields[row+1][col+2], candidateLeft.type);
+                        }
+                        if(candidateLeft.spawnable(candidateLower) && candidateLower.spawnable(candidateRight) && candidateRight.spawnable(candidateLeft)) {
+                            const newType = types.filter(t => !(["Source", "Obstacle", candidateLeft.type, candidateRight.type, candidateLower.type].includes(t)))[0];
+                            this.spawn(field, target, this.fields[row+1][col], this.fields[row+1][col+2], newType);
+                        }
                     }
                 }
             }
@@ -241,17 +292,37 @@ function Board(dimension) {
         for(let col=0; col<this.dimension; col++) {
             for(let row=0; row<this.dimension-2; row++) {
                 const field = this.fields[row][col];
-                const candidate = field.current;
+                const candidateUpper = field.current;
+                const candidateLower = this.fields[row+2][col].current;
                 const target = this.fields[row+1][col];
+
                 // Find (X 0 X) pattern
-                if(!field.empty() && candidate.same(this.fields[row+2][col].current) && (target.empty() || target.goal())) {
+                if(!field.empty() && candidateUpper.friendly(candidateLower) && (target.empty() || target.goal())) {
+
                     // Check left candidate
-                    if(col > 0 && candidate.same(this.fields[row+1][col-1].current)) {
-                        this.spawn(field, target, this.fields[row][col-1], this.fields[row+2][col-1]);
+                    if(col > 0) {
+                        const candidateLeft = this.fields[row+1][col-1].current;
+                        if(candidateUpper.same(candidateLower) && candidateUpper.same(candidateLeft))
+                        {
+                            this.spawn(field, target, this.fields[row][col-1], this.fields[row+2][col-1], candidateUpper.type);
+                        }
+                        if(candidateUpper.spawnable(candidateLeft) && candidateLeft.spawnable(candidateLower) && candidateLower.spawnable(candidateUpper)) {
+                            const newType = types.filter(t => !(["Source", "Obstacle", candidateUpper.type, candidateLeft.type, candidateLower.type].includes(t)))[0];
+                            this.spawn(field, target, this.fields[row][col-1], this.fields[row+2][col-1], newType);
+                        }
                     }
+
                     // Check right candidate
-                    if(row < this.dimesion-1 && candidate.same(this.fields[row+1][col+1].current)) {
-                        this.spawn(field, target, this.fields[row][col+1], this.fields[row+2][col+1]);
+                    if(col < this.dimension-1) {
+                        const candidateRight = this.fields[row+1][col+1].current;
+                        if(candidateUpper.same(candidateLower) && candidateUpper.same(candidateRight))
+                        {
+                            this.spawn(field, target, this.fields[row][col+1], this.fields[row+2][col+1], candidateUpper.type);
+                        }
+                        if(candidateUpper.spawnable(candidateRight) && candidateRight.spawnable(candidateLower) && candidateLower.spawnable(candidateUpper)) {
+                            const newType = types.filter(t => !(["Source", "Obstacle", candidateUpper.type, candidateRight.type, candidateLower.type].includes(t)))[0];
+                            this.spawn(field, target, this.fields[row][col+1], this.fields[row+2][col+1], newType);
+                        }
                     }
                 }
             }
@@ -302,15 +373,16 @@ function Board(dimension) {
         }
     }
 
-    this.spawn = function(candidate, target, corner1, corner2) {
+    this.spawn = function(candidate, target, corner1, corner2, type) {
         // Check corners empty or friendly
         if( corner1.empty() || corner1.current.friendly(candidate.current) &&
             corner2.empty() || corner2.current.friendly(candidate.current) ) {
             // Check territory
             if( candidate.current.side !== candidate.side() && candidate.side() !== "gray" &&
-                corner1.current.side !== corner1.side() && corner1.side() !== "gray" ) {
+                corner1.current.side !== corner1.side() && corner1.side() !== "gray" && 
+                corner2.current.side !== corner2.side() && corner2.side() !== "gray" ) {
                 // SPAWN!
-                target.current = new Unit(candidate.current.type, candidate.current.side);
+                target.current = new Unit(type, candidate.current.side);
             }
         }
     }
@@ -389,6 +461,9 @@ function Unit(type, side) {
     }
     this.friendly = function(other) {
         return this.side === other.side;
+    }
+    this.spawnable = function(other) {
+        return this.friendly(other) && !this.same(other) && this.type !== "Source";
     }
 }
 

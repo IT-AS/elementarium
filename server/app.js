@@ -95,25 +95,8 @@ io.on('connection', (socket) => {
         const moves = move[2];
         const game = games[gameId];
 
-        if(moves) {
-            if(!game.journal[game.turn-1]) {
-                game.journal[game.turn-1] = {};
-            }
-
-            const turn = game.journal[game.turn-1];
-            turn[side] = moves;
-            if(turn.green && turn.red) {
-                for(const playermoves of Object.values(turn)) {
-                    for(let i=0; i<playermoves.length; i++) {
-                        const move = playermoves[i];
-                        game.board.move(move[0],move[1],move[2],move[3]);
-                    }
-                }
-
-                game.board.resolve();
-                game.turn++;
-                io.emit('game[' + gameId + ']', game);
-            }
+        if(game.next(side, moves)) {
+            io.emit('game[' + gameId + ']', game);
         }
     });
 });

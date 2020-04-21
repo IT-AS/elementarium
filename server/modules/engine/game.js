@@ -8,10 +8,63 @@ function Game(gameId) {
     this.turn = 1;
     this.board = new Board(11);
     this.journal = [];
+    this.winner = "";
 
     this.start = function() {
         this.turn = 1;
         this.board.initialize();
+    }
+
+    this.next = function(side, moves) {
+        const turn = this.current();
+        
+        if(!side || !moves) {
+            return false;
+        }
+
+        if(!turn[side]) {
+            turn[side] = {}
+        }
+
+        turn[side]["moves"] = moves;
+        if(turn.green && turn.red) {
+            for(const playeractions of Object.values(turn)) {
+                const playermoves = playeractions["moves"];
+                for(let i=0; i<playermoves.length; i++) {
+                    const move = playermoves[i];
+                    this.board.move(move[0],move[1],move[2],move[3]);
+                }
+            }
+
+            const result = this.board.resolve();
+            this.winner = result.winner;
+
+            console.log(result);
+            for(const key of ["captures", "spawns"]) {
+                for(const side of sides) {
+                    if(side !== "gray") {
+                        if(result[key] && result[key].length > 0) {
+                            turn[side][key] = result[key].filter(c => c[2].side === side);
+                        } else {
+                            turn[side][key] = [];
+                        }
+                    }
+                }
+            }
+            this.turn++;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    this.current = function() {
+        if(!this.journal[this.turn-1]) {
+            this.journal[this.turn-1] = {};
+        }
+
+        return this.journal[this.turn-1];
     }
 }
 
@@ -19,7 +72,6 @@ function Board(dimension) {
     this.fields = [];
     this.targets = [];
     this.dimension = dimension;
-    this.winner = "";
 
     this.initialize = function() {
         this.fields = [];
@@ -55,95 +107,22 @@ function Board(dimension) {
     }
 
     this.resolve = function() {
-        let redSourceFound = false;
-        let greenSourceFound = false;
+        const spawns = [];
+        const captures = [];
 
         for(let row=0; row<this.dimension; row++) {
             for(let column=0; column<this.dimension; column++) {
                 const field = this.fields[row][column];
 
-                // Remove previous guys
-                field.redLast = {};
-                field.greenLast = {};
+                field.prepare();
+                captured = field.clash();
 
-                // Unit already on this field is also a candidate
-                if(field.current.type) {
-                    if(field.current.side === "red") {
-                        field.redCandidate = field.current;
+                if(captured && captured.length > 0) {
+                    for(const capture of captured) {
+                        captures.push(capture);
                     }
-                    if(field.current.side === "green") {
-                        field.greenCandidate = field.current;
-                    }
+                    console.log(captures);
                 }
-
-                // Here the clash beginns
-                if(field.greenCandidate.type && field.redCandidate.type) {
-                    if(field.greenCandidate.type === field.redCandidate.type) {
-                        field.current = {};
-                    } else {
-                        if(field.greenCandidate.type === "Earth") {
-                            if(field.redCandidate.type === "Water") {
-                                field.current = field.greenCandidate;
-                            }
-                            if(field.redCandidate.type === "Air") {
-                                field.current = field.redCandidate;
-                            }
-                            if(field.redCandidate.type === "Fire") {
-                                field.current = {};
-                            }
-                        }
-                        if(field.greenCandidate.type === "Air") {
-                            if(field.redCandidate.type === "Earth") {
-                                field.current = field.greenCandidate;
-                            }
-                            if(field.redCandidate.type === "Fire") {
-                                field.current = field.redCandidate;
-                            }
-                            if(field.redCandidate.type === "Water") {
-                                field.current = {};
-                            }
-                        }
-                        if(field.greenCandidate.type === "Fire") {
-                            if(field.redCandidate.type === "Air") {
-                                field.current = field.greenCandidate;
-                            }
-                            if(field.redCandidate.type === "Water") {
-                                field.current = field.redCandidate;
-                            }
-                            if(field.redCandidate.type === "Earth") {
-                                field.current = {};
-                            }
-                        }
-                        if(field.greenCandidate.type === "Water") {
-                            if(field.redCandidate.type === "Fire") {
-                                field.current = field.greenCandidate;
-                            }
-                            if(field.redCandidate.type === "Earth") {
-                                field.current = field.redCandidate;
-                            }
-                            if(field.redCandidate.type === "Air") {
-                                field.current = {};
-                            }
-                        }
-
-                        if(field.greenCandidate.type === "Source") {
-                            field.current = field.greenCandidate;
-                        }
-
-                        if(field.redCandidate.type === "Source") {
-                            field.current = field.redCandidate;
-                        }
-                    }
-                } else {
-                    if(field.greenCandidate.type) { field.current = field.greenCandidate; }
-                    if(field.redCandidate.type) { field.current = field.redCandidate; }
-                }
-
-                field.greenCandidate.last = {};
-                field.redCandidate.last = {};
-
-                field.greenCandidate = {};
-                field.redCandidate = {};
             }
         }
 
@@ -162,11 +141,15 @@ function Board(dimension) {
                     if(row > 0) {
                         const candidateUpper = this.fields[row-1][col+1].current;
                         if(candidateLeft.same(candidateRight) && candidateLeft.same(candidateUpper)) {
-                            this.spawn(field, target, this.fields[row-1][col], this.fields[row-1][col+2], candidateLeft.type);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row-1][col], this.fields[row-1][col+2], candidateLeft.type)
+                            );
                         }
                         if(candidateLeft.spawnable(candidateUpper) && candidateUpper.spawnable(candidateRight) && candidateRight.spawnable(candidateLeft)) {
                             const newType = types.filter(t => !(["Source", "Obstacle", candidateLeft.type, candidateRight.type, candidateUpper.type].includes(t)))[0];
-                            this.spawn(field, target, this.fields[row-1][col], this.fields[row-1][col+2], newType);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row-1][col], this.fields[row-1][col+2], newType)
+                            );
                         }
                     }
 
@@ -175,11 +158,15 @@ function Board(dimension) {
                         const candidateLower = this.fields[row+1][col+1].current;
                         if(candidateLeft.same(candidateRight) && candidateLeft.same(candidateLower))
                         {
-                            this.spawn(field, target, this.fields[row+1][col], this.fields[row+1][col+2], candidateLeft.type);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row+1][col], this.fields[row+1][col+2], candidateLeft.type)
+                            );
                         }
                         if(candidateLeft.spawnable(candidateLower) && candidateLower.spawnable(candidateRight) && candidateRight.spawnable(candidateLeft)) {
                             const newType = types.filter(t => !(["Source", "Obstacle", candidateLeft.type, candidateRight.type, candidateLower.type].includes(t)))[0];
-                            this.spawn(field, target, this.fields[row+1][col], this.fields[row+1][col+2], newType);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row+1][col], this.fields[row+1][col+2], newType)
+                            );
                         }
                     }
                 }
@@ -202,11 +189,15 @@ function Board(dimension) {
                         const candidateLeft = this.fields[row+1][col-1].current;
                         if(candidateUpper.same(candidateLower) && candidateUpper.same(candidateLeft))
                         {
-                            this.spawn(field, target, this.fields[row][col-1], this.fields[row+2][col-1], candidateUpper.type);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col-1], this.fields[row+2][col-1], candidateUpper.type)
+                            );
                         }
                         if(candidateUpper.spawnable(candidateLeft) && candidateLeft.spawnable(candidateLower) && candidateLower.spawnable(candidateUpper)) {
                             const newType = types.filter(t => !(["Source", "Obstacle", candidateUpper.type, candidateLeft.type, candidateLower.type].includes(t)))[0];
-                            this.spawn(field, target, this.fields[row][col-1], this.fields[row+2][col-1], newType);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col-1], this.fields[row+2][col-1], newType)
+                            );
                         }
                     }
 
@@ -215,11 +206,15 @@ function Board(dimension) {
                         const candidateRight = this.fields[row+1][col+1].current;
                         if(candidateUpper.same(candidateLower) && candidateUpper.same(candidateRight))
                         {
-                            this.spawn(field, target, this.fields[row][col+1], this.fields[row+2][col+1], candidateUpper.type);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col+1], this.fields[row+2][col+1], candidateUpper.type)
+                            );
                         }
                         if(candidateUpper.spawnable(candidateRight) && candidateRight.spawnable(candidateLower) && candidateLower.spawnable(candidateUpper)) {
                             const newType = types.filter(t => !(["Source", "Obstacle", candidateUpper.type, candidateRight.type, candidateLower.type].includes(t)))[0];
-                            this.spawn(field, target, this.fields[row][col+1], this.fields[row+2][col+1], newType);
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col+1], this.fields[row+2][col+1], newType)
+                            );
                         }
                     }
                 }
@@ -240,15 +235,28 @@ function Board(dimension) {
                 candidate1.current.side !== candidate1.side()) {
             
                 target.current = new Unit(candidate1.current.type, candidate1.current.side);
+                spawns.push([target.row, target.column, target.current]);
             }
         }
+
+        this.targets = this.findAllMoves();
+        return { 
+            'winner': this.conclude(),
+            'spawns': spawns.filter(s => s !== null),
+            'captures': captures.filter(c => c !== [])
+        };
+    }
+
+    this.conclude = function() {
+
+        let winner = "";
+        let redSourceFound = false;
+        let greenSourceFound = false;
 
         // Find sources
         for(let row=0; row<this.dimension; row++) {
             for(let column=0; column<this.dimension; column++) {
                 const field = this.fields[row][column];
-
-                // Unit already on this field is also a candidate
                 if(field.current.type === "Source") {
                     if(field.current.side === "red") {
                         redSourceFound = true;
@@ -262,19 +270,16 @@ function Board(dimension) {
 
         // Detect end of game
         if (redSourceFound && greenSourceFound) {
-            this.winner = "";
+            winner = "";
         } else if (redSourceFound && !greenSourceFound) {
-            this.winner = "red";
+            winner = "red";
         } else if (!redSourceFound && greenSourceFound) {
-            this.winner = "green";
+            winner = "green";
         } else {
-            this.winner = "gray";
+            winner = "gray";
         }
 
-        // Get available moves
-        if(this.winner === "") {
-            this.targets = this.findAllMoves();
-        }
+        return winner;
     }
 
     this.spawn = function(candidate, target, corner1, corner2, type) {
@@ -287,8 +292,11 @@ function Board(dimension) {
                 corner2.current.side !== corner2.side() && corner2.side() !== "gray" ) {
                 // SPAWN!
                 target.current = new Unit(type, candidate.current.side);
+                return [target.row, target.column, target.current];
             }
         }
+
+        return null;
     }
 
     this.move = function(sourceRow, sourceCol, targetRow, targetCol) {
@@ -466,6 +474,76 @@ function Field(row, column) {
     this.goal = function(side) {
         return !this.empty() && this.current.type === "Source" && this.current.side !== side;
     }
+
+    this.prepare = function() {
+
+        // Remove previous guys
+        this.redLast = {};
+        this.greenLast = {};
+
+        // Unit already on this field is also a candidate
+        if(this.current.type) {
+            if(this.current.side === "red") {
+                this.redCandidate = this.current;
+            }
+            if(this.current.side === "green") {
+                this.greenCandidate = this.current;
+            }
+        }
+    }
+
+    this.clash = function() {
+
+        const result = [];
+
+        // Here the clash beginns
+        if(this.greenCandidate.type && this.redCandidate.type) {
+            if(this.greenCandidate.type === this.redCandidate.type) {
+                this.current = {};
+
+                result.push([this.row, this.column, this.greenCandidate]);
+                result.push([this.row, this.column, this.redCandidate]);
+            } else {
+                const pattern = clashes[this.greenCandidate.type];
+                if(pattern) {
+                    if(this.redCandidate.type === pattern[0]) {
+                        this.current = this.greenCandidate;
+
+                        result.push([this.row, this.column, this.redCandidate]);
+                    }
+                    if(this.redCandidate.type === pattern[1]) {
+                        this.current = this.redCandidate;
+
+                        result.push([this.row, this.column, this.greenCandidate]);
+                    }
+                    if(this.redCandidate.type === pattern[2]) {
+                        this.current = {};
+
+                        result.push([this.row, this.column, this.greenCandidate]);
+                        result.push([this.row, this.column, this.redCandidate]);
+                    }
+                } else {
+                    if(this.greenCandidate.type === "Source") {
+                        this.current = this.greenCandidate;
+                        result.push([this.row, this.column, this.redCandidate]);
+                    }
+
+                    if(this.redCandidate.type === "Source") {
+                        this.current = this.redCandidate;
+                        result.push([this.row, this.column, this.greenCandidate]);
+                    }
+                }
+            }
+        } else {
+            if(this.greenCandidate.type) { this.current = this.greenCandidate; }
+            if(this.redCandidate.type) { this.current = this.redCandidate; }
+        }
+
+        this.greenCandidate = {};
+        this.redCandidate = {};    
+
+        return result;
+    }
 }
 
 function Unit(type, side) {
@@ -507,6 +585,13 @@ const units = {
     "gray": {
         "Obstacle": [ [4,0], [4,1], [5,1], [6,0], [6,1], [4,10], [4,9], [5,9], [6,10], [6,9] ]
     }
+}
+
+const clashes = {
+    "Earth": ["Water", "Air", "Fire"],
+    "Air": ["Earth", "Fire", "Water"],
+    "Fire": ["Air", "Water", "Earth"],
+    "Water": ["Fire", "Earth", "Air"],
 }
 
 const moves = {

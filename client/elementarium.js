@@ -3,10 +3,11 @@ function Game() {
     this.players = {};
 
     this.turn = 1;
+    this.journal = [];
     this.board = {};
+    this.winner = "";
 
     this.moves = 0;
-    this.journal = [];
     this.history = [];
 
     this.payload = function() {
@@ -19,6 +20,7 @@ function Game() {
         this.turn = game.turn;
         this.board = new Board(game.board);
         this.journal = game.journal;
+        this.winner = game.winner;
         this.moves = 0;
         this.history = []; 
     }
@@ -31,20 +33,40 @@ function Game() {
         let result = '';
 
         for(i=0; i<this.journal.length; i++) {
-            const greenMoves = this.journal[i].green;
-            const redMoves = this.journal[i].red;
+            const greenEvents = this.journal[i].green;
+            const redEvents = this.journal[i].red;
             result += '[' + (i+1) + ']: ';
             
-            for(g=0; g<greenMoves.length; g++) {
-                result += "Green " + greenMoves[g][4] 
-                        + " [" + greenMoves[g][0] + ", " + greenMoves[g][1] + "] ->"
-                        + " [" + greenMoves[g][2] + ", " + greenMoves[g][3] + "]<br />";
+            for(g=0; g<greenEvents.moves.length; g++) {
+                result += "Green " + greenEvents.moves[g][4] 
+                        + " [" + greenEvents.moves[g][0] + ", " + greenEvents.moves[g][1] + "] ->"
+                        + " [" + greenEvents.moves[g][2] + ", " + greenEvents.moves[g][3] + "]<br />";
             }
 
-            for(r=0; r<redMoves.length; r++) {
-                result += "Red " + redMoves[r][5] 
-                        + " [" + redMoves[r][0] + ", " + redMoves[r][1] + "] ->"
-                        + " [" + redMoves[r][2] + ", " + redMoves[r][3] + "]<br />";
+            for(r=0; r<redEvents.moves.length; r++) {
+                result += "Red " + redEvents.moves[r][5] 
+                        + " [" + redEvents.moves[r][0] + ", " + redEvents.moves[r][1] + "] ->"
+                        + " [" + redEvents.moves[r][2] + ", " + redEvents.moves[r][3] + "]<br />";
+            }
+
+            for(const capture of greenEvents.captures) {
+                result += "Red captured green " + capture[2].type + " on [" 
+                        + capture[0] + ", " + capture[1] + "]<br />" ;
+            }
+
+            for(const capture of redEvents.captures) {
+                result += "Green captured red " + capture[2].type + " on [" 
+                        + capture[0] + ", " + capture[1] + "]<br />" ;
+            }
+
+            for(const spawn of greenEvents.spawns) {
+                result += "Green spawned " + spawn[2].type + " on [" 
+                        + spawn[0] + ", " + spawn[1] + "]<br />" ;
+            }
+
+            for(const spawn of redEvents.spawns) {
+                result += "Red spawned " + spawn[2].type + " on [" 
+                        + spawn[0] + ", " + spawn[1] + "]<br />" ;
             }
 
             result += "<br />";
@@ -76,7 +98,6 @@ function Game() {
 function Board(other) {
     this.fields = other.fields.map(row => row.map(cell => cell = new Field(cell)));
     this.dimension = other.dimension;
-    this.winner = other.winner;
     this.targets = other.targets;
 
     this.inside = function(row, col) {
@@ -242,7 +263,7 @@ function Board(other) {
             target.removeChild(target.firstChild);
         }
 
-        if(game.board.winner === "") {
+        if(game.winner === "") {
             if (game.players[me] === "green") {
                 for(let row=0; row<this.dimension; row++) {
                     for(let column=0; column<this.dimension; column++) {
@@ -266,7 +287,7 @@ function Board(other) {
             infoBottom.innerHTML += "<br />" + this.targets.length + " moves available";
             infoBottom.innerHTML += "<br />" + game.printJournal();
         } else {
-            target.textContent = game.board.winner + " wins!";
+            target.textContent = game.winner + " wins!";
         }
     }
 }

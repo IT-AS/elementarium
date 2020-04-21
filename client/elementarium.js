@@ -6,10 +6,11 @@ function Game() {
     this.board = {};
 
     this.moves = 0;
+    this.journal = [];
     this.history = [];
 
     this.payload = function() {
-        return this.history.map( h => [h.from.row, h.from.column, h.to.row, h.to.column] );
+        return this.history.map( h => [h.from.row, h.from.column, h.to.row, h.to.column, h.from.greenLast.type, h.from.redLast.type] );
     }
 
     this.from = function(game) {
@@ -17,12 +18,39 @@ function Game() {
         this.players = game.players;
         this.turn = game.turn;
         this.board = new Board(game.board);
+        this.journal = game.journal;
         this.moves = 0;
         this.history = []; 
     }
 
     this.info = function() {
         return "Turn: " + this.turn;
+    }
+
+    this.printJournal = function() {
+        let result = '';
+
+        for(i=0; i<this.journal.length; i++) {
+            const greenMoves = this.journal[i].green;
+            const redMoves = this.journal[i].red;
+            result += '[' + (i+1) + ']: ';
+            
+            for(g=0; g<greenMoves.length; g++) {
+                result += "Green " + greenMoves[g][4] 
+                        + " [" + greenMoves[g][0] + ", " + greenMoves[g][1] + "] ->"
+                        + " [" + greenMoves[g][2] + ", " + greenMoves[g][3] + "]<br />";
+            }
+
+            for(r=0; r<redMoves.length; r++) {
+                result += "Red " + redMoves[r][5] 
+                        + " [" + redMoves[r][0] + ", " + redMoves[r][1] + "] ->"
+                        + " [" + redMoves[r][2] + ", " + redMoves[r][3] + "]<br />";
+            }
+
+            result += "<br />";
+        }
+
+        return result;
     }
 
     this.undo = function() {
@@ -49,6 +77,7 @@ function Board(other) {
     this.fields = other.fields.map(row => row.map(cell => cell = new Field(cell)));
     this.dimension = other.dimension;
     this.winner = other.winner;
+    this.targets = other.targets;
 
     this.inside = function(row, col) {
         return row >= 0 && row < this.dimension && col >= 0 && col < this.dimension;
@@ -87,14 +116,14 @@ function Board(other) {
                 game.moves++;
                 game.history.push({ 
                     "from": sourceField, 
-                    "to": targetField });
+                    "to": targetField});
             }
         }
     
         this.draw();
     }
 
-    this.moves = function(row, col) {
+    this.showMoves = function(row, col) {
         if (game.moves < movelimit) {
             const unit = this.fields[row][col].current;
 
@@ -213,24 +242,31 @@ function Board(other) {
             target.removeChild(target.firstChild);
         }
 
-        if (game.players[me] === "green") {
-            for(let row=0; row<this.dimension; row++) {
-                for(let column=0; column<this.dimension; column++) {
-                    this.fields[row][column].moveHere = false;
-                    this.fields[row][column].render(target);
+        if(game.board.winner === "") {
+            if (game.players[me] === "green") {
+                for(let row=0; row<this.dimension; row++) {
+                    for(let column=0; column<this.dimension; column++) {
+                        this.fields[row][column].moveHere = false;
+                        this.fields[row][column].render(target);
+                    }
                 }
+                infoTop.textContent = Object.keys(game.players)[1];
+                infoBottom.textContent = Object.keys(game.players)[0];
+            } else {
+                for(let row=this.dimension-1; row>=0; row--) {
+                    for(let column=this.dimension-1; column>=0; column--) {
+                        this.fields[row][column].moveHere = false;
+                        this.fields[row][column].render(target);
+                    }
+                }
+                infoTop.textContent = Object.keys(game.players)[0];
+                infoBottom.textContent = Object.keys(game.players)[1];
             }
-            infoTop.textContent = Object.keys(game.players)[1];
-            infoBottom.textContent = Object.keys(game.players)[0];
+
+            infoBottom.innerHTML += "<br />" + this.targets.length + " moves available";
+            infoBottom.innerHTML += "<br />" + game.printJournal();
         } else {
-            for(let row=this.dimension-1; row>=0; row--) {
-                for(let column=this.dimension-1; column>=0; column--) {
-                    this.fields[row][column].moveHere = false;
-                    this.fields[row][column].render(target);
-                }
-            }
-            infoTop.textContent = Object.keys(game.players)[0];
-            infoBottom.textContent = Object.keys(game.players)[1];
+            target.textContent = game.board.winner + " wins!";
         }
     }
 }

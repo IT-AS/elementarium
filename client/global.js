@@ -12,7 +12,7 @@ function clickField(ev) {
         clickRow = Number(ev.target.getAttribute("data-row"));
         clickCol = Number(ev.target.getAttribute("data-col"));
 
-        game.board.showMoves(clickRow, clickCol);
+        game.board.showTargets(clickRow, clickCol);
     } else {
         const sourceRow = clickRow;
         const sourceCol = clickCol;
@@ -39,7 +39,7 @@ function drag(ev) {
         ev.dataTransfer.setData("col", col);
     } 
 
-    game.board.showMoves(row, col);
+    game.board.showTargets(row, col);
 }
 
 function drop(ev) {

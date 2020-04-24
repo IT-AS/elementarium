@@ -39,7 +39,6 @@ function Game(gameId) {
             const result = this.board.resolve();
             this.winner = result.winner;
 
-            console.log(result);
             for(const key of ["captures", "spawns"]) {
                 for(const side of sides) {
                     if(side !== "gray") {
@@ -121,7 +120,6 @@ function Board(dimension) {
                     for(const capture of captured) {
                         captures.push(capture);
                     }
-                    console.log(captures);
                 }
             }
         }
@@ -304,16 +302,26 @@ function Board(dimension) {
         const targetField = this.fields[targetRow][targetCol];
     
         if(sourceField.current.type) {
-            let drop = true;
+            const side = sourceField.current.side;
+            let valid = true;
+
+            // Check if move was in list of possible moves
+            const target = this.targets.filter(f => 
+                f.from[0] === sourceField.row && f.from[1] === sourceField.column &&
+                f.to[0] === targetField.row && f.to[1] === targetField.column
+            );
+
+            if(!target) { valid = false; }
+
+            // Check if dynamic preconditions are met (such as putting a piece on a place where a piece was previously)
             if (targetField.current.type) {
-                if (targetField.current.side === "gray") { drop = false; }
-                if (sourceField.current.friendly(targetField.current)) { drop = false; }
-    
-                if (sourceField.current.friendly(targetField.greenCandidate)) { drop = false; }
-                if (sourceField.current.friendly(targetField.redCandidate)) { drop = false; }
+                if (targetField.current.side === "gray") { valid = false; }
+                if (sourceField.current.friendly(targetField.current)) { valid = false; }
+                if (sourceField.current.friendly(targetField.candidate(side))) { valid = false; }
             }
     
-            if(drop){
+            // Do the move if it is considered valid
+            if(valid){
                 if (sourceField.current.side === "green") { 
                     targetField.greenCandidate = sourceField.current;
                     sourceField.greenLast = sourceField.current;
@@ -327,6 +335,8 @@ function Board(dimension) {
                     targetField.redCandidate.last = sourceField;
                 }
                 sourceField.current = {};
+            } else {
+                console.log("Move from " + sourceField.coord() + " to " + targetField.coord() + " considered invalid!");
             }
         }
     }
@@ -396,12 +406,13 @@ function Board(dimension) {
 
                         // Air can jump over everything
                         if (unit.type !== "Air") {
+
                             // Check diagonals
                             if (Math.abs(offsetRow) > 0 && Math.abs(offsetCol) > 0 && Math.abs(offsetRow) === Math.abs(offsetCol)) {
                                 for(let d=1; d<=Math.abs(offsetRow); d++) {
                                     const targetField = this.fields[row+d*Math.sign(offsetRow)][col+d*Math.sign(offsetCol)]
                                     if(targetField.current.type) {
-                                        if(unit.friendly(targetField.current) || d < Math.abs(offsetRow)) {
+                                        if(d < Math.abs(offsetRow)) {
                                             possible = false;
                                         }
                                     }
@@ -413,7 +424,7 @@ function Board(dimension) {
                                 for(let d=1; d<=Math.abs(offsetRow); d++) {
                                     const targetField = this.fields[row+d*Math.sign(offsetRow)][col]
                                     if(targetField.current.type) {
-                                        if(unit.friendly(targetField.current) || d < Math.abs(offsetRow)) {
+                                        if(d < Math.abs(offsetRow)) {
                                             possible = false;
                                         }
                                     }
@@ -425,13 +436,13 @@ function Board(dimension) {
                                 for(let d=1; d<=Math.abs(offsetCol); d++) {
                                     const targetField = this.fields[row][col+d*Math.sign(offsetCol)]
                                     if(targetField.current.type) {
-                                        if(unit.friendly(targetField.current) || d < Math.abs(offsetCol)) {
+                                        if(d < Math.abs(offsetCol)) {
                                             possible = false;
                                         }
                                     }
                                 }
                             }
-                        }
+                        } 
                     } else {
                         possible = false;
                     }
@@ -475,6 +486,30 @@ function Field(row, column) {
         return !this.empty() && this.current.type === "Source" && this.current.side !== side;
     }
 
+    this.last = function (side) {
+        if(side === "red") {
+            return this.redLast;
+        }
+
+        if(side === "green") {
+            return this.greenLast;
+        }
+
+        return null;
+    }
+
+    this.candidate = function(side) {
+        if(side === "red") {
+            return this.redCandidate;
+        }
+
+        if(side === "green") {
+            return this.greenCandidate;
+        }
+
+        return null;
+    }
+
     this.prepare = function() {
 
         // Remove previous guys
@@ -496,13 +531,19 @@ function Field(row, column) {
 
         const result = [];
 
-        // Here the clash beginns
+        // Here the clash begins
         if(this.greenCandidate.type && this.redCandidate.type) {
             if(this.greenCandidate.type === this.redCandidate.type) {
                 this.current = {};
 
                 result.push([this.row, this.column, this.greenCandidate]);
                 result.push([this.row, this.column, this.redCandidate]);
+            } else if(this.greenCandidate.type === "Source") {
+                this.current = this.greenCandidate;
+                result.push([this.row, this.column, this.redCandidate]);
+            } else if(this.redCandidate.type === "Source") {
+                this.current = this.redCandidate;
+                result.push([this.row, this.column, this.greenCandidate]);
             } else {
                 const pattern = clashes[this.greenCandidate.type];
                 if(pattern) {
@@ -522,17 +563,7 @@ function Field(row, column) {
                         result.push([this.row, this.column, this.greenCandidate]);
                         result.push([this.row, this.column, this.redCandidate]);
                     }
-                } else {
-                    if(this.greenCandidate.type === "Source") {
-                        this.current = this.greenCandidate;
-                        result.push([this.row, this.column, this.redCandidate]);
-                    }
-
-                    if(this.redCandidate.type === "Source") {
-                        this.current = this.redCandidate;
-                        result.push([this.row, this.column, this.greenCandidate]);
-                    }
-                }
+                } 
             }
         } else {
             if(this.greenCandidate.type) { this.current = this.greenCandidate; }
@@ -541,6 +572,9 @@ function Field(row, column) {
 
         this.greenCandidate = {};
         this.redCandidate = {};    
+
+        this.greenLast = {};
+        this.redLast = {};
 
         return result;
     }

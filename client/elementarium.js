@@ -100,10 +100,6 @@ function Board(other) {
     this.dimension = other.dimension;
     this.targets = other.targets;
 
-    this.inside = function(row, col) {
-        return row >= 0 && row < this.dimension && col >= 0 && col < this.dimension;
-    }
-
     this.move = function(sourceRow, sourceCol, targetRow, targetCol) {
         const sourceField = this.fields[sourceRow][sourceCol];
         const targetField = this.fields[targetRow][targetCol];
@@ -144,8 +140,8 @@ function Board(other) {
         this.draw();
     }
 
-    this.showMoves = function(row, col) {
-        if (game.moves < movelimit) {
+    this.showTargets = function(row, col) {
+        if(game.moves < movelimit) {
             const unit = this.fields[row][col].current;
 
             // Check side to move
@@ -153,102 +149,13 @@ function Board(other) {
                 return;
             }
 
-            // Check if source and blocked
-            if (unit.type === "Source") {
-                for(let rowOffset=-1;rowOffset<=1;rowOffset++) {
-                    for(let colOffset=-1;colOffset<=1;colOffset++) {
-                        const nextRow = row+rowOffset;
-                        const nextCol = col+colOffset;
-                        if (this.inside(nextRow, nextCol)) {
-                            const candidate = this.fields[nextRow][nextCol].current;
-                            if(candidate.type && !unit.friendly(candidate)) {
-                                for(let b=0;b<blocks[candidate.type].length;b++) {
-                                    const rowBlock = blocks[candidate.type][b][0] + rowOffset;
-                                    const colBlock = blocks[candidate.type][b][1] + colOffset;
-                                    if (rowBlock === 0 && colBlock === 0) {
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            const filteredTargets = this.targets.filter(f => f.from[0] === row && f.from[1] === col);
 
-            // Check normal moves
-            for(let i=0; i<moves[unit.type].length; i++) {
-                const direction = (unit.side === "green") ? -1 : 1;
-                const offsetRow = moves[unit.type][i][0] * direction;
-                const offsetCol = moves[unit.type][i][1];
-                const nextRow = row + offsetRow;
-                const nextCol = col + offsetCol;
-        
-                if ( this.inside(nextRow, nextCol) ) {
-
-                    const field = this.fields[nextRow][nextCol];
-                    let possible = true;
-
-                    // Can't jump multiple times on the same field
-                    if (field.greenCandidate.type && unit.side === "green" || 
-                        field.redCandidate.type && unit.side === "red" ||
-                        field.current.type && field.current.friendly(unit.side)) {
-                        possible = false;
-                    }
-
-                    // Source can only run on his territory
-                    if (unit.type === "Source" && unit.side !== field.side()) {
-                        possible = false;
-                    }
-
-                    // Can't jump on gray
-                    if (field.current.side !== "gray" && possible) {
-
-                        // Air can jump over everything
-                        if (unit.type !== "Air") {
-                            // Check diagonals
-                            if (Math.abs(offsetRow) > 0 && Math.abs(offsetCol) > 0 && Math.abs(offsetRow) === Math.abs(offsetCol)) {
-                                for(let d=1; d<=Math.abs(offsetRow); d++) {
-                                    const targetField = this.fields[row+d*Math.sign(offsetRow)][col+d*Math.sign(offsetCol)]
-                                    if(targetField.current.type) {
-                                        if(unit.friendly(targetField.current) || d < Math.abs(offsetRow)) {
-                                            possible = false;
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Check vertical movement
-                            if (Math.abs(offsetRow) > 0 && offsetCol === 0) {
-                                for(let d=1; d<=Math.abs(offsetRow); d++) {
-                                    const targetField = this.fields[row+d*Math.sign(offsetRow)][col]
-                                    if(targetField.current.type) {
-                                        if(unit.friendly(targetField.current) || d < Math.abs(offsetRow)) {
-                                            possible = false;
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            // Check horizontal movement
-                            if (offsetRow === 0 && Math.abs(offsetCol) > 0) {
-                                for(let d=1; d<=Math.abs(offsetCol); d++) {
-                                    const targetField = this.fields[row][col+d*Math.sign(offsetCol)]
-                                    if(targetField.current.type) {
-                                        if(unit.friendly(targetField.current) || d < Math.abs(offsetCol)) {
-                                            possible = false;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        possible = false;
-                    }
-
-                    if (possible) {
-                        field.moveHere = true;
-                        document.getElementById(field.coord()).className += " target";
-                    }
+            for(const target of filteredTargets) {
+                const field = this.fields[target.to[0]][target.to[1]];
+                if(field.targetable(unit.side)) {
+                    field.moveHere = true;
+                    document.getElementById(field.coord()).className += " target";
                 }
             }
         }
@@ -317,6 +224,25 @@ function Field(other) {
         return typeof(this.current.type) === 'undefined'; 
     }
 
+    this.candidate = function(side){
+        if(side === "red") {
+            return this.redCandidate;
+        }
+
+        if(side === "green") {
+            return this.greenCandidate;
+        }
+
+        return null;
+    }
+
+    this.targetable = function(side) {
+        return side && 
+            !this.candidate(side).type &&
+            !this.goal(side) &&
+            (this.empty() || this.current.side !== side);
+    }
+
     this.goal = function(side) {
         return !this.empty() && this.current.type === "Source" && this.current.side !== side;
     }
@@ -374,13 +300,11 @@ function Unit(other) {
     this.name = function() {
         return side[0].toUpperCase() + side.slice(1) + " " + this.type;
     }
-    this.same = function(other) {
-        return this.type === other.type && this.friendly(other);
-    }
+
     this.friendly = function(other) {
         return this.side === other.side;
     }
-    this.letter = function () { return this.type.charAt(0); }
+
     this.render = function (target, row, col) {
         const div = document.createElement("div");
         div.className = "unit " + this.side + " " + this.type.toLowerCase();
@@ -398,7 +322,6 @@ function Unit(other) {
         div.setAttribute("data-row", row);
         div.setAttribute("data-col", col);
 
-        //div.innerText = this.letter();
         target.appendChild(div);
     }
 }

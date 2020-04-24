@@ -105,36 +105,21 @@ function Board(other) {
         const targetField = this.fields[targetRow][targetCol];
     
         if(sourceField.current.type && targetField.moveHere) {
-            let drop = true;
-            if (targetField.current.type) {
-                if (targetField.current.side === "gray") { drop = false; }
-                if (sourceField.current.friendly(targetField.current)) { drop = false; }
-    
-                if (sourceField.current.friendly(targetField.greenCandidate)) { drop = false; }
-                if (sourceField.current.friendly(targetField.redCandidate)) { drop = false; }
+            if (sourceField.current.side === "green") { 
+                targetField.greenCandidate = sourceField.current;
+                sourceField.greenLast = sourceField.current;
             }
-    
-            if(drop){
-                if (sourceField.current.side === "green") { 
-                    targetField.greenCandidate = sourceField.current;
-                    sourceField.greenLast = sourceField.current;
-
-                    targetField.greenCandidate.last = sourceField;
-                }
-                if (sourceField.current.side === "red") { 
-                    targetField.redCandidate = sourceField.current; 
-                    sourceField.redLast = sourceField.current;
-
-                    targetField.redCandidate.last = sourceField;
-                }
-                sourceField.current = {};
-
-                // Store for undo
-                game.moves++;
-                game.history.push({ 
-                    "from": sourceField, 
-                    "to": targetField});
+            if (sourceField.current.side === "red") { 
+                targetField.redCandidate = sourceField.current; 
+                sourceField.redLast = sourceField.current;
             }
+            sourceField.current = {};
+
+            // Store for undo
+            game.moves++;
+            game.history.push({ 
+                "from": sourceField, 
+                "to": targetField});
         }
     
         this.draw();
@@ -149,10 +134,9 @@ function Board(other) {
                 return;
             }
 
-            const filteredTargets = this.targets.filter(f => f.from[0] === row && f.from[1] === col);
-
-            for(const target of filteredTargets) {
-                const field = this.fields[target.to[0]][target.to[1]];
+            const filteredTargets = this.targets.filter(f => f.side === unit.side && f.from[0] === row && f.from[1] === col)[0];
+            for(const target of filteredTargets.to) {
+                const field = this.fields[target[0]][target[1]];
                 if(field.targetable(unit.side)) {
                     field.moveHere = true;
                     document.getElementById(field.coord()).className += " target";
@@ -295,7 +279,6 @@ function Field(other) {
 function Unit(other) {
     this.type = other.type;
     this.side = other.side;
-    this.last = other.last;
 
     this.name = function() {
         return side[0].toUpperCase() + side.slice(1) + " " + this.type;

@@ -27,6 +27,16 @@ function Game(gameId) {
         }
 
         turn[side]["moves"] = moves;
+
+        // CPU Intermezzo
+        const cpu = this.players["CPU"];
+        if(cpu) {
+            if(!turn[cpu]){
+                turn[cpu] = {};
+            }
+            turn[cpu]["moves"] = this.calculate(cpu);
+        }
+
         if(turn.green && turn.red) {
             for(const playeractions of Object.values(turn)) {
                 const playermoves = playeractions["moves"];
@@ -64,6 +74,25 @@ function Game(gameId) {
         }
 
         return this.journal[this.turn-1];
+    }
+
+    this.calculate = function(side) {
+        const availableMoves = this.board.targets.filter(f => f.side === side);
+        const calculatedMoves = [];
+        for(i=0; i<3; i++){
+            const moveFrom = Math.floor(Math.random() * availableMoves.length);
+            const moveTo = Math.floor(Math.random() * availableMoves[moveFrom].to.length);
+            calculatedMoves.push([
+                availableMoves[moveFrom].from[0], 
+                availableMoves[moveFrom].from[1], 
+                availableMoves[moveFrom].to[moveTo][0], 
+                availableMoves[moveFrom].to[moveTo][1],
+                this.board.fields[availableMoves[moveFrom].from[0]][availableMoves[moveFrom].from[1]].current.type,
+                this.board.fields[availableMoves[moveFrom].from[0]][availableMoves[moveFrom].from[1]].current.type,
+            ]);
+        }
+
+        return calculatedMoves;
     }
 }
 
@@ -306,12 +335,19 @@ function Board(dimension) {
             let valid = true;
 
             // Check if move was in list of possible moves
-            const target = this.targets.filter(f => 
-                f.from[0] === sourceField.row && f.from[1] === sourceField.column &&
-                f.to[0] === targetField.row && f.to[1] === targetField.column
-            );
+            const targets = this.targets.filter(f => 
+                f.side === side &&
+                f.from[0] === sourceField.row && f.from[1] === sourceField.column
+            )[0];
 
-            if(!target) { valid = false; }
+            if(targets) {
+                const target = targets.to.filter(t =>
+                    t[0] === targetField.row && t[1] === targetField.column);
+
+                if(!target) { valid = false; }
+            } else {
+                valid = false;
+            }
 
             // Check if dynamic preconditions are met (such as putting a piece on a place where a piece was previously)
             if (targetField.current.type) {
@@ -325,14 +361,10 @@ function Board(dimension) {
                 if (sourceField.current.side === "green") { 
                     targetField.greenCandidate = sourceField.current;
                     sourceField.greenLast = sourceField.current;
-
-                    targetField.greenCandidate.last = sourceField;
                 }
                 if (sourceField.current.side === "red") { 
                     targetField.redCandidate = sourceField.current; 
                     sourceField.redLast = sourceField.current;
-
-                    targetField.redCandidate.last = sourceField;
                 }
                 sourceField.current = {};
             } else {
@@ -448,13 +480,13 @@ function Board(dimension) {
                     }
 
                     if (possible) {
-                        result.push({'from': [row, col], 'to': [field.row, field.column]});
+                        result.push([field.row, field.column]);
                     }
                 }
             }
         }
 
-        return result;
+        return {'from': [row, col], 'to': result, 'side': sourceField.current.side};
     }
 }
 
@@ -484,18 +516,6 @@ function Field(row, column) {
 
     this.goal = function(side) {
         return !this.empty() && this.current.type === "Source" && this.current.side !== side;
-    }
-
-    this.last = function (side) {
-        if(side === "red") {
-            return this.redLast;
-        }
-
-        if(side === "green") {
-            return this.greenLast;
-        }
-
-        return null;
     }
 
     this.candidate = function(side) {
@@ -583,7 +603,6 @@ function Field(row, column) {
 function Unit(type, side) {
     this.type = type;
     this.side = side;
-    this.last = {};
     this.name = function() {
         return side[0].toUpperCase() + side.slice(1) + " " + this.type;
     }

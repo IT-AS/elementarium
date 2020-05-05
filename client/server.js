@@ -18,7 +18,8 @@ function init() {
             gameContainer.innerText = game.gameId;
 
             const nameInput = document.createElement("input");
-            const nickname = attribs[Math.floor(Math.random() * attribs.length)] + ' ' + 
+            const nickname = 
+                attribs[Math.floor(Math.random() * attribs.length)] + ' ' + 
                 names[Math.floor(Math.random() * names.length)];
             nameInput.setAttribute("type", "text");
             nameInput.setAttribute("id", "id" + game.gameId);
@@ -28,6 +29,11 @@ function init() {
             pwdInput.setAttribute("type", "password");
             pwdInput.setAttribute("placeholder", "Game password");
             pwdInput.setAttribute("id", "pwd" + game.gameId);
+
+            for(const side of sides) {
+                if (side !== "gray") {
+                }
+            }            
 
             gameContainer.appendChild(nameInput);
             gameContainer.appendChild(pwdInput);
@@ -48,7 +54,13 @@ function init() {
                     } else {
                         joinButton.className = side + " pill";
                         joinButton.innerText = "Join";
-                        joinButton.setAttribute("onclick", "joinGame('" + game.gameId + "','" + side + "')");
+                        joinButton.setAttribute("onclick", "joinGame('" + game.gameId + "','" + side + "', false)");
+
+                        const cpuButton = document.createElement("button");
+                        cpuButton.className = side + " pill";
+                        cpuButton.innerText = "CPU " + side;
+                        cpuButton.setAttribute("onclick", "joinGame('" + game.gameId + "','" + side + "', true)");
+                        gameContainer.appendChild(cpuButton);
                     }
 
                     gameContainer.appendChild(joinButton);
@@ -103,8 +115,12 @@ function createGame(e) {
     socket.emit("game", gameId, gamePassword);
 }
 
-function joinGame(gameId, side) {
-    me = document.getElementById('id' + gameId).value;
+function joinGame(gameId, side, cpu) {
+    if(cpu) {
+        me = 'CPU';
+    } else {
+        me = document.getElementById('id' + gameId).value;
+    }
     pwd = document.getElementById('pwd' + gameId).value;
     id = gameId;
 

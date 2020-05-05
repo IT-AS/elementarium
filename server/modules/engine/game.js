@@ -28,15 +28,6 @@ function Game(gameId) {
 
         turn[side]["moves"] = moves;
 
-        // CPU Intermezzo
-        const cpu = this.players["CPU"];
-        if(cpu) {
-            if(!turn[cpu]){
-                turn[cpu] = {};
-            }
-            turn[cpu]["moves"] = this.calculate(cpu);
-        }
-
         if(turn.green && turn.red) {
             for(const playeractions of Object.values(turn)) {
                 const playermoves = playeractions["moves"];
@@ -76,23 +67,12 @@ function Game(gameId) {
         return this.journal[this.turn-1];
     }
 
-    this.calculate = function(side) {
-        const availableMoves = this.board.targets.filter(f => f.side === side);
-        const calculatedMoves = [];
-        for(i=0; i<3; i++){
-            const moveFrom = Math.floor(Math.random() * availableMoves.length);
-            const moveTo = Math.floor(Math.random() * availableMoves[moveFrom].to.length);
-            calculatedMoves.push([
-                availableMoves[moveFrom].from[0], 
-                availableMoves[moveFrom].from[1], 
-                availableMoves[moveFrom].to[moveTo][0], 
-                availableMoves[moveFrom].to[moveTo][1],
-                this.board.fields[availableMoves[moveFrom].from[0]][availableMoves[moveFrom].from[1]].current.type,
-                this.board.fields[availableMoves[moveFrom].from[0]][availableMoves[moveFrom].from[1]].current.type,
-            ]);
-        }
+    this.sides = function() {
+        return Object.assign({}, ...Object.entries(this.players).map(([a,b]) => ({ [b]: a })));
+    }
 
-        return calculatedMoves;
+    this.opponent = function(side) {
+        return this.sides()[opponent[side]];
     }
 }
 
@@ -619,6 +599,11 @@ function Unit(type, side) {
 
 const types = [ "Source", "Earth", "Air", "Fire", "Water", "Obstacle" ];
 const sides = [ "green", "red", "gray" ];
+const opponent = { 
+    "green": "red",
+    "red": "green",
+    "gray": "gray"
+}
 
 const units = {
     "red": {

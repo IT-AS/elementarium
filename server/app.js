@@ -1,4 +1,5 @@
-const factory = require('@elementarium/engine');
+const gameFactory = require('@elementarium/engine');
+const aiFactory = require('@elementarium/ai');
 
 const http = require('http');
 const express = require('express');
@@ -12,6 +13,7 @@ const port = 4000;
 
 const games = {};
 const pwds = {};
+const ais = {};
 
 const gameList = function() {
     return Object.values(games).map(g => ({gameId: g.gameId, players: g.players, turn: g.turn}));
@@ -34,7 +36,7 @@ io.on('connection', (socket) => {
 
     socket.on('game', function(gameId, password) {
         // Initialize new game
-        const game = factory.create(gameId);
+        const game = gameFactory.create(gameId);
         game.start();
 
         // Store it
@@ -53,15 +55,21 @@ io.on('connection', (socket) => {
         const game = games[gameId];
         const gamePwd = pwds[gameId];
 
-        if (game && gamePwd) {
-            if(bcrypt.compareSync(pwd, pwds[gameId])) {
-                game.players[playerId] = side;
-                io.emit('game[' + gameId + ']', game);
-            } else {
-                socket.emit('game[' + gameId + ']', "Wrong password!");
-            }
+        if (playerId === 'CPU') {
+            game.players[playerId] = side;
+            ais[gameId] = aiFactory.create(game.board, side);
+            io.emit('games', gameList());            
         } else {
-            socket.emit('game[' + gameId + ']', "Unknown game!");
+            if (game && gamePwd) {
+                if(bcrypt.compareSync(pwd, pwds[gameId])) {
+                    game.players[playerId] = side;
+                    io.emit('game[' + gameId + ']', game);
+                } else {
+                    socket.emit('game[' + gameId + ']', "Wrong password!");
+                }
+            } else {
+                socket.emit('game[' + gameId + ']', "Unknown game!");
+            }
         }
     });
 
@@ -94,6 +102,18 @@ io.on('connection', (socket) => {
         const side = move[1];
         const moves = move[2];
         const game = games[gameId];
+        const cpu = 'CPU';
+
+        if(Object.keys(game.players).includes(cpu) &&
+           game.opponent(side) === cpu) {
+
+            const ai = ais[gameId];
+            if(ai) {
+                const calc = ai.calculate();
+                console.log('AI calculated: ' + calc);
+                game.next(game.players[cpu], calc);
+            }
+        }
 
         if(game.next(side, moves)) {
             io.emit('game[' + gameId + ']', game);

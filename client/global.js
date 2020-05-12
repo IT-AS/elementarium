@@ -12,7 +12,7 @@ function clickField(ev) {
         clickRow = Number(ev.target.getAttribute("data-row"));
         clickCol = Number(ev.target.getAttribute("data-col"));
 
-        game.board.showTargets(clickRow, clickCol);
+        game.showTargets(clickRow, clickCol);
     } else {
         const sourceRow = clickRow;
         const sourceCol = clickCol;
@@ -20,7 +20,7 @@ function clickField(ev) {
         const targetRow = Number(ev.target.getAttribute("data-row"));
         const targetCol = Number(ev.target.getAttribute("data-col"));
 
-        game.board.move(sourceRow, sourceCol, targetRow, targetCol);
+        game.move(sourceRow, sourceCol, targetRow, targetCol);
 
         clickRow = -1;
         clickCol = -1;
@@ -39,7 +39,7 @@ function drag(ev) {
         ev.dataTransfer.setData("col", col);
     } 
 
-    game.board.showTargets(row, col);
+    game.showTargets(row, col);
 }
 
 function drop(ev) {
@@ -52,6 +52,6 @@ function drop(ev) {
         const targetRow = Number(ev.target.getAttribute("data-row"));
         const targetCol = Number(ev.target.getAttribute("data-col"));
 
-        game.board.move(sourceRow, sourceCol, targetRow, targetCol);
+        game.move(sourceRow, sourceCol, targetRow, targetCol);
     }
 }

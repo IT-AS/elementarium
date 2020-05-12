@@ -30,11 +30,6 @@ function init() {
             pwdInput.setAttribute("placeholder", "Game password");
             pwdInput.setAttribute("id", "pwd" + game.gameId);
 
-            for(const side of sides) {
-                if (side !== "gray") {
-                }
-            }            
-
             gameContainer.appendChild(nameInput);
             gameContainer.appendChild(pwdInput);
             gameList.appendChild(gameContainer);
@@ -102,6 +97,8 @@ function view(viewName) {
         '   <button class="game" onclick="move();">Next</button>' +
         '   <br />' +
         '   <span id="info-bottom"></span>' +
+        '</div>' +
+        '<div id="captures" class="footer">' +
         '</div>';
     }
 
@@ -148,7 +145,7 @@ function receive(gameObject) {
         game.from(gameObject);
 
         view('Game');
-        game.board.draw();
+        game.draw();
 
         document.getElementsByTagName("body")[0].className = game.players[me];
     } else {

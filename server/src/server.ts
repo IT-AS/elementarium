@@ -9,4 +9,6 @@ const app = new App(
     4000
 );
 
+// TODO: define socket.io class and initialize
+
 app.listen();

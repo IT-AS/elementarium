@@ -1,4 +1,5 @@
 import express from "express";
+const path = require('path');
 
 class App {
     public app: express.Application;
@@ -9,6 +10,8 @@ class App {
         this.port = port;
 
         this.initControllers(controllers);
+
+        this.app.use(express.static(path.join(__dirname, '../../client')));
     }
 
     public initControllers(controllers) {

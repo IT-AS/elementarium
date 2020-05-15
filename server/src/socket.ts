@@ -1,6 +1,6 @@
 import socketIo from 'socket.io';
 import http from 'http';
-import App from "./app";
+import App from './app';
 
 enum SocketEvents {
     CONNECTION = 'connection',

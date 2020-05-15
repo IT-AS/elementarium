@@ -1,5 +1,5 @@
 import express from "express";
-const path = require('path');
+import path from "path";
 
 class App {
     public app: express.Application;

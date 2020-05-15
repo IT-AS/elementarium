@@ -1,6 +1,7 @@
 import App from "./app";
 
 import PingController from "./controller/ping.controller";
+import Socket from "./socket";
 
 const app = new App(
     [
@@ -9,6 +10,6 @@ const app = new App(
     4000
 );
 
-// TODO: define socket.io class and initialize
-
 app.listen();
+
+const socket = new Socket(app);

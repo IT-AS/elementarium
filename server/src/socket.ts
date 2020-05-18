@@ -1,7 +1,11 @@
 import socketIo from 'socket.io';
 import http from 'http';
-import Lobby from './modules/lobby/lobby';
 import App from './app';
+import JoinInfo from './modules/lobby/joininfo';
+import MoveInfo from './modules/lobby/moveinfo';
+import Result from './modules/lobby/result';
+import Lobby from './modules/lobby/lobby';
+import Game from './modules/engine/game';
 
 enum SocketEvents {
     CONNECTION = 'connection',

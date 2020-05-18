@@ -7,3 +7,5 @@ enum UnitType {
     Water,
     Obstacle
 }
+
+export default UnitType;

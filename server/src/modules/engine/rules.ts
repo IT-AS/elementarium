@@ -1,3 +1,6 @@
+import UnitType from "./enums/unittype";
+import Side from "./enums/side";
+
 class Rules {
 
     static boardsize: number = 11;
@@ -97,3 +100,5 @@ class Rules {
         "Source": []
     }
 }
+
+export default Rules;

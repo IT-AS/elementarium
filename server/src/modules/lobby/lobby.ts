@@ -1,4 +1,11 @@
 import bcrypt from 'bcrypt';
+import GameEntry from './gameentry';
+import JoinInfo from './joininfo';
+import Result from './result';
+import GameInfo from './gameInfo';
+import Game from '../engine/game';
+import Player from '../engine/player';
+import AI from '../ai/ai';
 
 class Lobby {
     private games: GameEntry[];

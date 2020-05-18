@@ -1,3 +1,6 @@
+import UnitType from "./enums/unittype";
+import Side from "./enums/side";
+
 class Unit {
     public type : UnitType;
     public side : Side;
@@ -23,3 +26,5 @@ class Unit {
         return this.friendly(other) && !this.same(other) && this.type !== UnitType.Source;
     }
 }
+
+export default Unit;

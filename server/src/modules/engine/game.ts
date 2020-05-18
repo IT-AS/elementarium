@@ -1,3 +1,12 @@
+import Player from "./player";
+import Side from "./enums/side";
+import Turn from "./moves/turn";
+import Move from "./moves/move";
+import HalfTurn from "./moves/halfturn";
+import TurnEvent from "./events/turnEvent";
+import Rules from "./rules";
+import Board from "./board";
+
 class Game {
     public gameId: string;
     public players: Player[];
@@ -73,3 +82,5 @@ class Game {
         return this.players.filter(p => p.side !== side)[0];
     }
 }
+
+export default Game;

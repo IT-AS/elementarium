@@ -1,3 +1,12 @@
+import Direction from "./moves/direction";
+import TurnEvent from "./events/turnEvent";
+import FieldEvent from "./events/fieldEvent";
+import UnitType from "./enums/unittype";
+import Side from "./enums/side";
+import Rules from "./rules";
+import Field from "./field";
+import Unit from "./unit";
+
 class Board {
     public fields: Field[][];
     public targets: Direction[];
@@ -388,3 +397,5 @@ class Board {
     }
 
 }
+
+export default Board;

@@ -1,3 +1,7 @@
+import Board from "../engine/board";
+import Side from "../engine/enums/side";
+import Move from "../engine/moves/move";
+
 class AI {
     public board: Board;
     public side: Side;
@@ -22,3 +26,5 @@ class AI {
         return calculatedMoves;
     }
 }
+
+export default AI;

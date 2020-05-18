@@ -3,3 +3,5 @@ enum Side {
     Green = 'green',
     Red = 'red',
 }
+
+export default Side;

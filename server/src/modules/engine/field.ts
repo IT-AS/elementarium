@@ -1,3 +1,9 @@
+import Side from "./enums/side";
+import UnitType from "./enums/unittype";
+import FieldEvent from "./events/fieldEvent";
+import Rules from "./rules";
+import Unit from "./unit";
+
 class Field {
     public row: number;
     public column: number;
@@ -119,3 +125,4 @@ class Field {
     }
 }
 
+export default Field;

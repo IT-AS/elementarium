@@ -1,5 +1,5 @@
 enum Side {
-    Gray,
-    Green,
-    Red,
+    Gray = 'gray',
+    Green = 'green',
+    Red = 'red',
 }

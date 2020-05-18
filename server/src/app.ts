@@ -1,5 +1,6 @@
-import express from "express";
-import path from "path";
+import express from 'express';
+import cors from 'express'
+import path from 'path';
 
 class App {
     public app: express.Application;
@@ -12,6 +13,8 @@ class App {
         this.initControllers(controllers);
 
         this.app.use(express.static(path.join(__dirname, '../../client')));
+        this.app.use(cors());
+        this.app.options('*', cors());
     }
 
     public initControllers(controllers) {

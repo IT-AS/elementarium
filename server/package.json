@@ -4,7 +4,6 @@
   "description": "elementarium",
   "main": "app.js",
   "scripts": {
-    "install": "node modules/install.js",
     "dev:ts": "nodemon"
   },
   "author": "",

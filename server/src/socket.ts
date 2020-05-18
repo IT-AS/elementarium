@@ -40,12 +40,12 @@ class Socket {
         this.lobby = new Lobby();
 
         this.io.on(SocketEvents.CONNECTION, (socket: Socket) => {
-            // console.log('connected');
+            console.log('connected');
         });
 
         this.io.on(SocketEvents.LIST, (socket: Socket) => {
             // Send updated list of games to clients
-            socket.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+            this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
         });
 
         this.io.on(SocketEvents.GAME, (socket: Socket, gameId: string, password: string) =>{
@@ -53,7 +53,7 @@ class Socket {
             this.lobby.createGame(gameId, password);
 
             // Send updated list of games to clients
-            socket.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+            this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
         });
 
         this.io.on(SocketEvents.JOIN, (socket: Socket, joiner: JoinInfo) =>{

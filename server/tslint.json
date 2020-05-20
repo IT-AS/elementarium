@@ -4,7 +4,7 @@
         "tslint:recommended"
     ],
     "jsRules": {
-        "no-console": true
+        "no-console": false
     },
     "rules": {},
     "rulesDirectory": []

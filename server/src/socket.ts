@@ -1,6 +1,5 @@
-import socketIo from 'socket.io';
+import socketIo from 'socket.io'
 import http from 'http';
-import App from './app';
 import JoinInfo from './modules/lobby/joininfo';
 import MoveInfo from './modules/lobby/moveinfo';
 import Result from './modules/lobby/result';
@@ -18,17 +17,14 @@ enum SocketEvents {
 }
 
 class Socket {
-    private io: socketIo.Server;
+    private readonly server: http.Server;
+    private readonly io: socketIo.Server;
     private lobby: Lobby;
-    private readonly app: Partial<App>;
 
-    constructor(app: App) {
-        this.app = http.createServer(app.app);
-        this.initSocket();
-    }
+    constructor(server: http.Server) {
+        this.server = server;
+        this.io = socketIo.listen(this.server, { origins: '*:*'});
 
-    private initSocket(): void {
-        this.io = socketIo(this.app);
         this.listen();
     }
 

@@ -109,6 +109,7 @@ function createGame(e) {
     e.preventDefault();
     const gameId = document.getElementById("gameId").value;
     const gamePassword = document.getElementById("gamePassword").value;
+
     socket.emit("game", gameId, gamePassword);
 }
 
@@ -122,7 +123,7 @@ function joinGame(gameId, side, cpu) {
     id = gameId;
 
     socket.on('game[' + gameId + ']', receive);	
-    socket.emit('join', [gameId, me, pwd, side]);
+    socket.emit('join', { gameId: gameId, playerId: me, password: pwd, side: side});
 }
 
 function resumeGame(gameId, playerName) {
@@ -140,6 +141,8 @@ function receive(gameObject) {
     // const id
     // are all captured through closures when registering to the event
     // so don't wonder that they aren't declared here.
+
+    console.log(gameObject);
 
     if (gameObject !== "" && gameObject.gameId) {
         game.from(gameObject);

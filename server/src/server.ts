@@ -19,6 +19,7 @@ export class Server {
   private createApp(): void {
     this.app = express();
     this.app.use(cors());
+    this.app.use(express.static('../client'))
   }
 
   private createServer(): void {

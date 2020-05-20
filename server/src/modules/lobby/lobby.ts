@@ -10,7 +10,9 @@ import AI from '../ai/ai';
 class Lobby {
     private games: GameEntry[];
 
-    constructor(){ ;}
+    constructor() {
+        this.games = [];
+    }
 
     public createGame(gameId: string, password: string): void {
         const game: Game = new Game(gameId);
@@ -53,7 +55,8 @@ class Lobby {
     }
 
     private getGameEntry(gameId: string) {
-        return this.games.filter(g => g.game.gameId === gameId)[0];
+        const filtered = this.games.filter(g => g.game.gameId === gameId);
+        return filtered[0];
     }
 }
 

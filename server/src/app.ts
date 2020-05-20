@@ -1,7 +1,6 @@
 import Server from "./server";
-import PingController from "./controller/ping.controller";
-
 import Socket from "./socket";
+import PingController from "./controller/ping.controller";
 
 const http = new Server(
     [

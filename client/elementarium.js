@@ -77,7 +77,7 @@ function Game() {
         const infoBottom = document.getElementById("info-bottom");
         const infoCaptures = document.getElementById("captures");
 
-        if(this.winner === "") {
+        if(this.winner === null) {
             if (this.players[me] !== "green") {
                 infoTop.textContent = Object.keys(this.players)[0];
                 infoBottom.textContent = Object.keys(this.players)[1];
@@ -226,11 +226,22 @@ function Field(other) {
     this.row = other.row;
     this.column = other.column;
     this.moveHere = other.moveHere;
-    this.current = new Unit(other.current);
-    this.greenLast = new Unit(other.greenLast);
-    this.greenCandidate = new Unit(other.greenCandidate);
-    this.redLast = new Unit(other.redLast);
-    this.redCandidate = new Unit(other.redCandidate);
+    console.log(other);
+    if( other.current !== null ) {
+        this.current = new Unit(other.current);
+    } else { this.current = null; }
+    if( other.greenLast !== null ) {
+        this.greenLast = new Unit(other.greenLast);
+    } else { this.greenLast = null; }
+    if( other.greenCandidate !== null ) {
+        this.greenCandidate = new Unit(other.greenCandidate);
+    } else { this.greenCandidate = null; }
+    if( other.redLast !== null ) {
+        this.redLast = new Unit(other.redLast);
+    } else { this.redLast = null; }
+    if( other.redCandidate !== null ) { 
+        this.redCandidate = new Unit(other.redCandidate);
+    } else { this.redCandidate = null; }
 
     this.coord = function() {
         return "[" + this.row + ", " + this.column + "]";
@@ -290,11 +301,11 @@ function Field(other) {
 
         div.setAttribute("id", this.coord());
 
-        if(this.current.type) {
+        if(this.current !== null) {
             this.current.render(div, side, this.row, this.column);
         }
         
-        if(this.greenCandidate.type && side==="green") {
+        if(this.greenCandidate !== null && side==="green") {
             const greenNext = document.createElement("div");
             greenNext.className = "next";
 
@@ -302,7 +313,7 @@ function Field(other) {
             this.greenCandidate.render(greenNext, side, this.row, this.column);
         }
 
-        if(this.redCandidate.type && side==="red") {
+        if(this.redCandidate !== null && side==="red") {
             const redNext = document.createElement("div");
             redNext.className = "next";
 
@@ -315,6 +326,7 @@ function Field(other) {
 }
 
 function Unit(other) {
+
     this.type = other.type;
     this.side = other.side;
 

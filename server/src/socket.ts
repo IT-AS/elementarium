@@ -35,57 +35,61 @@ class Socket {
     private listen(): void {
         this.lobby = new Lobby();
 
-        this.io.on(SocketEvents.CONNECTION, (socket: Socket) => {
+        this.io.on(SocketEvents.CONNECTION, (socket: any) => {
             console.log('connected');
-        });
 
-        this.io.on(SocketEvents.LIST, (socket: Socket) => {
-            // Send updated list of games to clients
-            this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
-        });
+            socket.on(SocketEvents.LIST, () => {
 
-        this.io.on(SocketEvents.GAME, (socket: Socket, gameId: string, password: string) =>{
-            // create game
-            this.lobby.createGame(gameId, password);
+                // Send updated list of games to clients
+                this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+            });
 
-            // Send updated list of games to clients
-            this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
-        });
+            socket.on(SocketEvents.GAME, (gameId: string, password: string) => {
 
-        this.io.on(SocketEvents.JOIN, (socket: Socket, joiner: JoinInfo) =>{
-            // join game
-            const result: Result = this.lobby.joinGame(joiner);
+                // create game
+                this.lobby.createGame(gameId, password);
 
-            if(result.success) {
-                // Send game to client
-                socket.io.emit(this.getGameChannel(joiner.gameId), this.lobby.getGame(joiner.gameId));
-            } else {
-                socket.io.emit(SocketEvents.ERROR, result.message);
-            }
-        });
+                // Send updated list of games to clients
+                this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+            });
 
-        this.io.on(SocketEvents.RESUME, (socket: Socket, joiner: JoinInfo) =>{
-            // join game
-            const result: Result = this.lobby.joinGame(joiner);
+            socket.on(SocketEvents.JOIN, (joiner: JoinInfo) =>{
 
-            if(result.success) {
-                // Send game to client
-                socket.io.emit(this.getGameChannel(joiner.gameId), this.lobby.getGame(joiner.gameId));
-            } else {
-                socket.io.emit(SocketEvents.ERROR, result.message);
-            }
-        });
+                // join game
+                const result: Result = this.lobby.joinGame(joiner);
 
-        this.io.on(SocketEvents.MOVE, (socket: Socket, moves: MoveInfo) => {
-            // get the game
-            const game: Game = this.lobby.getGame(moves.gameId);
+                if(result.success) {
+                    // Send game to client
+                    socket.emit(this.getGameChannel(joiner.gameId), this.lobby.getGame(joiner.gameId));
+                } else {
+                    socket.emit(SocketEvents.ERROR, result.message);
+                }
+            });
 
-            // TODO: get cpu moves
+            socket.on(SocketEvents.RESUME, (joiner: JoinInfo) =>{
 
-            // do the move
-            if(game.next(moves.side, moves.moves)) {
-                socket.io.emit(this.getGameChannel(moves.gameId), game);
-            }
+                // join game
+                const result: Result = this.lobby.joinGame(joiner);
+
+                if(result.success) {
+                    // Send game to client
+                    socket.emit(this.getGameChannel(joiner.gameId), this.lobby.getGame(joiner.gameId));
+                } else {
+                    socket.emit(SocketEvents.ERROR, result.message);
+                }
+            });
+
+            socket.on(SocketEvents.MOVE, (moves: MoveInfo) => {
+                // get the game
+                const game: Game = this.lobby.getGame(moves.gameId);
+
+                // TODO: get cpu moves
+
+                // do the move
+                if(game.next(moves.side, moves.moves)) {
+                    socket.emit(this.getGameChannel(moves.gameId), game);
+                }
+            });
         });
     }
 }

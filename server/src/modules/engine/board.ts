@@ -325,9 +325,9 @@ class Board {
                     let possible: boolean = true;
 
                     // Can't jump multiple times on the same field
-                    if (field.greenCandidate.type && unit.side === Side.Green ||
-                        field.redCandidate.type && unit.side === Side.Red ||
-                        field.current.type && field.current.friendly(unit)) {
+                    if (field.greenCandidate !== null && unit.side === Side.Green ||
+                        field.redCandidate !== null && unit.side === Side.Red ||
+                        field.current !== null && field.current.friendly(unit)) {
                         possible = false;
                     }
 
@@ -389,7 +389,11 @@ class Board {
             }
         }
 
-        return {from: [row, col], to: result, side: sourceField.current.side} as Direction;
+        if(result.length > 0) {
+            return {from: [row, col], to: result, side: sourceField.current.side} as Direction;
+        } else {
+            return {from: [row, col], to: result, side: Side.Gray} as Direction;
+        }
     }
 
     public findAllMoves(): Direction[] {

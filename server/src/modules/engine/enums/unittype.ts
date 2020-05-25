@@ -1,4 +1,4 @@
-enum UnitType {
+export enum UnitType {
     Nothing,
     Source,
     Earth,
@@ -7,5 +7,3 @@ enum UnitType {
     Water,
     Obstacle
 }
-
-export default UnitType;

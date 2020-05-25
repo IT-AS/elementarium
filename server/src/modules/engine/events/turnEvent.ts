@@ -1,10 +1,8 @@
-import FieldEvent from "./fieldEvent";
-import Side from "../enums/side";
+import {FieldEvent} from "./fieldEvent";
+import {Side} from "../enums/side";
 
-interface TurnEvent {
+export interface TurnEvent {
     captures: FieldEvent[];
     spawns: FieldEvent[];
     winner: Side;
 }
-
-export default TurnEvent;

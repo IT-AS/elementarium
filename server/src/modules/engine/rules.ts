@@ -1,5 +1,5 @@
-import UnitType from "./enums/unittype";
-import Side from "./enums/side";
+import {UnitType} from "./enums/unittype";
+import {Side} from "./enums/side";
 
 class Rules {
 

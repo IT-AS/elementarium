@@ -1,10 +1,11 @@
-import Side from "./enums/side";
-import UnitType from "./enums/unittype";
-import FieldEvent from "./events/fieldEvent";
+import {Side} from "./enums/side";
+import {UnitType} from "./enums/unittype";
+import {FieldEvent} from "./events/fieldEvent";
+
 import Rules from "./rules";
 import Unit from "./unit";
 
-class Field {
+export default class Field {
     public row: number;
     public column: number;
 
@@ -33,8 +34,12 @@ class Field {
     }
 
     public territory(): Side {
-        if(this.row < 4) { return Side.Red; }
-        if(this.row < 7) { return Side.Gray; }
+        if (this.row < 4) {
+            return Side.Red;
+        }
+        if (this.row < 7) {
+            return Side.Gray;
+        }
         return Side.Green;
     }
 
@@ -47,7 +52,7 @@ class Field {
     }
 
     public candidate(side: Side): Unit {
-        switch(side) {
+        switch (side) {
             case Side.Red:
                 return this.redCandidate;
             case Side.Green:
@@ -63,11 +68,11 @@ class Field {
         this.greenLast = null;
 
         // Unit already on this field is also a candidate
-        if(this.current) {
-            if(this.current.side === Side.Red) {
+        if (this.current) {
+            if (this.current.side === Side.Red) {
                 this.redCandidate = this.current;
             }
-            if(this.current.side === Side.Green) {
+            if (this.current.side === Side.Green) {
                 this.greenCandidate = this.current;
             }
         }
@@ -77,32 +82,32 @@ class Field {
         const result: FieldEvent[] = [];
 
         // Here the clash begins
-        if(this.greenCandidate.type && this.redCandidate.type) {
-            if(this.greenCandidate.type === this.redCandidate.type) {
+        if (this.greenCandidate.type && this.redCandidate.type) {
+            if (this.greenCandidate.type === this.redCandidate.type) {
                 this.current = null;
 
                 result.push({row: this.row, column: this.column, unit: this.greenCandidate} as FieldEvent);
                 result.push({row: this.row, column: this.column, unit: this.redCandidate} as FieldEvent);
-            } else if(this.greenCandidate.type === UnitType.Source) {
+            } else if (this.greenCandidate.type === UnitType.Source) {
                 this.current = this.greenCandidate;
                 result.push({row: this.row, column: this.column, unit: this.redCandidate} as FieldEvent);
-            } else if(this.redCandidate.type === UnitType.Source) {
+            } else if (this.redCandidate.type === UnitType.Source) {
                 this.current = this.redCandidate;
                 result.push({row: this.row, column: this.column, unit: this.greenCandidate} as FieldEvent);
             } else {
                 const pattern = Rules.clashes[this.greenCandidate.type.toString()];
-                if(pattern) {
-                    if(this.redCandidate.type === pattern[0]) {
+                if (pattern) {
+                    if (this.redCandidate.type === pattern[0]) {
                         this.current = this.greenCandidate;
 
                         result.push({row: this.row, column: this.column, unit: this.redCandidate} as FieldEvent);
                     }
-                    if(this.redCandidate.type === pattern[1]) {
+                    if (this.redCandidate.type === pattern[1]) {
                         this.current = this.redCandidate;
 
                         result.push({row: this.row, column: this.column, unit: this.greenCandidate} as FieldEvent);
                     }
-                    if(this.redCandidate.type === pattern[2]) {
+                    if (this.redCandidate.type === pattern[2]) {
                         this.current = null;
 
                         result.push({row: this.row, column: this.column, unit: this.greenCandidate} as FieldEvent);
@@ -111,8 +116,12 @@ class Field {
                 }
             }
         } else {
-            if(this.greenCandidate.type) { this.current = this.greenCandidate; }
-            if(this.redCandidate.type) { this.current = this.redCandidate; }
+            if (this.greenCandidate.type) {
+                this.current = this.greenCandidate;
+            }
+            if (this.redCandidate.type) {
+                this.current = this.redCandidate;
+            }
         }
 
         this.greenCandidate = null;
@@ -124,5 +133,3 @@ class Field {
         return result;
     }
 }
-
-export default Field;

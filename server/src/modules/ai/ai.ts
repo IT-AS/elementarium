@@ -1,5 +1,6 @@
+import {Side} from "../engine/enums/side";
+
 import Board from "../engine/board";
-import Side from "../engine/enums/side";
 import Move from "../engine/moves/move";
 
 class AI {

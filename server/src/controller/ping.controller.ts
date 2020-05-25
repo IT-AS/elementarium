@@ -1,6 +1,6 @@
 import * as express from 'express';
 
-class PingController {
+export default class PingController {
     public path: string = '/ping';
     public router: express.Router = express.Router();
 
@@ -16,5 +16,3 @@ class PingController {
         response.send("Im fine, bro");
     }
 }
-
-export default PingController;

@@ -1,7 +1,5 @@
-enum Side {
+export enum Side {
     Gray = 'gray',
     Green = 'green',
     Red = 'red',
 }
-
-export default Side;

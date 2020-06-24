@@ -1,16 +1,16 @@
-import UnitType from "./enums/unittype";
-import Side from "./enums/side";
+import {UnitType} from "./enums/unittype";
+import {Side} from "./enums/side";
 
-class Unit {
-    public type : UnitType;
-    public side : Side;
+export default class Unit {
+    public type: UnitType;
+    public side: Side;
 
-    constructor(type: UnitType, side: Side){
+    constructor(type: UnitType, side: Side) {
         this.type = type;
         this.side = side;
     }
 
-    public name() : string {
+    public name(): string {
         return this.side[0].toUpperCase() + this.side.toString().slice(1) + " " + this.type;
     }
 
@@ -26,5 +26,3 @@ class Unit {
         return this.friendly(other) && !this.same(other) && this.type !== UnitType.Source;
     }
 }
-
-export default Unit;

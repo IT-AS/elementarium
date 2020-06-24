@@ -1,9 +1,7 @@
 import Unit from "../unit";
 
-interface FieldEvent {
+export interface FieldEvent {
     row: number;
     column: number;
     unit: Unit;
 }
-
-export default FieldEvent;

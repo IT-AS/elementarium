@@ -1,10 +1,8 @@
-import Side from "../engine/enums/side";
+import {Side} from "../engine/enums/side";
 import Move from "../engine/moves/move";
 
-interface MoveInfo {
+export interface MoveInfo {
     gameId: string;
     side: Side;
     moves: Move[];
 }
-
-export default MoveInfo;

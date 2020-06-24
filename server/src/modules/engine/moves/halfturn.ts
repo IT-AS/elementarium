@@ -1,12 +1,11 @@
-import Move from "./move";
-import FieldEvent from "../events/fieldEvent";
-import Side from "../enums/side";
+import {FieldEvent} from "../events/fieldEvent";
+import {Side} from "../enums/side";
 
-interface HalfTurn {
+import Move from "./move";
+
+export interface HalfTurn {
     moves: Move[];
     captures: FieldEvent[];
     spawns: FieldEvent[];
     side: Side;
 }
-
-export default HalfTurn;

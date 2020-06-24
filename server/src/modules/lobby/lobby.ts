@@ -1,13 +1,15 @@
 import bcrypt from 'bcrypt';
-import GameEntry from './gameentry';
-import JoinInfo from './joininfo';
-import Result from './result';
-import GameInfo from './gameInfo';
+
+import {GameEntry} from './gameentry';
+import {JoinInfo} from './joininfo';
+import {Result} from './result';
+import {GameInfo} from './gameInfo';
+
 import Game from '../engine/game';
 import Player from '../engine/player';
 import AI from '../ai/ai';
 
-class Lobby {
+export default class Lobby {
     private games: GameEntry[];
 
     constructor() {
@@ -19,7 +21,7 @@ class Lobby {
         game.start();
 
         const encrypted = bcrypt.hashSync(password, 10);
-        this.games.push({ game, password: encrypted, ai: null } as GameEntry);
+        this.games.push({game, password: encrypted, ai: null} as GameEntry);
     }
 
     public joinGame(joinInfo: JoinInfo): Result {
@@ -34,7 +36,7 @@ class Lobby {
             return {success: true, message: ''} as Result;
         } else {
             if (game && password) {
-                if(bcrypt.compareSync(joinInfo.password, password)) {
+                if (bcrypt.compareSync(joinInfo.password, password)) {
                     game.players.push({name: joinInfo.playerId, side: joinInfo.side} as Player);
                     return {success: true, message: ''} as Result;
                 } else {
@@ -51,7 +53,7 @@ class Lobby {
     }
 
     public getGameList(): GameInfo[] {
-        return this.games.map(g => ({ gameId: g.game.gameId, players: g.game.players, turn: g.game.turn } as GameInfo));
+        return this.games.map(g => ({gameId: g.game.gameId, players: g.game.players, turn: g.game.turn} as GameInfo));
     }
 
     private getGameEntry(gameId: string) {
@@ -59,5 +61,3 @@ class Lobby {
         return filtered[0];
     }
 }
-
-export default Lobby;

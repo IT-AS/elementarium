@@ -1,8 +1,6 @@
-import HalfTurn from "./halfturn";
+import {HalfTurn} from "./halfturn";
 
-interface Turn {
+export interface Turn {
     green: HalfTurn;
     red: HalfTurn;
 }
-
-export default Turn;

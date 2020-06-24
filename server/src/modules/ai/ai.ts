@@ -1,5 +1,6 @@
+import {Side} from "../engine/enums/side";
+
 import Board from "../engine/board";
-import Side from "../engine/enums/side";
 import Move from "../engine/moves/move";
 
 class AI {
@@ -18,10 +19,11 @@ class AI {
         for (let i = 0; i < 3; i++) {
             const moveFrom = Math.floor(Math.random() * availableMoves.length);
             const moveTo = Math.floor(Math.random() * availableMoves[moveFrom].to.length);
-            calculatedMoves.push({ from: [availableMoves[moveFrom].from[0], availableMoves[moveFrom].from[1]],
-                                    to: [availableMoves[moveFrom].to[moveTo][0], availableMoves[moveFrom].to[moveTo][1]],
-                                    side: this.board.fields[availableMoves[moveFrom].from[0]][availableMoves[moveFrom].from[1]].current.side
-                                });
+            calculatedMoves.push({
+                from: [availableMoves[moveFrom].from[0], availableMoves[moveFrom].from[1]],
+                to: [availableMoves[moveFrom].to[moveTo][0], availableMoves[moveFrom].to[moveTo][1]],
+                side: this.board.fields[availableMoves[moveFrom].from[0]][availableMoves[moveFrom].from[1]].current.side
+            });
         }
         return calculatedMoves;
     }

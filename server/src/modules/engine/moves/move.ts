@@ -1,4 +1,4 @@
-import Side from "../enums/side";
+import {Side} from "../enums/side";
 
 interface Move {
     from: number[];

@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'elementarium-app',
@@ -7,4 +8,10 @@ import {Component} from '@angular/core';
 })
 export class AppComponent {
   title = 'elementarium-client';
+
+  constructor(private socketService: SocketService) {}
+  
+  ngOnInit() {
+    this.socketService.setupSocketConnection();
+  }  
 }

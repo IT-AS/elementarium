@@ -11,18 +11,24 @@ import { StoreModule } from '@ngrx/store';
 import { LobbyReducer } from './lobby/store/lobby.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { LobbyEffects } from './lobby/store/lobby.effects';
+import { GameListComponent } from './lobby/game-list/game-list.component';
+import { GameEntryComponent } from './lobby/game-entry/game-entry.component';
+import { GameCreationComponent } from './lobby/game-creation/game-creation.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LobbyComponent
+    LobbyComponent,
+    GameListComponent,
+    GameEntryComponent,
+    GameCreationComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(APP_ROUTES),
     SharedModule.forRoot(),
     StoreModule.forRoot({lobby: LobbyReducer}),
-    EffectsModule.forRoot([LobbyEffects])
+    EffectsModule.forRoot([LobbyEffects]),
   ],
   providers: [SocketService],
   bootstrap: [AppComponent]

@@ -1,10 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { selectGames } from 'src/app/main/lobby/store/lobby.selector';
-import { GameInfo } from '../../../../../shared/lobby/gameinfo';
-import { Observable } from 'rxjs';
-import { LobbyGamesGet } from './store/lobby.actions';
-import LobbyState from 'src/app/main/lobby/store/lobby.state';
 
 @Component({
   selector: 'app-lobby',
@@ -13,20 +7,18 @@ import LobbyState from 'src/app/main/lobby/store/lobby.state';
 })
 export class LobbyComponent implements OnInit {
 
-  private games: GameInfo[];
-  private subscription$: Observable<GameInfo[]>;
+  public newGame: boolean = false;
 
-  constructor(
-    private store: Store<LobbyState>) { 
-
-      this.subscription$ = this.store.pipe(select(selectGames));
-      this.subscription$.subscribe(games => {
-        this.games = games;
-        console.log(this.games);
-      });
-  }
+  constructor() { }
 
   ngOnInit(): void {
-    this.store.dispatch(LobbyGamesGet());
+  }
+
+  public openNewGame(): void {
+    this.newGame = true;
+  }
+
+  public closeNewGame(): void {
+    this.newGame = false;
   }
 }

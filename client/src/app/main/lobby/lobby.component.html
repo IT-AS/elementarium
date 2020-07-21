@@ -1,1 +1,5 @@
-<p>lobby works!</p>
+<p>Lobby starts here</p>
+<app-game-list></app-game-list>
+<a href="javascript:void(0)"><i (click)="openNewGame()">New game</i></a>
+<p>Lobby ends here here</p>
+<app-game-creation [visible]="newGame" (closing)="closeNewGame()"></app-game-creation>

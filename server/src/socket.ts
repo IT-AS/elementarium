@@ -1,13 +1,13 @@
 import socketIo from 'socket.io'
 import http from 'http';
 
-import {JoinInfo} from './modules/lobby/joininfo';
-import {MoveInfo} from './modules/lobby/moveinfo';
-import {Result} from './modules/lobby/result';
-import {SocketEvents} from "./modules/engine/enums/socketevents";
+import {JoinInfo} from '../../shared/lobby/joininfo';
+import {MoveInfo} from '../../shared/lobby/moveinfo';
+import {Result} from '../../shared/lobby/result';
+import {SocketEvents} from "../../shared/engine/enums/socketevents";
 
-import Lobby from './modules/lobby/lobby';
-import Game from './modules/engine/game';
+import Lobby from './lobby';
+import Game from '../../shared/engine/game';
 
 export default class Socket {
     private readonly server: http.Server;

@@ -1,5 +1,5 @@
-import Game from "../engine/game";
-import AI from "../ai/ai";
+import Game from "../../shared/engine/game";
+import AI from "./modules/ai/ai";
 
 export interface GameEntry {
     game: Game;

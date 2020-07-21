@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
 
 import {GameEntry} from './gameentry';
-import {JoinInfo} from './joininfo';
-import {Result} from './result';
-import {GameInfo} from './gameInfo';
+import {JoinInfo} from '../../shared/lobby/joininfo';
+import {Result} from '../../shared/lobby/result';
+import {GameInfo} from '../../shared/lobby/gameInfo';
 
-import Game from '../engine/game';
-import Player from '../engine/player';
-import AI from '../ai/ai';
+import Game from '../../shared/engine/game';
+import Player from '../../shared/engine/player';
+import AI from './modules/ai/ai';
 
 export default class Lobby {
     private games: GameEntry[];

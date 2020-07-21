@@ -7,6 +7,10 @@ import {APP_ROUTES} from './routes/app.routes';
 import {SharedModule} from '../shared/shared.module';
 import { LobbyComponent } from './lobby/lobby.component';
 import { SocketService } from '../services/socket.service';
+import { StoreModule } from '@ngrx/store';
+import { LobbyReducer } from './lobby/store/lobby.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { LobbyEffects } from './lobby/store/lobby.effects';
 
 @NgModule({
   declarations: [
@@ -16,7 +20,9 @@ import { SocketService } from '../services/socket.service';
   imports: [
     BrowserModule,
     RouterModule.forRoot(APP_ROUTES),
-    SharedModule.forRoot()
+    SharedModule.forRoot(),
+    StoreModule.forRoot({lobby: LobbyReducer}),
+    EffectsModule.forRoot([LobbyEffects])
   ],
   providers: [SocketService],
   bootstrap: [AppComponent]

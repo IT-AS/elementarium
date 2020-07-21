@@ -1,7 +1,7 @@
-import {Side} from "../engine/enums/side";
+import {Side} from "../../../../shared/engine/enums/side";
 
-import Board from "../engine/board";
-import Move from "../engine/moves/move";
+import Board from "../../../../shared/engine/board";
+import Move from "../../../../shared/engine/moves/move";
 
 class AI {
     public board: Board;

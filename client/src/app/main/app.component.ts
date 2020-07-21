@@ -12,6 +12,6 @@ export class AppComponent {
   constructor(private socketService: SocketService) {}
   
   ngOnInit() {
-    this.socketService.setupSocketConnection();
+    this.socketService.initialize();
   }  
 }

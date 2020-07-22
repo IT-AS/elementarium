@@ -32,4 +32,8 @@ export class SocketService {
   public createGame(gameId: string, gamePassword: string): void {
     this.socket.emit(SocketEvents.GAME, gameId, gamePassword);
   }
+
+  public deleteGame(gameId: string, gamePassword: string): void {
+    this.socket.emit(SocketEvents.DELETE, gameId, gamePassword);
+  }
 }

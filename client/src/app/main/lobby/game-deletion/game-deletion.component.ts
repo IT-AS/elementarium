@@ -1,14 +1,14 @@
 import { Component, OnInit, Input, EventEmitter, Output, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { LobbyGameCreate } from '../store/lobby.actions';
+import { LobbyGameDelete } from '../store/lobby.actions';
 import LobbyState from '../store/lobby.state';
 
 @Component({
-  selector: 'app-game-creation',
-  templateUrl: './game-creation.component.html',
-  styleUrls: ['./game-creation.component.scss']
+  selector: 'app-game-deletion',
+  templateUrl: './game-deletion.component.html',
+  styleUrls: ['./game-deletion.component.scss']
 })
-export class GameCreationComponent implements OnInit {
+export class GameDeletionComponent implements OnInit {
 
   @Input()
   public visible: boolean = false;
@@ -16,8 +16,9 @@ export class GameCreationComponent implements OnInit {
   @Output()
   public closing = new EventEmitter();
 
-  public gameId: string = 'Game';
-  public gamePassword: string = '12345';
+  @Input()
+  public gameId: string;
+  public gamePassword: string = '';
 
   constructor(private store: Store<LobbyState>) { }
 
@@ -28,12 +29,12 @@ export class GameCreationComponent implements OnInit {
     this.closing.emit();
   }
 
-  public createGame(): void {
-    this.store.dispatch(LobbyGameCreate({ gameId: this.gameId, gamePassword: this.gamePassword}));
+  public deleteGame(): void {
+    this.store.dispatch(LobbyGameDelete({ gameId: this.gameId, gamePassword: this.gamePassword}));
     this.closing.emit();
   }
 
   public visibility(): string {
     return this.visible ? 'show' : 'hidden';
-  }
+  }  
 }

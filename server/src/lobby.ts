@@ -24,6 +24,18 @@ export default class Lobby {
         this.games.push({game, password: encrypted, ai: null} as GameEntry);
     }
 
+    public deleteGame(gameId: string, password: string): Result {
+        const gameEntry: GameEntry = this.getGameEntry(gameId);
+        const gamePassword: string = gameEntry.password;
+
+        if (bcrypt.compareSync(password, gamePassword)) {
+            this.games = this.games.filter((game) => game.game.gameId !== gameId);
+            return {success: true, message: ''} as Result;
+        }
+
+        return {success: false, message: 'Wrong password'} as Result;
+    }    
+
     public joinGame(joinInfo: JoinInfo): Result {
         const gameEntry: GameEntry = this.getGameEntry(joinInfo.gameId);
         const game: Game = gameEntry.game;

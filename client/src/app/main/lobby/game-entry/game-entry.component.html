@@ -1,3 +1,5 @@
-<p>game-entry starts here</p>
 <p>{{game.gameId}}</p>
-<p>game-entry ends here</p>
+<p>
+    <a href="javascript:void(0)"><i (click)="openDeleteGame()">Delete</i></a>
+</p>
+<app-game-deletion [visible]="deleteGame" [gameId]="game.gameId" (closing)="closeDeleteGame()"></app-game-deletion>

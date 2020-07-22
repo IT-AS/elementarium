@@ -6,7 +6,9 @@ export enum ActionTypes{
   LobbyGamesRequestAction = '[Lobby] Games Request',
   LobbyGamesUpdateAction = '[Lobby] Games Update',
   LobbyGameCreateAction = '[Lobby] Game Create',
-  LobbyGameRequestAction = '[Lobby] Game Request'
+  LobbyGameCreationRequestAction = '[Lobby] Game Creation Request',
+  LobbyGameDeleteAction = '[Lobby] Game Delete',
+  LobbyGameDeletionRequestAction = '[Lobby] Game Deletion Request'
 };
 
 export const LobbyGamesGet = createAction(
@@ -27,6 +29,15 @@ export const LobbyGameCreate = createAction(
   props<{ gameId: string, gamePassword: string }>()
 );
 
-export const LobbyGameRequest = createAction(
-  ActionTypes.LobbyGameRequestAction
+export const LobbyGameCreationRequest = createAction(
+  ActionTypes.LobbyGameCreationRequestAction
+);
+
+export const LobbyGameDelete = createAction(
+  ActionTypes.LobbyGameDeleteAction,
+  props<{ gameId: string, gamePassword: string }>()
+);
+
+export const LobbyGameDeletionRequest = createAction(
+  ActionTypes.LobbyGameDeletionRequestAction
 );

@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {FormsModule} from '@angular/forms';
 import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
 import {RouterModule} from '@angular/router';
@@ -9,12 +9,13 @@ import {SharedModule} from '../shared/shared.module';
 import { LobbyComponent } from './lobby/lobby.component';
 import { SocketService } from '../services/socket.service';
 import { StoreModule } from '@ngrx/store';
-import { LobbyReducer } from './lobby/store/lobby.reducer';
 import { EffectsModule } from '@ngrx/effects';
+import { LobbyReducer } from './lobby/store/lobby.reducer';
 import { LobbyEffects } from './lobby/store/lobby.effects';
 import { GameListComponent } from './lobby/game-list/game-list.component';
 import { GameEntryComponent } from './lobby/game-entry/game-entry.component';
 import { GameCreationComponent } from './lobby/game-creation/game-creation.component';
+import { GameDeletionComponent } from './lobby/game-deletion/game-deletion.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { GameCreationComponent } from './lobby/game-creation/game-creation.compo
     LobbyComponent,
     GameListComponent,
     GameEntryComponent,
-    GameCreationComponent
+    GameCreationComponent,
+    GameDeletionComponent
   ],
   imports: [
     BrowserModule,

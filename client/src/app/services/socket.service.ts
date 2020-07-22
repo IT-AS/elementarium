@@ -20,13 +20,16 @@ export class SocketService {
     this.socket = io(environment.world);
     this.socket.on(SocketEvents.LIST, (data: any) => 
     {
-      //const games: GameInfo[] = data;
-      const games: GameInfo[] = [{gameId: "123", turn:1, players:[] }];
+      const games: GameInfo[] = data;
       this.store.dispatch(LobbyGamesUpdate({ payload: games }));
     });
   }
 
   public getGames(): void {
     this.socket.emit(SocketEvents.LIST);
+  }
+
+  public createGame(gameId: string, gamePassword: string): void {
+    this.socket.emit(SocketEvents.GAME, gameId, gamePassword);
   }
 }

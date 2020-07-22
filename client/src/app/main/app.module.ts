@@ -1,4 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
+import {FormsModule} from '@angular/forms';
 import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
@@ -25,6 +26,7 @@ import { GameCreationComponent } from './lobby/game-creation/game-creation.compo
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     RouterModule.forRoot(APP_ROUTES),
     SharedModule.forRoot(),
     StoreModule.forRoot({lobby: LobbyReducer}),

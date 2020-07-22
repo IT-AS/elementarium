@@ -1,5 +1,15 @@
 <div id="game-creation-container" [class]="visibility">
-    <p>game-creation works!</p>
+    <form id="game-creation-form">
+        <p>{{gameId}}</p>
+        <label id="game-creation-gameId-label" for="game-creation-gameId-input">Game Id</label>
+        <input id="game-creation-gameId-input" type="text" [(value)]="gameId" />
+
+        <label id="game-creation-gamePassword-label" for="game-creation-gamePassword-input">Game Password</label>
+        <input id="game-creation-gamePassword-input" type="text" [(value)]="gamePassword" />
+
+        <a href="javascript:void(0)"><i (click)="createGame()">Create</i></a>
+        <a href="javascript:void(0)"><i (click)="close()">Close</i></a>
+    </form>
 </div>
 <div id="game-creation-overlay" 
      [class]="visibility"

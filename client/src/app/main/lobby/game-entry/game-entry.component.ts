@@ -11,9 +11,18 @@ export class GameEntryComponent implements OnInit {
   @Input()
   public game: GameInfo;
 
+  public deleteGame: boolean = false;
+
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  public openDeleteGame(): void {
+    this.deleteGame = true;
+  }
+
+  public closeDeleteGame(): void {
+    this.deleteGame = false;
+  }
 }

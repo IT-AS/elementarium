@@ -46,6 +46,15 @@ export default class Socket {
                 this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
             });
 
+            socket.on(SocketEvents.DELETE, (gameId: string, password: string) => {
+
+                // create game
+                this.lobby.deleteGame(gameId, password);
+
+                // Send updated list of games to clients
+                this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+            });
+
             socket.on(SocketEvents.JOIN, (joiner: JoinInfo) => {
 
                 // join game

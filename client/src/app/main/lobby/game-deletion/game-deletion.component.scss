@@ -5,7 +5,7 @@
     display:block;
 }
 
-#game-creation-container {
+#game-deletion-container {
     position:  fixed;
     top: 300px;
     left: 50%;
@@ -17,7 +17,7 @@
     z-index: 100;
 }
 
-#game-creation-overlay {
+#game-deletion-overlay {
     position: absolute;
     top: 0px;
     left:  0px;

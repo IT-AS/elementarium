@@ -16,6 +16,7 @@ import { GameListComponent } from './lobby/game-list/game-list.component';
 import { GameEntryComponent } from './lobby/game-entry/game-entry.component';
 import { GameCreationComponent } from './lobby/game-creation/game-creation.component';
 import { GameDeletionComponent } from './lobby/game-deletion/game-deletion.component';
+import { GameJoiningComponent } from './lobby/game-joining/game-joining.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { GameDeletionComponent } from './lobby/game-deletion/game-deletion.compo
     GameListComponent,
     GameEntryComponent,
     GameCreationComponent,
-    GameDeletionComponent
+    GameDeletionComponent,
+    GameJoiningComponent
   ],
   imports: [
     BrowserModule,

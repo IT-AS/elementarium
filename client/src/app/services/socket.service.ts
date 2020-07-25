@@ -6,6 +6,7 @@ import { LobbyGamesUpdate } from '../main/lobby/store/lobby.actions';
 import { GameInfo } from '../../../../shared/lobby/gameinfo';
 import { Store } from '@ngrx/store';
 import ApplicationState from '../main/lobby/store/lobby.state';
+import { JoinInfo } from '../../../../shared/lobby/joinInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +19,7 @@ export class SocketService {
 
   public initialize(): void {
     this.socket = io(environment.world);
-    this.socket.on(SocketEvents.LIST, (data: any) => 
-    {
+    this.socket.on(SocketEvents.LIST, (data: any) => {
       const games: GameInfo[] = data;
       this.store.dispatch(LobbyGamesUpdate({ payload: games }));
     });
@@ -36,4 +36,16 @@ export class SocketService {
   public deleteGame(gameId: string, gamePassword: string): void {
     this.socket.emit(SocketEvents.DELETE, gameId, gamePassword);
   }
+
+  public joinGame(joinInfo: JoinInfo): void {
+    this.socket.on(this.getGameChannel(joinInfo.gameId), (data: any) => {
+      console.log(data);
+    });
+
+    this.socket.emit(SocketEvents.JOIN, joinInfo);
+  }
+
+  private getGameChannel(gameId: string): string {
+    return SocketEvents.GAME + '[' + gameId + ']';
+}  
 }

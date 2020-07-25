@@ -1,0 +1,20 @@
+<div id="game-joining-container" [class]="visibility()">
+    <form id="game-joining-form">
+        <label id="game-joining-gameId-label" for="game-joining-gameId-input">Game Id</label>
+        <input id="game-joining-gameId-input" name="game-joining-gameId-input" type="text" [(ngModel)]="gameId" disabled="disabled"/>
+    
+        <label id="game-joining-gamePassword-label" for="game-joining-gamePassword-input">Game Password</label>
+        <input id="game-joining-gamePassword-input" name="game-joining-gamePassword-input" type="text" [(ngModel)]="gamePassword" />
+    
+        <label id="game-joining-playerName-label" for="game-joining-playerName-input">Player Name</label>
+        <input id="game-joining-playerName-input" name="game-joining-playerName-input" type="text" [(ngModel)]="playerName" />
+
+        <label id="game-joining-side-label" for="game-joining-side-input">Side</label>
+        <input id="game-joining-side-input" name="game-joining-side-input" type="text" [(ngModel)]="side" disabled="disabled"/>
+
+        <a href="javascript:void(0)"><i (click)="joinGame()">Join</i></a>
+        <a href="javascript:void(0)"><i (click)="close()">Close</i></a>
+    </form>
+</div>
+<div id="game-joining-overlay" [class]="visibility()" (click)="close()">
+</div>

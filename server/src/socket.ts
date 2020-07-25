@@ -61,8 +61,12 @@ export default class Socket {
                 const result: Result = this.lobby.joinGame(joiner);
 
                 if (result.success) {
+
                     // Send game to client
                     socket.emit(this.getGameChannel(joiner.gameId), this.lobby.getGame(joiner.gameId));
+                    
+                    // Send updated list of games to clients
+                    this.io.emit(SocketEvents.LIST, this.lobby.getGameList());                    
                 } else {
                     socket.emit(SocketEvents.ERROR, result.message);
                 }

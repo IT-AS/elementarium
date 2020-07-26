@@ -19,6 +19,8 @@ import { GameDeletionComponent } from './lobby/game-deletion/game-deletion.compo
 import { GameJoiningComponent } from './lobby/game-joining/game-joining.component';
 import { GameComponent } from './game/game.component';
 import { GameReducer } from './game/store/game.reducer';
+import { BoardComponent } from './game/board/board.component';
+import { BoardCellComponent } from './game/board-cell/board-cell.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { GameReducer } from './game/store/game.reducer';
     GameCreationComponent,
     GameDeletionComponent,
     GameJoiningComponent,
-    GameComponent
+    GameComponent,
+    BoardComponent,
+    BoardCellComponent
   ],
   imports: [
     BrowserModule,

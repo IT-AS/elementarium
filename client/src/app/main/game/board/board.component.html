@@ -1,0 +1,3 @@
+<div *ngFor="let line of board?.fields" class="board-line">
+    <app-board-cell *ngFor="let field of line" [field]="field"></app-board-cell>
+</div>

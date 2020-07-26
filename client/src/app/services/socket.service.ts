@@ -2,11 +2,14 @@ import * as io from 'socket.io-client';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { SocketEvents } from "../../../../shared/engine/enums/socketevents";
-import { LobbyGamesUpdate } from '../main/lobby/store/lobby.actions';
-import { GameInfo } from '../../../../shared/lobby/gameinfo';
+import { LobbyGamesUpdate, LobbyGameJoined } from '../main/lobby/store/lobby.actions';
 import { Store } from '@ngrx/store';
-import ApplicationState from '../main/lobby/store/lobby.state';
+import LobbyState from '../main/lobby/store/lobby.reducer';
 import { JoinInfo } from '../../../../shared/lobby/joinInfo';
+import { GameInfo } from '../../../../shared/lobby/gameinfo';
+import Game from '../../../../shared/engine/game';
+import GameState from '../main/game/store/game.reducer';
+import { GameReceive } from '../main/game/store/game.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +18,13 @@ export class SocketService {
 
   private socket: any;
 
-  constructor(private store: Store<ApplicationState>) {   }
+  constructor(private lobbyState: Store<LobbyState>, private gameState: Store<GameState>) {   }
 
   public initialize(): void {
     this.socket = io(environment.world);
     this.socket.on(SocketEvents.LIST, (data: any) => {
       const games: GameInfo[] = data;
-      this.store.dispatch(LobbyGamesUpdate({ payload: games }));
+      this.lobbyState.dispatch(LobbyGamesUpdate({ payload: games }));
     });
   }
 
@@ -39,7 +42,9 @@ export class SocketService {
 
   public joinGame(joinInfo: JoinInfo): void {
     this.socket.on(this.getGameChannel(joinInfo.gameId), (data: any) => {
-      console.log(data);
+      const game: Game = data;
+      this.lobbyState.dispatch(LobbyGameJoined({ payload: game }));
+      this.gameState.dispatch(GameReceive({ payload: game }));
     });
 
     this.socket.emit(SocketEvents.JOIN, joinInfo);

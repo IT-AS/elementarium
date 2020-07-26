@@ -24,7 +24,7 @@ export class GameEntryComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public getPlayerInfo(): string {
+  public get playerInfo(): string {
     let green: string = '??';
     let red: string = '??';
     

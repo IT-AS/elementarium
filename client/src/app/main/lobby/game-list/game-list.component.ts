@@ -4,7 +4,7 @@ import { selectGames } from 'src/app/main/lobby/store/lobby.selector';
 import { GameInfo } from '../../../../../../shared/lobby/gameinfo';
 import { Observable } from 'rxjs';
 import { LobbyGamesGet } from '../store/lobby.actions';
-import LobbyState from 'src/app/main/lobby/store/lobby.state';
+import LobbyState from 'src/app/main/lobby/store/lobby.reducer';
 
 @Component({
   selector: 'app-game-list',

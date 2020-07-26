@@ -1,5 +1,5 @@
 <p>{{game.gameId}}</p>
-<p>{{getPlayerInfo()}}</p>
+<p>{{playerInfo}}</p>
 <p>
     <a *ngIf="!getJoined(Side.Green)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Green)">Join As Green</i></a>
     <a *ngIf="!getJoined(Side.Red)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Red)">Join As Red</i></a>

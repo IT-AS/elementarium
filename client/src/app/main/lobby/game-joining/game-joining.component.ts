@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
-import LobbyState from '../store/lobby.state';
+import LobbyState from '../store/lobby.reducer';
 import { LobbyGameJoin } from '../store/lobby.actions';
 import { Side } from '../../../../../../shared/engine/enums/side';
 import { JoinInfo } from '../../../../../../shared/lobby/joinInfo';

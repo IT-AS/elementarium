@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { SocketService } from 'src/app/services/socket.service';
 import { ActionTypes, LobbyGamesRequest, LobbyGameCreationRequest, LobbyGameJoiningRequest } from './lobby.actions';
+import { Router } from '@angular/router';
  
 @Injectable()
 export class LobbyEffects {
@@ -39,8 +40,16 @@ export class LobbyEffects {
     }))
   );
 
+  joinedGame$ = createEffect(() => this.actions$.pipe(
+    ofType(ActionTypes.LobbyGameJoinedAction),
+    tap((action: any) => {
+      this.router.navigate(['/game']);
+    })), { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
+    private router: Router,
     private socketService: SocketService
   ) {}
 }

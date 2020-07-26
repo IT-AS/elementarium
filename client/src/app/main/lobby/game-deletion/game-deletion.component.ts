@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LobbyGameDelete } from '../store/lobby.actions';
-import LobbyState from '../store/lobby.state';
+import LobbyState from '../store/lobby.reducer';
 
 @Component({
   selector: 'app-game-deletion',

@@ -1,5 +1,5 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import LobbyState from './lobby.state';
+import LobbyState from './lobby.reducer';
  
 export const selectLobbyState = createFeatureSelector<LobbyState>('lobby');
 export const selectGames = createSelector(

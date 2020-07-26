@@ -1,13 +1,20 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import ApplicationState from './lobby.state';
 import * as LobbyActions from './lobby.actions'
-import { InitialState } from './lobby.state';
+import { GameInfo } from '../../../../../../shared/lobby/gameInfo'
+
+export default interface LobbyState {
+    games: GameInfo[]
+}
+
+export const InitialState: LobbyState = {
+    games: []
+};
 
 const reducer = createReducer(
     InitialState,
-    on(LobbyActions.LobbyGamesUpdate, (state: ApplicationState, { payload }) => ({...state, games: payload}))
+    on(LobbyActions.LobbyGamesUpdate, (state: LobbyState, { payload }) => ({...state, games: payload}))
 );
   
-export function LobbyReducer(state: ApplicationState | undefined, action: Action) {
+export function LobbyReducer(state: LobbyState | undefined, action: Action) {
     return reducer(state, action);
 }

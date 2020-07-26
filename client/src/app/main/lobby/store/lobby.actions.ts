@@ -1,6 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import { GameInfo } from '../../../../../../shared/lobby/gameinfo';
 import { JoinInfo } from '../../../../../../shared/lobby/joinInfo';
+import Game from '../../../../../../shared/engine/game';
 
 export enum ActionTypes{
   LobbyGamesGetAction = '[Lobby] Games Get',
@@ -11,7 +12,8 @@ export enum ActionTypes{
   LobbyGameDeleteAction = '[Lobby] Game Delete',
   LobbyGameDeletionRequestAction = '[Lobby] Game Deletion Request',
   LobbyGameJoinAction = '[Lobby] Game Join',
-  LobbyGameJoiningRequestAction = '[Lobby] Game Joining Request'
+  LobbyGameJoiningRequestAction = '[Lobby] Game Joining Request',
+  LobbyGameJoinedAction = '[Lobby] Game Joined',
 };
 
 export const LobbyGamesGet = createAction(
@@ -52,4 +54,9 @@ export const LobbyGameJoin = createAction(
 
 export const LobbyGameJoiningRequest = createAction(
   ActionTypes.LobbyGameJoiningRequestAction
+);
+
+export const LobbyGameJoined = createAction(
+  ActionTypes.LobbyGameJoinedAction,
+  props<{ payload: Game }>()
 );

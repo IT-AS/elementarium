@@ -17,6 +17,8 @@ import { GameEntryComponent } from './lobby/game-entry/game-entry.component';
 import { GameCreationComponent } from './lobby/game-creation/game-creation.component';
 import { GameDeletionComponent } from './lobby/game-deletion/game-deletion.component';
 import { GameJoiningComponent } from './lobby/game-joining/game-joining.component';
+import { GameComponent } from './game/game.component';
+import { GameReducer } from './game/store/game.reducer';
 
 @NgModule({
   declarations: [
@@ -26,14 +28,15 @@ import { GameJoiningComponent } from './lobby/game-joining/game-joining.componen
     GameEntryComponent,
     GameCreationComponent,
     GameDeletionComponent,
-    GameJoiningComponent
+    GameJoiningComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     RouterModule.forRoot(APP_ROUTES),
     SharedModule.forRoot(),
-    StoreModule.forRoot({lobby: LobbyReducer}),
+    StoreModule.forRoot({lobby: LobbyReducer, game: GameReducer}),
     EffectsModule.forRoot([LobbyEffects]),
   ],
   providers: [SocketService],

@@ -8,6 +8,7 @@ import {SocketEvents} from "../../shared/engine/enums/socketevents";
 
 import Lobby from './lobby';
 import Game from '../../shared/engine/game';
+import { TokenInfo } from '../../shared/lobby/tokeninfo';
 
 export default class Socket {
     private readonly server: http.Server;
@@ -63,25 +64,25 @@ export default class Socket {
                 if (result.success) {
 
                     // Send game to client
-                    socket.emit(this.getGameChannel(joiner.gameId), this.lobby.getGame(joiner.gameId));
+                    socket.emit(this.getGameChannel(joiner.gameId), this.lobby.getToken(joiner.gameId, joiner.side));
                     
                     // Send updated list of games to clients
                     this.io.emit(SocketEvents.LIST, this.lobby.getGameList());                    
                 } else {
-                    socket.emit(SocketEvents.ERROR, result.message);
+                    socket.emit(SocketEvents.PROBLEM, result.message);
                 }
             });
 
-            socket.on(SocketEvents.RESUME, (joiner: JoinInfo) => {
+            socket.on(SocketEvents.RESUME, (tokenInfo: TokenInfo) => {
 
-                // join game
-                const result: Result = this.lobby.joinGame(joiner);
+                // resume game
+                const result: Result = this.lobby.resumeGame(tokenInfo);
 
                 if (result.success) {
                     // Send game to client
-                    socket.emit(this.getGameChannel(joiner.gameId), this.lobby.getGame(joiner.gameId));
+                    socket.emit(this.getGameChannel(tokenInfo.gameId), this.lobby.getGame(tokenInfo.gameId));
                 } else {
-                    socket.emit(SocketEvents.ERROR, result.message);
+                    socket.emit(SocketEvents.PROBLEM, result.message);
                 }
             });
 

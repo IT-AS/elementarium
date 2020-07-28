@@ -43,7 +43,7 @@ export class LobbyEffects {
   joinedGame$ = createEffect(() => this.actions$.pipe(
     ofType(ActionTypes.LobbyGameJoinedAction),
     tap((action: any) => {
-      this.router.navigate([`/game/${action.payload.gameId}`]);
+      this.router.navigate([`/game/${action.payload.gameId}/${action.payload.token}`]);
     })), { dispatch: false }
   );
 

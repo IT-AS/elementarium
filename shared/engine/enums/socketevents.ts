@@ -6,5 +6,5 @@ export enum SocketEvents {
     JOIN = 'join',
     RESUME = 'resume',
     MOVE = 'move',
-    ERROR = 'error',
+    PROBLEM = 'problem',
 }

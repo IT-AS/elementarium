@@ -2,12 +2,21 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/services/socket.service';
-import { ActionTypes, GameMoveRequest } from './game.actions';
+import { ActionTypes, GameMoveRequest, GameResumeRequest } from './game.actions';
  
 @Injectable()
 export class GameEffects {
- 
-  getGames$ = createEffect(() => this.actions$.pipe(
+
+  doResume$ = createEffect(() => this.actions$.pipe(
+    ofType(ActionTypes.GameResumeAction),
+    map((action: any) => {
+        console.log(action.payload);
+        this.socketService.resumeGame(action.payload);
+        return GameResumeRequest();
+    }))
+  );  
+
+  doMove$ = createEffect(() => this.actions$.pipe(
     ofType(ActionTypes.GameMoveAction),
     map(() => {
         // this.socketService.getGames();

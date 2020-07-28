@@ -3,7 +3,8 @@ import bcrypt from 'bcrypt';
 import {GameEntry} from './gameentry';
 import {JoinInfo} from '../../shared/lobby/joininfo';
 import {Result} from '../../shared/lobby/result';
-import {GameInfo} from '../../shared/lobby/gameInfo';
+import {GameInfo} from '../../shared/lobby/gameinfo';
+import {TokenInfo} from '../../shared/lobby/tokeninfo';
 
 import Game from '../../shared/engine/game';
 import Player from '../../shared/engine/player';
@@ -23,8 +24,12 @@ export default class Lobby {
         const game: Game = new Game(gameId, name);
         game.start();
 
+        const tokens: Map<string, Side> = new Map<string, Side>();
+        tokens.set(uuidv4(), Side.Green);
+        tokens.set(uuidv4(), Side.Red);
+
         const encrypted = bcrypt.hashSync(password, 10);
-        this.games.push({game, password: encrypted, ai: null} as GameEntry);
+        this.games.push({game, password: encrypted, ai: null, tokens} as GameEntry);
     }
 
     public deleteGame(gameId: string, password: string): Result {
@@ -63,10 +68,11 @@ export default class Lobby {
         }
     }
 
-    public resumeGame(token: string): Result {
-        const gameEntries: GameEntry[] = this.games.filter(g => g.tokens.has(token));
+    public resumeGame(tokenInfo: TokenInfo): Result {
+        const gameEntry: GameEntry = this.getGameEntry(tokenInfo.gameId);
+        console.log(gameEntry);
 
-        if(gameEntries) {
+        if(gameEntry && gameEntry.tokens.has(tokenInfo.token)) {
             return {success: true, message: ''} as Result;
         }
 
@@ -84,6 +90,19 @@ export default class Lobby {
             players: g.game.players, 
             turn: g.game.turn 
         } as GameInfo));
+    }
+
+    public getToken(gameId: string, side: Side) {
+        const gameEntry: GameEntry = this.getGameEntry(gameId);
+        let tokenInfo: TokenInfo = null;
+
+        gameEntry.tokens.forEach((value: Side, key: string) => {
+            if(value === side) {
+                tokenInfo = { gameId, token: key };
+            }
+        });
+
+        return tokenInfo;
     }
 
     private getGameEntry(gameId: string) {

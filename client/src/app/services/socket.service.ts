@@ -10,6 +10,7 @@ import { GameInfo } from '../../../../shared/lobby/gameinfo';
 import Game from '../../../../shared/engine/game';
 import GameState from '../main/game/store/game.reducer';
 import { GameReceive } from '../main/game/store/game.actions';
+import { TokenInfo } from '../../../../shared/lobby/tokenInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -42,15 +43,29 @@ export class SocketService {
 
   public joinGame(joinInfo: JoinInfo): void {
     this.socket.on(this.getGameChannel(joinInfo.gameId), (data: any) => {
-      const game: Game = data;
-      this.lobbyState.dispatch(LobbyGameJoined({ payload: game }));
-      this.gameState.dispatch(GameReceive({ payload: game }));
+      const tokenInfo: TokenInfo = data as TokenInfo;
+
+      if (tokenInfo && tokenInfo.token) {
+        this.lobbyState.dispatch(LobbyGameJoined({ payload: tokenInfo }));
+      } 
     });
 
     this.socket.emit(SocketEvents.JOIN, joinInfo);
   }
 
+  public resumeGame(tokenInfo: TokenInfo): void {
+    this.socket.on(this.getGameChannel(tokenInfo.gameId), (data: any) => {
+      const game: Game = data as Game;
+
+      if (game) {
+        this.gameState.dispatch(GameReceive({ payload: game }));
+      }
+    });
+
+    this.socket.emit(SocketEvents.RESUME, tokenInfo);
+  }
+
   private getGameChannel(gameId: string): string {
     return SocketEvents.GAME + '[' + gameId + ']';
-}  
+  }  
 }

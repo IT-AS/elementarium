@@ -4,6 +4,9 @@ import Game from '../../../../../shared/engine/game';
 import { Observable } from 'rxjs';
 import GameState from './store/game.reducer';
 import { selectGame } from './store/game.selector';
+import { Router } from '@angular/router';
+import { TokenInfo } from '../../../../../shared/lobby/tokenInfo';
+import { GameResume } from './store/game.actions';
 
 @Component({
   selector: 'app-game',
@@ -15,7 +18,8 @@ export class GameComponent implements OnInit {
   private subscription$: Observable<Game>;
 
   constructor(
-    private store: Store<GameState>) { 
+    private store: Store<GameState>,
+    private router: Router) { 
 
       this.subscription$ = this.store.pipe(select(selectGame));
       this.subscription$.subscribe(game => {
@@ -24,5 +28,11 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const url: string[] = this.router.url.split('/');
+
+    if(url.length >= 4 && url[1] === 'game') {
+      const tokenInfo: TokenInfo = { gameId: url[2], token: url[3] };
+      this.store.dispatch(GameResume({payload: tokenInfo}));
+    }
   }
 }

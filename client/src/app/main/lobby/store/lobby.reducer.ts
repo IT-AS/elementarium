@@ -1,6 +1,6 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import * as LobbyActions from './lobby.actions'
-import { GameInfo } from '../../../../../../shared/lobby/gameInfo'
+import { GameInfo } from '../../../../../../shared/lobby/gameinfo'
 
 export default interface LobbyState {
     games: GameInfo[]

@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import { GameInfo } from '../../../../../../shared/lobby/gameinfo';
 import { JoinInfo } from '../../../../../../shared/lobby/joinInfo';
-import Game from '../../../../../../shared/engine/game';
+import { TokenInfo } from '../../../../../../shared/lobby/tokenInfo';
 
 export enum ActionTypes{
   LobbyGamesGetAction = '[Lobby] Games Get',
@@ -58,5 +58,5 @@ export const LobbyGameJoiningRequest = createAction(
 
 export const LobbyGameJoined = createAction(
   ActionTypes.LobbyGameJoinedAction,
-  props<{ payload: Game }>()
+  props<{ payload: TokenInfo }>()
 );

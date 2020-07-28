@@ -19,7 +19,7 @@ export class LobbyEffects {
   createGame$ = createEffect(() => this.actions$.pipe(
     ofType(ActionTypes.LobbyGameCreateAction),
     map((action: any) => {
-        this.socketService.createGame(action.gameId, action.gamePassword);
+        this.socketService.createGame(action.gameName, action.gamePassword);
         return LobbyGameCreationRequest();
     }))
   );
@@ -43,7 +43,7 @@ export class LobbyEffects {
   joinedGame$ = createEffect(() => this.actions$.pipe(
     ofType(ActionTypes.LobbyGameJoinedAction),
     tap((action: any) => {
-      this.router.navigate(['/game']);
+      this.router.navigate([`/game/${action.payload.gameId}`]);
     })), { dispatch: false }
   );
 

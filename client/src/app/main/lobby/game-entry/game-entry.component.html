@@ -1,9 +1,9 @@
-<p>{{game.gameId}}</p>
+<p>{{game.name}}</p>
 <p>{{playerInfo}}</p>
 <p>
     <a *ngIf="!getJoined(Side.Green)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Green)">Join As Green</i></a>
     <a *ngIf="!getJoined(Side.Red)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Red)">Join As Red</i></a>
     <a href="javascript:void(0)"><i (click)="openDeleteGame()">Delete</i></a>
 </p>
-<app-game-deletion [visible]="deleteGame" [gameId]="game.gameId" (closing)="closeDeleteGame()"></app-game-deletion>
-<app-game-joining [visible]="joinGame" [gameId]="game.gameId" [side]="joinSide" (closing)="closeJoinGame()"></app-game-joining>
+<app-game-deletion [visible]="deleteGame" [gameId]="game.gameId" [gameName]="game.name" (closing)="closeDeleteGame()"></app-game-deletion>
+<app-game-joining [visible]="joinGame" [gameId]="game.gameId" [gameName]="game.name" [side]="joinSide" (closing)="closeJoinGame()"></app-game-joining>

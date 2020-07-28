@@ -16,7 +16,7 @@ export class GameCreationComponent implements OnInit {
   @Output()
   public closing = new EventEmitter();
 
-  public gameId: string = 'Game';
+  public gameName: string = 'Game';
   public gamePassword: string = '12345';
 
   constructor(private store: Store<LobbyState>) { }
@@ -29,7 +29,7 @@ export class GameCreationComponent implements OnInit {
   }
 
   public createGame(): void {
-    this.store.dispatch(LobbyGameCreate({ gameId: this.gameId, gamePassword: this.gamePassword}));
+    this.store.dispatch(LobbyGameCreate({ gameName: this.gameName, gamePassword: this.gamePassword}));
     this.closing.emit();
   }
 

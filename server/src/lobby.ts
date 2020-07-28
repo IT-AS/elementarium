@@ -8,6 +8,8 @@ import {GameInfo} from '../../shared/lobby/gameInfo';
 import Game from '../../shared/engine/game';
 import Player from '../../shared/engine/player';
 import AI from './modules/ai/ai';
+import { v4 as uuidv4 } from 'uuid';
+import { Side } from '../../shared/engine/enums/side';
 
 export default class Lobby {
     private games: GameEntry[];
@@ -16,8 +18,9 @@ export default class Lobby {
         this.games = [];
     }
 
-    public createGame(gameId: string, password: string): void {
-        const game: Game = new Game(gameId);
+    public createGame(name: string, password: string): void {
+        const gameId: string = uuidv4();
+        const game: Game = new Game(gameId, name);
         game.start();
 
         const encrypted = bcrypt.hashSync(password, 10);
@@ -60,12 +63,27 @@ export default class Lobby {
         }
     }
 
+    public resumeGame(token: string): Result {
+        const gameEntries: GameEntry[] = this.games.filter(g => g.tokens.has(token));
+
+        if(gameEntries) {
+            return {success: true, message: ''} as Result;
+        }
+
+        return {success: false, message: 'Unknown token'} as Result;
+    }
+
     public getGame(gameId: string): Game {
         return this.getGameEntry(gameId).game;
     }
 
     public getGameList(): GameInfo[] {
-        return this.games.map(g => ({gameId: g.game.gameId, players: g.game.players, turn: g.game.turn} as GameInfo));
+        return this.games.map(g => ({
+            gameId: g.game.gameId, 
+            name: g.game.name, 
+            players: g.game.players, 
+            turn: g.game.turn 
+        } as GameInfo));
     }
 
     private getGameEntry(gameId: string) {

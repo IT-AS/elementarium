@@ -10,14 +10,16 @@ import Move from "./moves/move";
 
 export default class Game {
     public gameId: string;
+    public name: string;
     public players: Player[];
     public turn: number;
     public board: Board;
     public journal: Turn[];
     public winner: Side;
 
-    constructor(gameId: string) {
+    constructor(gameId: string, name: string) {
         this.gameId = gameId;
+        this.name = name;
         this.players = [];
         this.board = new Board(Rules.boardsize);
         this.turn = 1;

@@ -18,6 +18,9 @@ export class GameDeletionComponent implements OnInit {
 
   @Input()
   public gameId: string;
+
+  @Input()
+  public gameName: string;
   public gamePassword: string = '';
 
   constructor(private store: Store<LobbyState>) { }

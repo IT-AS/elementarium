@@ -31,7 +31,7 @@ export const LobbyGamesUpdate = createAction(
 
 export const LobbyGameCreate = createAction(
   ActionTypes.LobbyGameCreateAction,
-  props<{ gameId: string, gamePassword: string }>()
+  props<{ gameName: string, gamePassword: string }>()
 );
 
 export const LobbyGameCreationRequest = createAction(

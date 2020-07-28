@@ -37,10 +37,10 @@ export default class Socket {
                 this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
             });
 
-            socket.on(SocketEvents.GAME, (gameId: string, password: string) => {
+            socket.on(SocketEvents.GAME, (name: string, password: string) => {
 
                 // create game
-                this.lobby.createGame(gameId, password);
+                this.lobby.createGame(name, password);
 
                 // Send updated list of games to clients
                 this.io.emit(SocketEvents.LIST, this.lobby.getGameList());

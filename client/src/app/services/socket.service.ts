@@ -32,8 +32,8 @@ export class SocketService {
     this.socket.emit(SocketEvents.LIST);
   }
 
-  public createGame(gameId: string, gamePassword: string): void {
-    this.socket.emit(SocketEvents.GAME, gameId, gamePassword);
+  public createGame(gameName: string, gamePassword: string): void {
+    this.socket.emit(SocketEvents.GAME, gameName, gamePassword);
   }
 
   public deleteGame(gameId: string, gamePassword: string): void {

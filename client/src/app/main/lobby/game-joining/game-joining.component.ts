@@ -19,13 +19,13 @@ export class GameJoiningComponent implements OnInit {
   public closing = new EventEmitter();
 
   @Input()
-  public gameId: string = 'Game';
+  public gameId: string;
+  @Input()
+  public gameName: string;
   public gamePassword: string = '12345';
   public playerName: string = 'Player1';
   @Input()
   public side: Side = Side.Green;
-
-  public sides = Side;  
 
   constructor(private store: Store<LobbyState>) { }
 

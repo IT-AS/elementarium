@@ -23,7 +23,7 @@ export class GameComponent implements OnInit {
 
       this.subscription$ = this.store.pipe(select(selectGame));
       this.subscription$.subscribe(game => {
-        this.game = game;
+        this.game = game as Game;
       });
   }
 

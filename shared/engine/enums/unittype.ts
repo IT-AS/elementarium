@@ -1,9 +1,9 @@
 export enum UnitType {
-    Nothing,
-    Source,
-    Earth,
-    Air,
-    Fire,
-    Water,
-    Obstacle
+    Nothing = 'Nothing',
+    Source = 'Source',
+    Earth = 'Earth',
+    Air = 'Air',
+    Fire = 'Fire',
+    Water = 'Water',
+    Obstacle = 'Obstacle'
 }

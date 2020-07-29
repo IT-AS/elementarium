@@ -343,7 +343,7 @@ export default class Board {
                     }
 
                     // Can't jump on gray
-                    if (field.current.side !== Side.Gray && possible) {
+                    if (field.current?.side !== Side.Gray && possible) {
 
                         // Air can jump over everything
                         if (unit.type !== UnitType.Air) {
@@ -352,7 +352,7 @@ export default class Board {
                             if (Math.abs(offsetRow) > 0 && Math.abs(offsetCol) > 0 && Math.abs(offsetRow) === Math.abs(offsetCol)) {
                                 for (let d = 1; d <= Math.abs(offsetRow); d++) {
                                     const targetField: Field = this.fields[row + d * Math.sign(offsetRow)][col + d * Math.sign(offsetCol)]
-                                    if (targetField.current.type) {
+                                    if (targetField.current?.type) {
                                         if (d < Math.abs(offsetRow)) {
                                             possible = false;
                                         }
@@ -364,7 +364,7 @@ export default class Board {
                             if (Math.abs(offsetRow) > 0 && offsetCol === 0) {
                                 for (let d = 1; d <= Math.abs(offsetRow); d++) {
                                     const targetField: Field = this.fields[row + d * Math.sign(offsetRow)][col]
-                                    if (targetField.current.type) {
+                                    if (targetField.current?.type) {
                                         if (d < Math.abs(offsetRow)) {
                                             possible = false;
                                         }
@@ -376,7 +376,7 @@ export default class Board {
                             if (offsetRow === 0 && Math.abs(offsetCol) > 0) {
                                 for (let d = 1; d <= Math.abs(offsetCol); d++) {
                                     const targetField: Field = this.fields[row][col + d * Math.sign(offsetCol)]
-                                    if (targetField.current.type) {
+                                    if (targetField.current?.type) {
                                         if (d < Math.abs(offsetCol)) {
                                             possible = false;
                                         }

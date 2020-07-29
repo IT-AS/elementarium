@@ -1,1 +1,5 @@
-<div class="board-cell"></div>
+<div class="board-cell">
+    <span *ngIf="field?.current">
+        {{fullField?.current?.name()}}
+    </span>
+</div>

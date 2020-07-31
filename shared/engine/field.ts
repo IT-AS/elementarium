@@ -29,6 +29,22 @@ export default class Field {
         this.redCandidate = null;
     }
 
+    static clone(source: Field): Field {
+        if(!source) { return source; }
+
+        const field: Field = new Field(source.row, source.column);
+
+        field.moveHere = source.moveHere;
+
+        field.current = Unit.clone(source.current);
+        field.greenLast = Unit.clone(source.greenLast);
+        field.greenCandidate = Unit.clone(source.greenCandidate);
+        field.redLast = Unit.clone(source.redLast);
+        field.redCandidate = Unit.clone(source.redCandidate);
+
+        return field;
+    }
+
     public coord(): string {
         return "[" + this.row + ", " + this.column + "]";
     }

@@ -22,6 +22,7 @@ import { GameReducer } from './game/store/game.reducer';
 import { BoardComponent } from './game/board/board.component';
 import { BoardCellComponent } from './game/board-cell/board-cell.component';
 import { GameEffects } from './game/store/game.effects';
+import { BoardUnitComponent } from './game/board-unit/board-unit.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { GameEffects } from './game/store/game.effects';
     GameJoiningComponent,
     GameComponent,
     BoardComponent,
-    BoardCellComponent
+    BoardCellComponent,
+    BoardUnitComponent
   ],
   imports: [
     BrowserModule,

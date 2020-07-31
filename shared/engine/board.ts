@@ -17,6 +17,18 @@ export default class Board {
         this.dimension = dimension;
     }
 
+    static clone(source: Board): Board {
+
+        if(!source) { return source; }
+
+        const board: Board = new Board(source.dimension);
+
+        board.targets = source.targets;
+        board.fields = source.fields.map(line => line.map(field => Field.clone(field)));
+
+        return board;
+    }
+
     public initialize(): void {
         this.fields = [];
 

@@ -1,3 +1,19 @@
-<div *ngFor="let line of board?.fields" class="board-line">
-    <app-board-cell *ngFor="let field of line" [field]="field"></app-board-cell>
+<div 
+    class="board" 
+    [style.width.px]="boardSize"
+    [style.height.px]="boardSize">
+    <div 
+        *ngFor="let line of board?.fields"
+        class="board-line" 
+        [style.height.px]="cellSize"
+        [style.width.px]="boardSize">
+        <app-board-cell 
+            *ngFor="let field of line" 
+            class="board-cell-container" 
+            [style.width.px]="cellSize"
+            [style.height.px]="cellSize"
+            [field]="field" 
+            [size]="cellSize">
+        </app-board-cell>
+    </div>
 </div>

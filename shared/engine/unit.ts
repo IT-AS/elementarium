@@ -10,6 +10,12 @@ export default class Unit {
         this.side = side;
     }
 
+    static clone(source: Unit): Unit {
+        if(!source) { return source; }
+
+        return new Unit(source.type, source.side);
+    }
+
     public name(): string {
         return this.side[0].toUpperCase() + this.side.toString().slice(1) + " " + this.type;
     }

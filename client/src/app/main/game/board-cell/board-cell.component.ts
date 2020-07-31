@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import Field from '../../../../../../shared/engine/field';
-import Unit from '../../../../../../shared/engine/unit';
+import { Side } from '../../../../../../shared/engine/enums/side';
 
 @Component({
   selector: 'app-board-cell',
@@ -12,14 +12,17 @@ export class BoardCellComponent implements OnInit {
   @Input()
   public field: Field
 
-  public fullField: Field;
+  @Input()
+  public size: number;
+
+  public Side = Side;
+
+  public get side(): Side {
+    return this.field.territory();
+  }
 
   constructor() { }
 
   ngOnInit(): void {
-    this.fullField = new Field(this.field.row, this.field.column);
-    if(this.field.current) {
-      this.fullField.current = new Unit(this.field.current.type, this.field.current.side);
-    }
   }
 }

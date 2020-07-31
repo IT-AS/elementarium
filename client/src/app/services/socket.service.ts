@@ -55,7 +55,7 @@ export class SocketService {
 
   public resumeGame(tokenInfo: TokenInfo): void {
     this.socket.on(this.getGameChannel(tokenInfo.gameId), (data: any) => {
-      const game: Game = data as Game;
+      const game: Game = Game.clone(data as Game);
 
       if (game) {
         this.gameState.dispatch(GameReceive({ payload: game }));

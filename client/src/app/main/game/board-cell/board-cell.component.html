@@ -1,5 +1,9 @@
-<div class="board-cell">
-    <span *ngIf="field?.current">
-        {{fullField?.current?.name()}}
-    </span>
+<div 
+    class="board-cell"
+    [style.width.px]="size - 1"
+    [style.height.px]="size - 1"
+    [class.red]="side === Side.Red"
+    [class.green]="side === Side.Green"
+    [class.gray]="side === Side.Gray">
+    <app-board-unit *ngIf="field?.current" [unit]="field?.current" [size]="size"></app-board-unit>
 </div>

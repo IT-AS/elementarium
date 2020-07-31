@@ -27,6 +27,22 @@ export default class Game {
         this.winner = null;
     }
 
+    static clone(source: Game): Game {
+
+        if(!source) { return source; }
+
+        const game: Game = new Game(source.gameId, source.name);
+
+        game.players = source.players;
+        game.turn = source.turn;
+        game.journal = source.journal;
+        game.winner = source.winner;
+
+        game.board = Board.clone(source.board);
+
+        return game;
+    }
+
     public start(): void {
         this.turn = 1;
         this.board.initialize();

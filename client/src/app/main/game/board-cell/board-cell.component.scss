@@ -1,6 +1,21 @@
 .board-cell {
     display: inline-block;
-    min-width: 48px;
-    min-height: 48px;
-    border: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+
+    &.red {
+        background-color: #faa;
+    }
+     
+    &.gray {
+        background-color: #ccc;
+    }
+      
+    &.green {
+        background-color: #afa;
+    }
+      
+    &.target {
+        background-color: #555;
+    }    
 }

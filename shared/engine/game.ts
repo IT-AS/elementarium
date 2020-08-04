@@ -99,8 +99,4 @@ export default class Game {
 
         return this.journal[this.turn - 1];
     }
-
-    private opponent(side: Side): Player {
-        return this.players.filter(p => p.side !== side)[0];
-    }
 }

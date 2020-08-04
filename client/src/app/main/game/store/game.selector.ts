@@ -23,4 +23,9 @@ export const selectSide = createSelector(
     }
 );
 
-
+export const selectHistory = createSelector(
+    selectGameState,
+    (state) => {
+        return state.history;
+    }
+);

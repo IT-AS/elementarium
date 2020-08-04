@@ -2,3 +2,6 @@
 <div class="game-container">
     <app-board [board]="game?.board" [side]="side"></app-board>
 </div>
+<a href="javascript:void(0)" [class.hidden]="history.length === 0"><i (click)="undo()">Undo</i></a>
+<a href="javascript:void(0)"><i (click)="submit()">Move!</i></a>
+

@@ -96,8 +96,6 @@ export default class Socket {
                 // get the game
                 const game: Game = this.lobby.getGame(moves.gameId);
 
-                // TODO: get cpu moves
-
                 // get side by token (addition authorization per move)
                 const side: Side = this.lobby.getSide(moves.gameId, moves.token);
 
@@ -106,7 +104,7 @@ export default class Socket {
 
                     // do the move
                     if (game.next(side, moves.moves)) {
-                        socket.emit(this.getGameChannel(moves.gameId), game);
+                        this.io.emit(this.getGameChannel(moves.gameId), game);
                     }
                 }
             });

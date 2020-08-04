@@ -17,10 +17,24 @@ export class BoardComponent implements OnInit {
   public side: Side;
 
   public get lines(): Field[][] {
-    const lines: Field[][] = this.board?.fields.filter(f => true);
+    const lines: Field[][] = [];
 
     if(this.side === Side.Red) {
-      lines.reverse();
+      for(let row = this.board?.fields.length-1; row>=0; row--) {
+        const line = [];
+        for(let col = this.board?.fields[row].length - 1; col>=0; col--) {
+          line.push(this.board?.fields[row][col]);
+        }
+        lines.push(line);
+      }
+    } else {
+      for(let row = 0; row<this.board?.fields.length; row++) {
+        const line = [];
+        for(let col = 0; col<this.board?.fields[row].length; col++) {
+          line.push(this.board?.fields[row][col]);
+        }
+        lines.push(line);
+      }
     }
 
     return lines;

@@ -105,7 +105,7 @@ export default class Field {
         const result: FieldEvent[] = [];
 
         // Here the clash begins
-        if (this.greenCandidate.type && this.redCandidate.type) {
+        if (this.greenCandidate !== null && this.redCandidate !== null) {
             if (this.greenCandidate.type === this.redCandidate.type) {
                 this.current = null;
 
@@ -139,10 +139,10 @@ export default class Field {
                 }
             }
         } else {
-            if (this.greenCandidate.type) {
+            if (this.greenCandidate !== null) {
                 this.current = this.greenCandidate;
             }
-            if (this.redCandidate.type) {
+            if (this.redCandidate !== null) {
                 this.current = this.redCandidate;
             }
         }

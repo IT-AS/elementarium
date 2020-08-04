@@ -1,6 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import Game from '../../../../../../shared/engine/game';
 import { TokenInfo } from '../../../../../../shared/lobby/tokenInfo';
+import { MoveInfo } from '../../../../../../shared/lobby/moveInfo';
 import Field from '../../../../../../shared/engine/field';
 import { Side } from '../../../../../../shared/engine/enums/side';
 
@@ -36,7 +37,8 @@ export const GameReceive = createAction(
 );
 
 export const GameMove = createAction(
-  ActionTypes.GameMoveAction
+  ActionTypes.GameMoveAction,
+  props<{ payload: MoveInfo }>()
 );
 
 export const GameMoveRequest = createAction(

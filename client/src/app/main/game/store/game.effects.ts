@@ -17,8 +17,8 @@ export class GameEffects {
 
   doMove$ = createEffect(() => this.actions$.pipe(
     ofType(ActionTypes.GameMoveAction),
-    map(() => {
-        // this.socketService.getGames();
+    map((action: any) => {
+        this.socketService.move(action.payload);
         return GameMoveRequest();
     }))
   );

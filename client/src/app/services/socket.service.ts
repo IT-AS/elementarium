@@ -12,6 +12,7 @@ import GameState from '../main/game/store/game.reducer';
 import { GameReceive, GameSideAssigned } from '../main/game/store/game.actions';
 import { TokenInfo } from '../../../../shared/lobby/tokenInfo';
 import { Side } from '../../../../shared/engine/enums/side';
+import { MoveInfo } from '../../../../shared/lobby/moveInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,10 @@ export class SocketService {
     });
 
     this.socket.emit(SocketEvents.RESUME, tokenInfo);
+  }
+
+  public move(moveInfo: MoveInfo): void {
+    this.socket.emit(SocketEvents.MOVE, moveInfo);
   }
 
   private getGameChannel(gameId: string): string {

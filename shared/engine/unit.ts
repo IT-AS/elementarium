@@ -21,14 +21,14 @@ export default class Unit {
     }
 
     public same(other: Unit) {
-        return this.type === other.type && this.friendly(other);
+        return other && this.type === other.type && this.friendly(other);
     }
 
     public friendly(other: Unit) {
-        return this.side === other.side;
+        return other && this.side === other.side;
     }
 
     public spawnable(other: Unit) {
-        return this.friendly(other) && !this.same(other) && this.type !== UnitType.Source;
+        return other && this.friendly(other) && !this.same(other) && this.type !== UnitType.Source;
     }
 }

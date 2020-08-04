@@ -76,6 +76,9 @@ export default class Board {
                 const candidateRight: Unit = this.fields[row][col + 2].current;
                 const target: Field = this.fields[row][col + 1];
 
+                // Skip empty fields directly
+                if (!candidateLeft || !candidateRight) { continue; }
+
                 // Find (X 0 X) pattern
                 if (!field.empty() && candidateLeft.friendly(candidateRight) && (target.empty() || target.goal(candidateLeft.side))) {
 
@@ -98,6 +101,7 @@ export default class Board {
                     // Check lower candidate
                     if (row < this.dimension - 1) {
                         const candidateLower: Unit = this.fields[row + 1][col + 1].current;
+
                         if (candidateLeft.same(candidateRight) && candidateLeft.same(candidateLower)) {
                             spawns.push(
                                 this.spawn(field, target, this.fields[row + 1][col], this.fields[row + 1][col + 2], candidateLeft.type)
@@ -121,6 +125,9 @@ export default class Board {
                 const candidateUpper: Unit = field.current;
                 const candidateLower: Unit = this.fields[row + 2][col].current;
                 const target: Field = this.fields[row + 1][col];
+
+                // Skip empty fields directly
+                if (!candidateUpper || !candidateLower) { continue; }
 
                 // Find (X 0 X) pattern
                 if (!field.empty() && candidateUpper.friendly(candidateLower) && (target.empty() || target.goal(candidateUpper.side))) {
@@ -191,7 +198,7 @@ export default class Board {
         const sourceField: Field = this.fields[sourceRow][sourceCol];
         const targetField: Field = this.fields[targetRow][targetCol];
 
-        if (sourceField.current.type) {
+        if (!sourceField.empty()) {
             const side: Side = sourceField.current.side;
             let valid: boolean = true;
 
@@ -213,7 +220,7 @@ export default class Board {
             }
 
             // Check if dynamic preconditions are met (such as putting a piece on a place where a piece was previously)
-            if (targetField.current.type) {
+            if (!targetField.empty()) {
                 if (targetField.current.side === Side.Gray) {
                     valid = false;
                 }
@@ -256,9 +263,11 @@ export default class Board {
         // Check side to move
         if (unit.side !== side) { return []; }
 
-        return this.targets
-            .filter(f => f.side === unit.side && f.from[0] === field.row && f.from[1] === field.column)[0].to
-            .filter(t => this.fields[t[0]][t[1]].targetable(unit.side));
+        const candidates = this.targets.filter(f => f.side === unit.side && f.from[0] === field.row && f.from[1] === field.column)[0];
+
+        if(!candidates) { return []; }
+        
+        return candidates.to.filter(t => this.fields[t[0]][t[1]].targetable(unit.side));
     }
 
     private conclude(): Side {
@@ -270,7 +279,7 @@ export default class Board {
         for (let row = 0; row < this.dimension; row++) {
             for (let column = 0; column < this.dimension; column++) {
                 const field = this.fields[row][column];
-                if (field.current.type === UnitType.Source) {
+                if (field.current?.type === UnitType.Source) {
                     if (field.current.side === Side.Red) {
                         redSourceFound = true;
                     }
@@ -329,7 +338,7 @@ export default class Board {
                         const nextCol = col + colOffset;
                         if (this.inside(nextRow, nextCol)) {
                             const candidate = this.fields[nextRow][nextCol].current;
-                            if (candidate.type && !unit.friendly(candidate)) {
+                            if (candidate?.type && !unit.friendly(candidate)) {
                                 for (const block of Rules.blocks[candidate.type]) {
                                     const rowBlock = block[0] + rowOffset;
                                     const colBlock = block[1] + colOffset;

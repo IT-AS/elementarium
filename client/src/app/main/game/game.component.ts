@@ -3,11 +3,13 @@ import { Store, select } from '@ngrx/store';
 import Game from '../../../../../shared/engine/game';
 import { Observable } from 'rxjs';
 import GameState from './store/game.reducer';
-import { selectGame, selectSide } from './store/game.selector';
+import { selectGame, selectSide, selectHistory } from './store/game.selector';
 import { Router } from '@angular/router';
 import { TokenInfo } from '../../../../../shared/lobby/tokenInfo';
-import { GameResume } from './store/game.actions';
+import { GameResume, GameMove } from './store/game.actions';
 import { Side } from '../../../../../shared/engine/enums/side';
+import { MoveInfo } from '../../../../../shared/lobby/moveInfo';
+import Move from '../../../../../shared/engine/moves/move';
 
 @Component({
   selector: 'app-game',
@@ -17,8 +19,12 @@ import { Side } from '../../../../../shared/engine/enums/side';
 export class GameComponent implements OnInit {
   public game: Game;
   public side: Side;
+  public history: Move[];
   private game$: Observable<Game>;
   private side$: Observable<Side>;
+  private history$: Observable<Move[]>;
+
+  private tokenInfo: TokenInfo;
 
   constructor(
     private store: Store<GameState>,
@@ -33,14 +39,33 @@ export class GameComponent implements OnInit {
       this.side$.subscribe(side => {
         this.side = side as Side;
       });
+
+      this.history$ = this.store.pipe(select(selectHistory));
+      this.history$.subscribe(history => {
+        this.history = history as Move[];
+      });
    }
 
   ngOnInit(): void {
     const url: string[] = this.router.url.split('/');
 
     if(url.length >= 4 && url[1] === 'game') {
-      const tokenInfo: TokenInfo = { gameId: url[2], token: url[3] };
-      this.store.dispatch(GameResume({payload: tokenInfo}));
+      this.tokenInfo = { gameId: url[2], token: url[3] };
+      this.store.dispatch(GameResume({payload: this.tokenInfo}));
     }
+  }
+
+  public submit(): void {
+    const moveInfo: MoveInfo = { 
+      gameId: this.game.gameId,
+      moves: this.history,
+      token: this.tokenInfo.token
+    };
+
+    this.store.dispatch(GameMove({payload: moveInfo}));
+  }
+
+  public undo(): void {
+    
   }
 }

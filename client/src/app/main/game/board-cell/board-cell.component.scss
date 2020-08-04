@@ -4,18 +4,18 @@
     border-bottom: 1px solid black;
 
     &.red {
-        background-color: #faa;
+        background-color: rgba(255, 170, 170, .5);
     }
      
     &.gray {
-        background-color: #ccc;
+        background-color: rgba(204, 204, 204, .5);
     }
       
     &.green {
-        background-color: #afa;
+        background-color: rgba(170, 255, 170, .5);
     }
       
     &.target {
-        background-color: #555;
+        background-color: rgba(85, 85, 85, .5);
     }    
 }

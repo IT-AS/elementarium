@@ -14,7 +14,7 @@ export class BoardUnitComponent implements OnInit {
   @Input()
   public size: number;
 
-  public scale: number = 0.6;
+  public scale: number = 0.95;
 
   public get class(): string {
     return `unit ${this.unit.side} ${this.unit.type.toLowerCase()}`;

@@ -1,65 +1,55 @@
 .unit {
-    border: 1px solid #000;
     text-align: center;
     margin: auto;
-    margin-top: 5%;
-    box-shadow: 4px 4px 1px 1px #444;
-
-    &.red {
-        color: #000;
-        background-color: #f00;
-    }
-      
-    &.gray {
-        color: #ccc;
-        background-color: #000;
-    }
-     
-    &.green {
-        color: #000;
-        background-color: #0f0;
-    }
+    margin-top: 2%;
 
     &.fire {
-        //background-image: url(images/fire.png);
-        background-size: 36px 36px;
-      }
-      
-    &.water {
-        //background-image: url(images/water.png);
-        background-size: 24px 36px;
-        background-position: center;
-        background-repeat: no-repeat;
+        &.red {
+            background-image: url(/assets/fire-chaos.png);
+        }
+        &.green {
+            background-image: url(/assets/fire-order.png);
+        }
     }
-      
+
     &.earth {
-        //background-image: url(images/earth.png);
-        background-size: 36px 36px;
+        &.red {
+            background-image: url(/assets/earth-chaos.png);
+        }
+        &.green {
+            background-image: url(/assets/earth-order.png);
+        }
     }
-      
+
+    &.water {
+        &.red {
+            background-image: url(/assets/water-chaos.png);
+        }
+        &.green {
+            background-image: url(/assets/water-order.png);
+        }
+    }
+
     &.air {
-        //background-image: url(images/air.png);
-        background-size: 36px 36px;
+        &.red {
+            background-image: url(/assets/air-chaos.png);
+        }
+        &.green {
+            background-image: url(/assets/air-order.png);
+        }
     }
-      
-    &.obstacle {
-        //background-image: url(images/obstacle.png);
-        background-size: 36px 36px;
-    }
-      
+
     &.source {
-        //background-image: url(images/source.png);
-        background-size: 36px 36px;
-    }    
-  }
-  
-  .next .unit {
-    width: 12px;
-    height: 12px;
-    font-size: 12px;
-    line-height: 12px;
-  
-    display:block;
-    box-shadow: none;
+        &.red {
+            background-image: url(/assets/source-chaos.png);
+        }
+        &.green {
+            background-image: url(/assets/source-order.png);
+        }
+    }
+
+    &.obstacle {
+        background-image: url(/assets/obstacle.png);
+    }
   }
   

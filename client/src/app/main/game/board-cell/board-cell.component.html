@@ -6,6 +6,7 @@
     [class.green]="territory === Side.Green && !field?.moveHere"
     [class.gray]="territory === Side.Gray && !field?.moveHere"
     [class.target]="field?.moveHere"
+    [style.background-size.px]="size"
     (click)="onClick($event)">
     <app-board-unit *ngIf="field?.current" [unit]="field?.current" [size]="size"></app-board-unit>
     <app-board-unit *ngIf="candidate" [unit]="candidate" [size]="size/2"></app-board-unit>

@@ -1,3 +1,16 @@
 a.hidden {
     display: none;
 }
+
+.grid {
+    display: flex;
+    flex-flow: nowrap;
+}
+
+.grid-cell-primary {
+    flex: 3;
+}
+
+.grid-cell-secondary {
+    flex: 1;
+}

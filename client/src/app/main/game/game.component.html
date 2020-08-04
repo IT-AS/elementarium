@@ -1,7 +1,16 @@
-<p>Game Name: {{game?.name}}, Turn: {{game?.turn}}</p>
-<div class="game-container">
-    <app-board [board]="game?.board" [side]="side"></app-board>
+<div class="game-container background">
+    <div class="grid">
+        <div class="grid-cell-secondary">
+            <p>Game Name: {{game?.name}}, Turn: {{game?.turn}}</p>
+        </div>
+        <div class="grid-cell-primary">
+            <app-board [board]="game?.board" [side]="side"></app-board>
+            <a href="javascript:void(0)" [class.hidden]="history.length === 0"><i (click)="undo()">Undo</i></a>
+            <a href="javascript:void(0)"><i (click)="submit()">Move!</i></a>
+        </div>
+        <div class="grid-cell-secondary">
+
+        </div>
+      </div>
 </div>
-<a href="javascript:void(0)" [class.hidden]="history.length === 0"><i (click)="undo()">Undo</i></a>
-<a href="javascript:void(0)"><i (click)="submit()">Move!</i></a>
 

@@ -9,8 +9,9 @@ import { JoinInfo } from '../../../../shared/lobby/joinInfo';
 import { GameInfo } from '../../../../shared/lobby/gameinfo';
 import Game from '../../../../shared/engine/game';
 import GameState from '../main/game/store/game.reducer';
-import { GameReceive } from '../main/game/store/game.actions';
+import { GameReceive, GameSideAssigned } from '../main/game/store/game.actions';
 import { TokenInfo } from '../../../../shared/lobby/tokenInfo';
+import { Side } from '../../../../shared/engine/enums/side';
 
 @Injectable({
   providedIn: 'root'
@@ -55,10 +56,22 @@ export class SocketService {
 
   public resumeGame(tokenInfo: TokenInfo): void {
     this.socket.on(this.getGameChannel(tokenInfo.gameId), (data: any) => {
+      // I could not find a reliable way to determine the type of a json-object
+      // So just try to cast and check if some properties are present
+      // TODO: Maybe implement some IsValid-Methods to hide the details
+
+      // Handle game message
       const game: Game = Game.clone(data as Game);
 
-      if (game) {
+      if (game && game.board) {
         this.gameState.dispatch(GameReceive({ payload: game }));
+      }
+
+      // Handle side message
+      const side: Side = data as Side;
+
+      if (side === Side.Green || side === Side.Red) {
+        this.gameState.dispatch(GameSideAssigned({ payload: side }));
       }
     });
 
@@ -66,6 +79,6 @@ export class SocketService {
   }
 
   private getGameChannel(gameId: string): string {
-    return SocketEvents.GAME + '[' + gameId + ']';
-  }  
+    return `${SocketEvents.GAME}${gameId}`;
+  }
 }

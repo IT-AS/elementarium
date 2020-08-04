@@ -2,8 +2,10 @@ import { createAction, props } from "@ngrx/store";
 import Game from '../../../../../../shared/engine/game';
 import { TokenInfo } from '../../../../../../shared/lobby/tokenInfo';
 import Field from '../../../../../../shared/engine/field';
+import { Side } from '../../../../../../shared/engine/enums/side';
 
 export enum ActionTypes{
+  GameSideAssignedAction = "[Game] Side Assigned",
   GameResumeAction = '[Game] Resume',
   GameResumeRequestAction = '[Game] Resume Request',
   GameReceiveAction = '[Game] Receive',
@@ -13,6 +15,11 @@ export enum ActionTypes{
   FieldDeactivateAction = '[Field] Dectivate',
   FieldMoveHereAction = '[Field] Move Here',
 };
+
+export const GameSideAssigned = createAction(
+  ActionTypes.GameSideAssignedAction,
+  props<{ payload: Side }>()
+);
 
 export const GameResume = createAction(
   ActionTypes.GameResumeAction,

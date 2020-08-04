@@ -10,7 +10,6 @@ export class GameEffects {
   doResume$ = createEffect(() => this.actions$.pipe(
     ofType(ActionTypes.GameResumeAction),
     map((action: any) => {
-        console.log(action.payload);
         this.socketService.resumeGame(action.payload);
         return GameResumeRequest();
     }))

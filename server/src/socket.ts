@@ -9,6 +9,7 @@ import {SocketEvents} from "../../shared/engine/enums/socketevents";
 import Lobby from './lobby';
 import Game from '../../shared/engine/game';
 import { TokenInfo } from '../../shared/lobby/tokeninfo';
+import { Side } from '../../shared/engine/enums/side';
 
 export default class Socket {
     private readonly server: http.Server;
@@ -23,7 +24,7 @@ export default class Socket {
     }
 
     private getGameChannel(gameId: string): string {
-        return SocketEvents.GAME + '[' + gameId + ']';
+        return `${SocketEvents.GAME}${gameId}`;
     }
 
     private listen(): void {
@@ -63,8 +64,10 @@ export default class Socket {
 
                 if (result.success) {
 
-                    // Send game to client
-                    socket.emit(this.getGameChannel(joiner.gameId), this.lobby.getToken(joiner.gameId, joiner.side));
+                    const tokenInfo: TokenInfo = this.lobby.getToken(joiner.gameId, joiner.side)
+
+                    // Send token info to client
+                    socket.emit(this.getGameChannel(joiner.gameId), tokenInfo);
                     
                     // Send updated list of games to clients
                     this.io.emit(SocketEvents.LIST, this.lobby.getGameList());                    
@@ -79,6 +82,9 @@ export default class Socket {
                 const result: Result = this.lobby.resumeGame(tokenInfo);
 
                 if (result.success) {
+                    // Send side to client
+                    socket.emit(this.getGameChannel(tokenInfo.gameId), this.lobby.getSide(tokenInfo.gameId, tokenInfo.token));
+                    
                     // Send game to client
                     socket.emit(this.getGameChannel(tokenInfo.gameId), this.lobby.getGame(tokenInfo.gameId));
                 } else {
@@ -92,9 +98,16 @@ export default class Socket {
 
                 // TODO: get cpu moves
 
-                // do the move
-                if (game.next(moves.side, moves.moves)) {
-                    socket.emit(this.getGameChannel(moves.gameId), game);
+                // get side by token (addition authorization per move)
+                const side: Side = this.lobby.getSide(moves.gameId, moves.token);
+
+                // Ignore not authorized moves
+                if(side !== Side.Gray) {
+
+                    // do the move
+                    if (game.next(side, moves.moves)) {
+                        socket.emit(this.getGameChannel(moves.gameId), game);
+                    }
                 }
             });
         });

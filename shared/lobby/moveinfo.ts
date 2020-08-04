@@ -3,6 +3,6 @@ import Move from "../engine/moves/move";
 
 export interface MoveInfo {
     gameId: string;
-    side: Side;
+    token: string;
     moves: Move[];
 }

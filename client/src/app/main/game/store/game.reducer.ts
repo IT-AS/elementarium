@@ -18,12 +18,13 @@ export const InitialState: GameState = {
     game: null,
     moves: 0,
     history: [],
-    side: Side.Green,
+    side: Side.Gray,
     selectedField: null,
 }
 
 const reducer = createReducer(
     InitialState,
+    on(GameActions.GameSideAssigned, (state: GameState, action: { payload }) => ({...state, side: action.payload})),
     on(GameActions.GameReceive, (state: GameState, action: { payload }) => ({...state, game: action.payload})),
     on(GameActions.FieldActivate, (state: GameState, action: { payload }) => fieldActivate(state, action)),
     on(GameActions.FieldDeactivate, (state: GameState, action: { payload }) => fieldDeactivate(state, action)),

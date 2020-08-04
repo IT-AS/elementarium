@@ -3,7 +3,7 @@
     [style.width.px]="boardSize"
     [style.height.px]="boardSize">
     <div 
-        *ngFor="let line of board?.fields"
+        *ngFor="let line of lines"
         class="board-line" 
         [style.height.px]="cellSize"
         [style.width.px]="boardSize">
@@ -12,7 +12,8 @@
             class="board-cell-container" 
             [style.width.px]="cellSize"
             [style.height.px]="cellSize"
-            [field]="field" 
+            [field]="field"
+            [side]="side" 
             [size]="cellSize">
         </app-board-cell>
     </div>

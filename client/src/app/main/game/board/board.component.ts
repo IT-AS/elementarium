@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, HostListener } from '@angular/core';
 import Board from '../../../../../../shared/engine/board';
+import Field from '../../../../../../shared/engine/field';
+import { Side } from '../../../../../../shared/engine/enums/side';
 
 @Component({
   selector: 'app-board',
@@ -10,6 +12,19 @@ export class BoardComponent implements OnInit {
 
   @Input()
   public board: Board;
+
+  @Input()
+  public side: Side;
+
+  public get lines(): Field[][] {
+    const lines: Field[][] = this.board?.fields.filter(f => true);
+
+    if(this.side === Side.Red) {
+      lines.reverse();
+    }
+
+    return lines;
+  }
 
   private baseSize: number;
 

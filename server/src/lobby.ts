@@ -70,7 +70,6 @@ export default class Lobby {
 
     public resumeGame(tokenInfo: TokenInfo): Result {
         const gameEntry: GameEntry = this.getGameEntry(tokenInfo.gameId);
-        console.log(gameEntry);
 
         if(gameEntry && gameEntry.tokens.has(tokenInfo.token)) {
             return {success: true, message: ''} as Result;
@@ -103,6 +102,16 @@ export default class Lobby {
         });
 
         return tokenInfo;
+    }
+
+    public getSide(gameId: string, token: string) {
+        const gameEntry: GameEntry = this.getGameEntry(gameId);
+
+        if(gameEntry.tokens.has(token)) {
+            return gameEntry.tokens.get(token);
+        }
+
+        return Side.Gray;
     }
 
     private getGameEntry(gameId: string) {

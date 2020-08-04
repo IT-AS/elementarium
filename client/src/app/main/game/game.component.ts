@@ -3,10 +3,11 @@ import { Store, select } from '@ngrx/store';
 import Game from '../../../../../shared/engine/game';
 import { Observable } from 'rxjs';
 import GameState from './store/game.reducer';
-import { selectGame } from './store/game.selector';
+import { selectGame, selectSide } from './store/game.selector';
 import { Router } from '@angular/router';
 import { TokenInfo } from '../../../../../shared/lobby/tokenInfo';
 import { GameResume } from './store/game.actions';
+import { Side } from '../../../../../shared/engine/enums/side';
 
 @Component({
   selector: 'app-game',
@@ -15,17 +16,24 @@ import { GameResume } from './store/game.actions';
 })
 export class GameComponent implements OnInit {
   public game: Game;
-  private subscription$: Observable<Game>;
+  public side: Side;
+  private game$: Observable<Game>;
+  private side$: Observable<Side>;
 
   constructor(
     private store: Store<GameState>,
     private router: Router) { 
 
-      this.subscription$ = this.store.pipe(select(selectGame));
-      this.subscription$.subscribe(game => {
+      this.game$ = this.store.pipe(select(selectGame));
+      this.game$.subscribe(game => {
         this.game = game as Game;
       });
-  }
+
+      this.side$ = this.store.pipe(select(selectSide));
+      this.side$.subscribe(side => {
+        this.side = side as Side;
+      });
+   }
 
   ngOnInit(): void {
     const url: string[] = this.router.url.split('/');

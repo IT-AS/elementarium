@@ -22,16 +22,16 @@ export class BoardCellComponent implements OnInit {
   @Input()
   public size: number;
 
+  @Input()
+  public side: Side;
+
   public Side = Side;
-  public get side(): Side {
+  public get territory(): Side {
     return this.field.territory();
   }
 
   public get candidate(): Unit {
-    let side: Side;
-    this.store.select(selectSide).subscribe(s => side = s); // NgRx why you do this to me?!
-
-    return this.field?.candidate(side)
+    return this.field?.candidate(this.side)
   }
 
   private selectedField$: Observable<Field>;

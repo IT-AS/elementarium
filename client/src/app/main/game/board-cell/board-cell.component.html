@@ -2,8 +2,11 @@
     class="board-cell"
     [style.width.px]="size - 1"
     [style.height.px]="size - 1"
-    [class.red]="side === Side.Red"
-    [class.green]="side === Side.Green"
-    [class.gray]="side === Side.Gray">
+    [class.red]="side === Side.Red && !field?.moveHere"
+    [class.green]="side === Side.Green && !field?.moveHere"
+    [class.gray]="side === Side.Gray && !field?.moveHere"
+    [class.target]="field?.moveHere"
+    (click)="onClick($event)">
     <app-board-unit *ngIf="field?.current" [unit]="field?.current" [size]="size"></app-board-unit>
+    <app-board-unit *ngIf="candidate" [unit]="candidate" [size]="size"></app-board-unit>
 </div>

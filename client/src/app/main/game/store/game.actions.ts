@@ -1,6 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import Game from '../../../../../../shared/engine/game';
 import { TokenInfo } from '../../../../../../shared/lobby/tokenInfo';
+import Field from '../../../../../../shared/engine/field';
 
 export enum ActionTypes{
   GameResumeAction = '[Game] Resume',
@@ -8,6 +9,9 @@ export enum ActionTypes{
   GameReceiveAction = '[Game] Receive',
   GameMoveAction = '[Game] Move',
   GameMoveRequestAction = '[Game] Move Request',
+  FieldActivateAction = '[Field] Activate',
+  FieldDeactivateAction = '[Field] Dectivate',
+  FieldMoveHereAction = '[Field] Move Here',
 };
 
 export const GameResume = createAction(
@@ -30,4 +34,19 @@ export const GameMove = createAction(
 
 export const GameMoveRequest = createAction(
   ActionTypes.GameMoveRequestAction
+);
+
+export const FieldActivate = createAction(
+  ActionTypes.FieldActivateAction,
+  props<{ payload: Field }>()
+);
+
+export const FieldDeactivate = createAction(
+  ActionTypes.FieldDeactivateAction,
+  props<{ payload: Field }>()
+);
+
+export const FieldMoveHere = createAction(
+  ActionTypes.FieldMoveHereAction,
+  props<{ payload: Field }>()
 );

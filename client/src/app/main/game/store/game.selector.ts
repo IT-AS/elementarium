@@ -8,3 +8,19 @@ export const selectGame = createSelector(
         return state.game;
     }
 );
+
+export const selectSelectedField = createSelector(
+    selectGameState,
+    (state) => {
+        return state.selectedField;
+    }
+);
+
+export const selectSide = createSelector(
+    selectGameState,
+    (state) => {
+        return state.side;
+    }
+);
+
+

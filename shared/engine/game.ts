@@ -13,6 +13,7 @@ export default class Game {
     public name: string;
     public players: Player[];
     public turn: number;
+    public movesPerTurn: number;
     public board: Board;
     public journal: Turn[];
     public winner: Side;
@@ -23,6 +24,7 @@ export default class Game {
         this.players = [];
         this.board = new Board(Rules.boardsize);
         this.turn = 1;
+        this.movesPerTurn = Rules.movesPerTurn;
         this.journal = [];
         this.winner = null;
     }
@@ -35,6 +37,7 @@ export default class Game {
 
         game.players = source.players;
         game.turn = source.turn;
+        game.movesPerTurn = source.movesPerTurn;
         game.journal = source.journal;
         game.winner = source.winner;
 

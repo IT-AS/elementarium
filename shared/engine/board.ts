@@ -247,6 +247,20 @@ export default class Board {
         return row >= 0 && row < this.dimension && col >= 0 && col < this.dimension;
     }
 
+    public moves(field: Field, side: Side): number[][] {
+
+        if(!field) { return []; }
+
+        const unit = field?.current;
+
+        // Check side to move
+        if (unit.side !== side) { return []; }
+
+        return this.targets
+            .filter(f => f.side === unit.side && f.from[0] === field.row && f.from[1] === field.column)[0].to
+            .filter(t => this.fields[t[0]][t[1]].targetable(unit.side));
+    }
+
     private conclude(): Side {
         let winner: Side = null;
         let redSourceFound: boolean = false;

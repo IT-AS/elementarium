@@ -78,6 +78,13 @@ export default class Field {
         }
     }
 
+    public targetable(side: Side) {
+        return side && 
+            !this.candidate(side)?.type &&
+            !this.goal(side) &&
+            (this.empty() || this.current?.side !== side);
+    }
+
     public prepare(): void {
         // Remove previous guys
         this.redLast = null;

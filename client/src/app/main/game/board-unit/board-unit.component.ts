@@ -24,5 +24,4 @@ export class BoardUnitComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }

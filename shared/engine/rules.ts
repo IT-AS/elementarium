@@ -5,6 +5,8 @@ export default class Rules {
 
     static readonly boardsize: number = 11;
 
+    static readonly movesPerTurn: number = 3;
+
     static readonly types: Readonly<UnitType[]> =
         [
             UnitType.Source,

@@ -5,11 +5,17 @@
         </div>
         <div class="grid-cell-primary">
             <app-board [board]="game?.board" [side]="side"></app-board>
-            <a href="javascript:void(0)" [class.hidden]="history.length === 0"><i (click)="undo()">Undo</i></a>
-            <a href="javascript:void(0)"><i (click)="submit()">Move!</i></a>
         </div>
         <div class="grid-cell-secondary">
-
+            <div>
+                <button class="action-button" [disabled]="history.length === 0" (click)="retreat()">Retreat</button>
+            </div>
+            <div>
+                <button class="action-button" [disabled]="history.length === 0" (click)="undo()">Undo</button>
+            </div>
+            <div>
+                <button class="action-button" (click)="submit()">Move!</button>
+            </div>
         </div>
       </div>
 </div>

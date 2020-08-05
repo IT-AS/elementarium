@@ -15,6 +15,7 @@ export enum ActionTypes{
   FieldActivateAction = '[Field] Activate',
   FieldDeactivateAction = '[Field] Dectivate',
   FieldMoveHereAction = '[Field] Move Here',
+  FieldMoveUndoAction = '[Field] Move Undo',
 };
 
 export const GameSideAssigned = createAction(
@@ -58,4 +59,8 @@ export const FieldDeactivate = createAction(
 export const FieldMoveHere = createAction(
   ActionTypes.FieldMoveHereAction,
   props<{ payload: Field }>()
+);
+
+export const FieldMoveUndo = createAction(
+  ActionTypes.FieldMoveUndoAction,
 );

@@ -22,7 +22,6 @@ export class GameListComponent implements OnInit {
       this.subscription$ = this.store.pipe(select(selectGames));
       this.subscription$.subscribe(games => {
         this.games = games;
-        console.log(this.games);
       });
   }
 

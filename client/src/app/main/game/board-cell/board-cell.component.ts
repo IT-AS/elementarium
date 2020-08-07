@@ -47,14 +47,29 @@ export class BoardCellComponent implements OnInit {
   }
 
   public onClick(event) {
-    if(this.selectedField) {
-      if(this.field?.moveHere) {
+    this.activate();
+  }
+
+  public onDrag() {
+    this.activate();
+  }
+
+  public onDrop(ev) {
+    this.activate();
+    ev.preventDefault();
+  }
+
+  public allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  private activate() {
+    if(this.selectedField && this.field?.moveHere) {
         this.store.dispatch(FieldMoveHere({payload: this.field}));
-      } 
-      this.store.dispatch(FieldDeactivate({payload: this.field}));
-    } else {
-      if(!this.field?.empty()) {
         this.store.dispatch(FieldDeactivate({payload: this.field}));
+    } else {
+      this.store.dispatch(FieldDeactivate({payload: this.field}));
+      if(!this.field?.empty()) {
         this.store.dispatch(FieldActivate({payload: this.field}));
       }
     }

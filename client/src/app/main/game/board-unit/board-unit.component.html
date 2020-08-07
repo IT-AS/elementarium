@@ -4,6 +4,8 @@
     [style.height.px]="size*scale"
     [style.line-height.px]="size"
     [style.font-size.px]="size"
-    [style.background-size.px]="size*scale">
+    [style.background-size.px]="size*scale"
+    draggable="true"
+    (ondragstart)="onDrag($event)">
 </div>
 

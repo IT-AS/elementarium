@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import Unit from '../../../../../../shared/engine/unit';
 
 @Component({
@@ -14,6 +14,9 @@ export class BoardUnitComponent implements OnInit {
   @Input()
   public size: number;
 
+  @Output()
+  public drag: EventEmitter<void> = new EventEmitter();
+
   public scale: number = 0.95;
 
   public get class(): string {
@@ -23,5 +26,9 @@ export class BoardUnitComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  public onDrag(event) {
+    this.drag.emit();
   }
 }

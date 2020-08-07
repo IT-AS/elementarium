@@ -204,6 +204,7 @@ export default class Board {
 
             // Check if move was in list of possible moves
             const targets = this.targets.filter(f =>
+                f &&
                 f.side === side &&
                 f.from[0] === sourceField.row && f.from[1] === sourceField.column
             )[0];
@@ -263,7 +264,10 @@ export default class Board {
         // Check side to move
         if (unit.side !== side) { return []; }
 
-        const candidates = this.targets.filter(f => f.side === unit.side && f.from[0] === field.row && f.from[1] === field.column)[0];
+        // Check if any moves
+        if (!this.targets) { return []; }
+
+        const candidates = this.targets.filter(f => f && f.side === unit.side && f.from[0] === field.row && f.from[1] === field.column)[0];
 
         if(!candidates) { return []; }
         
@@ -309,11 +313,11 @@ export default class Board {
         if (corner1.empty() || corner1.current.friendly(candidate.current) &&
             corner2.empty() || corner2.current.friendly(candidate.current)) {
             // Check territory
-            if (candidate.current.side !== candidate.territory() && candidate.territory() !== Side.Gray &&
-                corner1.current.side !== corner1.territory() && corner1.territory() !== Side.Gray &&
-                corner2.current.side !== corner2.territory() && corner2.territory() !== Side.Gray) {
+            if (candidate.current?.side !== candidate.territory() && candidate.territory() !== Side.Gray &&
+                corner1.current?.side !== corner1.territory() && corner1.territory() !== Side.Gray &&
+                corner2.current?.side !== corner2.territory() && corner2.territory() !== Side.Gray) {
                 // SPAWN!
-                target.current = new Unit(type, candidate.current.side);
+                target.current = new Unit(type, candidate.current?.side);
                 return {row: target.row, column: target.column, unit: target.current} as FieldEvent;
             }
         }

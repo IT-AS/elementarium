@@ -63,6 +63,21 @@ export default class Rules {
         }
     };
 
+/*
+    static readonly units: Readonly<any> = {
+        "red": {
+            "Source": [[0, 5]],
+        },
+        "green": {
+            "Water": [[0, 0], [0, 1], [0, 10], [0, 9], [0, 4]],
+            "Source": [[10, 5]],
+        },
+        "gray": {
+            "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]
+        }
+    };
+*/
+
     static readonly clashes: Readonly<any> = {
         "Earth": ["Water", "Air", "Fire"],
         "Air": ["Earth", "Fire", "Water"],

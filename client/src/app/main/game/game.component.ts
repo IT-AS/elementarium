@@ -25,6 +25,27 @@ export class GameComponent implements OnInit {
   private history$: Observable<Move[]>;
 
   private tokenInfo: TokenInfo;
+  private afterGame: boolean = false;
+
+  public get outcome(): string {
+    if(this.game?.winner === Side.Red) {
+      return 'Chaos always defeats order, because it is better organized...';
+    } 
+    
+    if (this.game?.winner === Side.Green) {
+      return 'Nobody can escape from the triumph of Order!';
+    }
+
+    if (this.game?.winner === Side.Gray) {
+      return 'Order and Chaos will forever remain in equilibrium!';
+    }
+
+    return '';
+  }
+
+  public get finished(): boolean {
+    return this.game?.winner && !this.afterGame;
+  }
 
   constructor(
     private store: Store<GameState>,
@@ -71,5 +92,13 @@ export class GameComponent implements OnInit {
 
   public retreat(): void {
 
+  }
+
+  public quit(): void {
+    this.router.navigate(['/']);
+  }
+
+  public close(): void {
+    this.afterGame = true;
   }
 }

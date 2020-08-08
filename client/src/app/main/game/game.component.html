@@ -7,16 +7,33 @@
             <app-board [board]="game?.board" [side]="side"></app-board>
         </div>
         <div class="grid-cell-secondary">
-            <div>
-                <button class="action-button" [disabled]="history.length === 0" (click)="retreat()">Retreat</button>
+            <div *ngIf="!game?.winner">
+                <div>
+                    <button class="action-button" [disabled]="history.length === 0" (click)="retreat()">Retreat</button>
+                </div>
+                <div>
+                    <button class="action-button" [disabled]="history.length === 0" (click)="undo()">Undo</button>
+                </div>
+                <div>
+                    <button class="action-button" (click)="submit()">Move!</button>
+                </div>
             </div>
-            <div>
-                <button class="action-button" [disabled]="history.length === 0" (click)="undo()">Undo</button>
-            </div>
-            <div>
-                <button class="action-button" (click)="submit()">Move!</button>
+            <div *ngIf="game?.winner">
+                <div>
+                    <button class="action-button" (click)="quit()">Quit</button>
+                </div>
             </div>
         </div>
-      </div>
+    </div>
+</div>
+<div id="game-finalization-container" [class.hidden]="!finished">
+    <div>
+        <h1>{{outcome}}</h1>
+    </div>
+    <div>
+        <button class="action-button" (click)="quit()">Quit</button>
+    </div>
+</div>
+<div id="game-finalization-overlay" [class.hidden]="!finished" (click)="close()">
 </div>
 

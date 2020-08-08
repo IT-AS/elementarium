@@ -50,10 +50,10 @@ export default class Field {
     }
 
     public territory(): Side {
-        if (this.row < 4) {
+        if (this.row < Rules.territory[Side.Red]) {
             return Side.Red;
         }
-        if (this.row < 7) {
+        if (this.row < Rules.territory[Side.Green]) {
             return Side.Gray;
         }
         return Side.Green;

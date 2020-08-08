@@ -43,6 +43,11 @@ export default class Rules {
             [[10, 10], [10, 9], [9, 10], [9, 9]]
         ];
 
+    static readonly territory: Readonly<any> = {
+        "red": 4,
+        "green": 7.
+    }
+
     static readonly units: Readonly<any> = {
         "red": {
             "Earth": [[0, 3], [0, 7], [1, 4], [1, 5], [1, 6]],
@@ -69,7 +74,7 @@ export default class Rules {
             "Source": [[0, 5]],
         },
         "green": {
-            "Water": [[0, 0], [0, 1], [0, 10], [0, 9], [0, 4]],
+            "Water": [[0, 3], [1, 4], [0, 10], [0, 9], [0, 4]],
             "Source": [[10, 5]],
         },
         "gray": {

@@ -53,7 +53,7 @@ export class GameComponent implements OnInit {
 
       this.game$ = this.store.pipe(select(selectGame));
       this.game$.subscribe(game => {
-        this.game = game as Game;
+        this.game = Game.clone(game);
       });
 
       this.side$ = this.store.pipe(select(selectSide));

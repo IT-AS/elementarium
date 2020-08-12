@@ -5,7 +5,7 @@ import { Store, select } from '@ngrx/store';
 import GameState from '../store/game.reducer';
 import { FieldDeactivate, FieldActivate, FieldMoveHere } from '../store/game.actions';
 import { Observable } from 'rxjs';
-import { selectSelectedField, selectTargets } from '../store/game.selector';
+import { selectSelectedField, selectTargets, selectLastMove } from '../store/game.selector';
 import Unit from '../../../../../../shared/engine/unit';
 
 @Component({
@@ -35,6 +35,7 @@ export class BoardCellComponent implements OnInit {
     return this.field?.candidate(this.side)
   }
 
+  private lastMove$: Observable<{ from: Field, to: Field }>;
   private selectedField$: Observable<Field>;
   private targets$: Observable<number[][]>;
 
@@ -55,6 +56,28 @@ export class BoardCellComponent implements OnInit {
         }
       } else {
         this.isTarget = false;
+      }
+    });
+
+    this.lastMove$ = this.store.pipe(select(selectLastMove));
+    this.lastMove$.subscribe(lastMove => {
+      if( this.field && lastMove?.to && lastMove?.from ) {
+        if(lastMove.to.row === this.field.row && lastMove.to.column === this.field.column) {
+          const newField = Field.clone(this.field);
+          if (this.side === Side.Green) { 
+            newField.greenCandidate = lastMove.from.current;
+          }
+          if (this.side === Side.Red) { 
+            newField.redCandidate = lastMove.from.current; 
+          }
+          this.field = newField;
+        }
+
+        if(lastMove.from.row === this.field.row && lastMove.from.column === this.field.column) {
+          const newField = Field.clone(this.field);
+          newField.current = null;
+          this.field = newField;
+        }
       }
     });
   }

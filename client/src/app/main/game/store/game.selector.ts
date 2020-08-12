@@ -16,6 +16,15 @@ export const selectSelectedField = createSelector(
     }
 );
 
+
+export const selectLastMove = createSelector(
+    selectGameState,
+    (state) => {
+        return state.lastMove;
+    }
+);
+
+
 export const selectTargets = createSelector(
     selectGameState,
     (state) => {

@@ -12,7 +12,8 @@ export default interface GameState {
     history: Move[],
     side: Side,
     selectedField: Field,
-    targets: number[][]
+    targets: number[][],
+    lastMove: { from: Field, to: Field }
 };
 
 export const InitialState: GameState = {
@@ -21,7 +22,8 @@ export const InitialState: GameState = {
     history: [],
     side: Side.Gray,
     selectedField: null,
-    targets: []
+    targets: [],
+    lastMove: null
 }
 
 const reducer = createReducer(
@@ -52,28 +54,20 @@ function fieldDeactivate(state: GameState, action: { payload } ) : GameState {
 }
 
 function fieldMoveHere (state: GameState, action: { payload } ) : GameState {
-    const sourceField: Field = Field.clone(state.selectedField);
-    const targetField: Field = Field.clone(action.payload);
+    const sourceField: Field = state.selectedField;
+    const targetField: Field = action.payload;
 
+    
     if(sourceField.current.type) {
-        if (sourceField.current.side === Side.Green) { 
-            targetField.greenCandidate = sourceField.current;
-            sourceField.greenLast = sourceField.current;
-        }
-        if (sourceField.current.side === Side.Red) { 
-            targetField.redCandidate = sourceField.current; 
-            sourceField.redLast = sourceField.current;
-        }
-
-        sourceField.current = null;
-        const game: Game = Game.clone(state.game);
-        game.board.fields[sourceField.row][sourceField.column] = sourceField;
-        game.board.fields[targetField.row][targetField.column] = targetField;
-        
         const history: Move[] = state.history.filter(m => true);
         history.push({ from: [sourceField.row, sourceField.column], to: [targetField.row, targetField.column], side: state.side } as Move);
 
-        return {...state, selectedField: null, game: game, moves: state.moves + 1, history: history};
+        return {...state, 
+            selectedField: null, 
+            moves: state.moves + 1, 
+            history: history, 
+            lastMove: { from: sourceField, to: targetField }
+        };
     }
 
     return state;

@@ -2,9 +2,10 @@
     class="board" 
     [style.width.px]="boardSize"
     [style.height.px]="boardSize"
-    [style.background-size.px]="boardSize">
+    [style.background-size.px]="boardSize"
+    [style.transform]="rotation">
     <div 
-        *ngFor="let line of lines"
+        *ngFor="let line of board?.fields"
         class="board-line" 
         [style.height.px]="cellSize"
         [style.width.px]="boardSize">

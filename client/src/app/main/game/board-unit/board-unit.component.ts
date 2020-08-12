@@ -38,6 +38,16 @@ export class BoardUnitComponent implements OnInit {
     return `/assets/${this.unit.type.toLowerCase()}-${side}.png`
   }
 
+  public get rotation(): string {
+    if(this.side === Side.Red) {
+      return 'rotate(180deg)'; 
+    }
+
+    return '';
+  }
+
+  private readonly iconName: string = 'drag-icon';
+
   constructor(private store: Store<GameState>) { 
     this.side$ = this.store.pipe(select(selectSide));
     this.side$.subscribe(side => {
@@ -55,7 +65,7 @@ export class BoardUnitComponent implements OnInit {
     img.height = this.size;
     img.style.position = 'absolute';
     img.style.top = '-10000px';
-    img.id = 'drag-icon';
+    img.id = this.iconName;
 
     document.body.appendChild(img);
     event.dataTransfer.setDragImage(img, this.size/2, this.size/2);
@@ -63,7 +73,7 @@ export class BoardUnitComponent implements OnInit {
   }
 
   public onDragEnd(event: DragEvent) {
-    const img: HTMLImageElement = document.body.querySelector('#drag-icon');
+    const img: HTMLImageElement = document.body.querySelector(`#${this.iconName}`);
     document.body.removeChild(img);
   }
 }

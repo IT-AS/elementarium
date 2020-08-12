@@ -2,7 +2,6 @@ import { Action, createReducer, on } from '@ngrx/store';
 import * as GameActions from './game.actions'
 import Game from '../../../../../../shared/engine/game';
 import { Side } from '../../../../../../shared/engine/enums/side';
-import Board from '../../../../../../shared/engine/board';
 import Field from '../../../../../../shared/engine/field';
 import Move from '../../../../../../shared/engine/moves/move';
 import Unit from '../../../../../../shared/engine/unit';
@@ -13,6 +12,7 @@ export default interface GameState {
     history: Move[],
     side: Side,
     selectedField: Field,
+    targets: number[][]
 };
 
 export const InitialState: GameState = {
@@ -21,6 +21,7 @@ export const InitialState: GameState = {
     history: [],
     side: Side.Gray,
     selectedField: null,
+    targets: []
 }
 
 const reducer = createReducer(
@@ -40,31 +41,21 @@ export function GameReducer(state: GameState | undefined, action: Action) {
 function fieldActivate(state: GameState, action: { payload } ) : GameState {
     if(state.moves >= state.game.movesPerTurn) { return state; }
 
-    const game: Game = Game.clone(state.game);
-    const field: Field = Field.clone(action.payload);
-    for(const move of game.board.moves(action.payload, state.side) ) {
-        game.board.fields[move[0]][move[1]].moveHere = true;
-    }
-
-    return {...state, selectedField: game.board.fields[field.row][field.column], game: game};
+    return {...state,
+        selectedField: state.game.board.fields[action.payload.row][action.payload.column], 
+        targets: state.game.board.moves(action.payload, state.side)};
 }
 
 function fieldDeactivate(state: GameState, action: { payload } ) : GameState {
-    const game: Game = Game.clone(state.game);
-    for(const line of game.board.fields) {
-        for(const field of line) {
-            field.moveHere = false;
-        }
-    }
 
-    return {...state, selectedField: null, game: game};
+    return {...state, selectedField: null, targets: []};
 }
 
 function fieldMoveHere (state: GameState, action: { payload } ) : GameState {
     const sourceField: Field = Field.clone(state.selectedField);
     const targetField: Field = Field.clone(action.payload);
 
-    if(sourceField.current.type && targetField.moveHere) {
+    if(sourceField.current.type) {
         if (sourceField.current.side === Side.Green) { 
             targetField.greenCandidate = sourceField.current;
             sourceField.greenLast = sourceField.current;

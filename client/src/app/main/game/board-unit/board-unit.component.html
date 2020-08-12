@@ -5,6 +5,7 @@
     [style.line-height.px]="size"
     [style.font-size.px]="size"
     [style.background-size.px]="size*scale"
+    [style.transform]="rotation"
     [draggable]="unit?.side === side"
     (dragstart)="onDragStart($event)"
     (dragend)="onDragEnd($event)">

@@ -16,6 +16,14 @@ export const selectSelectedField = createSelector(
     }
 );
 
+export const selectTargets = createSelector(
+    selectGameState,
+    (state) => {
+        return state.targets;
+    }
+);
+
+
 export const selectSide = createSelector(
     selectGameState,
     (state) => {

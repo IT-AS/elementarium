@@ -15,12 +15,9 @@ export default class Field {
     public redLast: Unit;
     public redCandidate: Unit;
 
-    public moveHere: boolean;
-
     constructor(row: number, column: number) {
         this.row = row;
         this.column = column;
-        this.moveHere = false;
 
         this.current = null;
         this.greenLast = null;
@@ -33,8 +30,6 @@ export default class Field {
         if(!source) { return source; }
 
         const field: Field = new Field(source.row, source.column);
-
-        field.moveHere = source.moveHere;
 
         field.current = Unit.clone(source.current);
         field.greenLast = Unit.clone(source.greenLast);

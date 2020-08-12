@@ -1,11 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import Field from '../../../../../../shared/engine/field';
 import { Side } from '../../../../../../shared/engine/enums/side';
 import { Store, select } from '@ngrx/store';
 import GameState from '../store/game.reducer';
 import { FieldDeactivate, FieldActivate, FieldMoveHere } from '../store/game.actions';
 import { Observable } from 'rxjs';
-import { selectSelectedField, selectSide } from '../store/game.selector';
+import { selectSelectedField, selectTargets } from '../store/game.selector';
 import Unit from '../../../../../../shared/engine/unit';
 
 @Component({
@@ -18,6 +18,7 @@ export class BoardCellComponent implements OnInit {
   @Input()
   public field: Field
   public selectedField: Field;
+  public isTarget: boolean;
 
   @Input()
   public size: number;
@@ -27,7 +28,7 @@ export class BoardCellComponent implements OnInit {
 
   public Side = Side;
   public get territory(): Side {
-    return this.field.territory();
+    return this.field?.territory();
   }
 
   public get candidate(): Unit {
@@ -35,15 +36,27 @@ export class BoardCellComponent implements OnInit {
   }
 
   private selectedField$: Observable<Field>;
+  private targets$: Observable<number[][]>;
 
-  constructor(private store: Store<GameState>) { 
+  constructor(private store: Store<GameState>) { }
+
+  ngOnInit(): void {
     this.selectedField$ = this.store.pipe(select(selectSelectedField));
     this.selectedField$.subscribe(selectedField => {
       this.selectedField = selectedField;
     });
-  }
 
-  ngOnInit(): void {
+    this.targets$ = this.store.pipe(select(selectTargets));
+    this.targets$.subscribe(targets => {
+      if(targets.length > 0) {
+        const target = targets.filter(target => this.field?.row === target[0] && this.field?.column === target[1]);
+        if(target.length > 0) {
+          this.isTarget = true;
+        }
+      } else {
+        this.isTarget = false;
+      }
+    });
   }
 
   public onClick(event) {
@@ -56,9 +69,6 @@ export class BoardCellComponent implements OnInit {
 
   public onDrop(event) {
     this.activate();
-
-    const img: HTMLImageElement = document.body.querySelector('#drag-icon');
-    document.body.removeChild(img);
     event.preventDefault();
   }
 
@@ -67,7 +77,7 @@ export class BoardCellComponent implements OnInit {
   }
 
   private activate() {
-    if(this.selectedField && this.field?.moveHere) {
+    if(this.selectedField && this.isTarget) {
         this.store.dispatch(FieldMoveHere({payload: this.field}));
         this.store.dispatch(FieldDeactivate({payload: this.field}));
     } else {

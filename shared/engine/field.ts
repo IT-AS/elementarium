@@ -46,7 +46,7 @@ export default class Field {
     }
 
     public coord(): string {
-        return "[" + this.row + ", " + this.column + "]";
+        return `r${this.row}-c${this.column}`;
     }
 
     public territory(): Side {

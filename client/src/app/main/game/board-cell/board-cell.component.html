@@ -12,9 +12,9 @@
     (drop)="onDrop($event)">
     <app-board-unit 
         *ngIf="field?.current" 
-        [unit]="field?.current" 
+        [unit]="field?.current"
         [size]="size"
-        (drag)="onDrag()">
+        (draggi)="onDrag()">
     </app-board-unit>
     <app-board-unit *ngIf="candidate" [unit]="candidate" [size]="size/2"></app-board-unit>
 </div>

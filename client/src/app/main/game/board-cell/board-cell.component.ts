@@ -54,13 +54,16 @@ export class BoardCellComponent implements OnInit {
     this.activate();
   }
 
-  public onDrop(ev) {
+  public onDrop(event) {
     this.activate();
-    ev.preventDefault();
+
+    const img: HTMLImageElement = document.body.querySelector('#drag-icon');
+    document.body.removeChild(img);
+    event.preventDefault();
   }
 
-  public allowDrop(ev) {
-    ev.preventDefault();
+  public allowDrop(event) {
+    event.preventDefault();
   }
 
   private activate() {

@@ -3,6 +3,7 @@
     border-right: 1px solid black;
     border-bottom: 1px solid black;
 
+    /*
     &.red {
         background-color: rgba(255, 170, 170, .5);
     }
@@ -14,8 +15,9 @@
     &.green {
         background-color: rgba(170, 255, 170, .5);
     }
-      
+    */  
+     
     &.target {
-        background-color: rgba(85, 85, 85, .5);
-    }    
+        background-color: rgba(85, 85, 85, .8);
+    }  
 }

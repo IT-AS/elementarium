@@ -296,7 +296,26 @@ export default class Board {
 
         // Detect end of game
         if (redSourceFound && greenSourceFound) {
-            winner = null;
+            // Detect draw conditions
+            // At least one side needs to have either two units of the same type
+            // or at least three units of different type (source not included)
+            const redUnits: Field[] = [].concat.apply([], this.fields.map(line => line.filter(field => field.current !== null && field.current.side === Side.Red && field.current.type !== UnitType.Source)));
+            const greenUnits: Field[] = [].concat.apply([], this.fields.map(line => line.filter(field => field.current !== null && field.current.side === Side.Green && field.current.type !== UnitType.Source)));
+
+            if(redUnits.length < 3 && greenUnits.length < 3) {
+                if(redUnits.length < 2 && greenUnits.length < 2) {
+                    winner = Side.Gray;
+                } else {
+                    if(redUnits.length === 2 && redUnits[0].current.type === redUnits[1].current.type) {
+                        winner = null;
+                    }
+                    if(greenUnits.length === 2 && redUnits[0].current.type === greenUnits[1].current.type) {
+                        winner = null;
+                    }
+                }
+            } else {
+                winner = null;
+            }
         } else if (redSourceFound && !greenSourceFound) {
             winner = Side.Red;
         } else if (!redSourceFound && greenSourceFound) {

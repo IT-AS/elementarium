@@ -54,7 +54,7 @@ export default class Game {
     public next(side: Side, moves: Move[]): boolean {
         const turn: Turn = this.current();
 
-        if (!side || !moves) {
+        if (!side || !moves || this.winner) {
             return false;
         }
 

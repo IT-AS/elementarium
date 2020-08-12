@@ -48,6 +48,7 @@ export default class Rules {
         "green": 7.
     }
 
+/*
     static readonly units: Readonly<any> = {
         "red": {
             "Earth": [[0, 3], [0, 7], [1, 4], [1, 5], [1, 6]],
@@ -67,8 +68,42 @@ export default class Rules {
             "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]
         }
     };
+*/
+/*
+    // For checking draw-condition by destroying both sources
+    static readonly units: Readonly<any> = {
+        "red": {
+            "Water": [[10, 3], [9, 4], [10, 10], [10, 9], [10, 4]],
+            "Source": [[0, 5]],
+        },
+        "green": {
+            "Water": [[0, 3], [1, 4], [0, 10], [0, 9], [0, 4]],
+            "Source": [[10, 5]],
+        },
+        "gray": {
+            "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]
+        }
+    };
+*/
+
+    // For checking draw-condition by unsufficient units
+    static readonly units: Readonly<any> = {
+        "red": {
+            "Water": [[10, 3]],
+            "Source": [[0, 5]],
+        },
+        "green": {
+            "Fire": [[10, 2], [10, 10]],
+            "Water": [[10, 4]],
+            "Source": [[10, 5]],
+        },
+        "gray": {
+            "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]
+        }
+    };
 
 /*
+    // For checking win-condition
     static readonly units: Readonly<any> = {
         "red": {
             "Source": [[0, 5]],

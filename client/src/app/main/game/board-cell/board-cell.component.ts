@@ -35,6 +35,14 @@ export class BoardCellComponent implements OnInit {
     return this.field?.candidate(this.side)
   }
 
+  public get unitRelation(): string {
+    return this.candidate ? 'unit-under-candidate' : 'unit';
+  }
+
+  public get candidateRelation(): string {
+    return this.field?.current ? 'candidate-over-unit' : 'candidate';
+  }
+
   private lastMove$: Observable<{ from: Field, to: Field }>;
   private selectedField$: Observable<Field>;
   private targets$: Observable<number[][]>;

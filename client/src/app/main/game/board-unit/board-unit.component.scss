@@ -1,3 +1,5 @@
+.unit-under-candidate,
+.candidate-over-unit,
 .candidate,
 .unit {
 
@@ -51,6 +53,14 @@
     }
   }
 
-  .justify {
-      transform: translate(52%, -150%);
-  }
+.candidate {
+    transform: translate(50%, 50%);
+}
+
+.candidate-over-unit {
+    transform: translate(50%, -150%);
+}
+
+.unit-under-candidate {
+    opacity: 0.5;
+}

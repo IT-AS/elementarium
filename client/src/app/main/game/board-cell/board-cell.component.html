@@ -10,13 +10,17 @@
     (click)="onClick($event)"
     (dragover)="allowDrop($event)"
     (drop)="onDrop($event)">
-    <div style="display: flex; justify-content: center; align-items: center;" [class.aero]="candidate && field?.current">
-        <app-board-unit 
-            *ngIf="field?.current" 
-            [unit]="field?.current"
-            [size]="size"
-            (draggi)="onDrag()">
-        </app-board-unit>
-    </div>
-    <app-board-unit *ngIf="candidate" [candidate]="candidate" [size]="size/2"></app-board-unit>
+    <app-board-unit 
+        *ngIf="field?.current" 
+        [unit]="field?.current"
+        [size]="size"
+        [relation]="unitRelation"
+        (draggi)="onDrag()">
+    </app-board-unit>
+    <app-board-unit 
+        *ngIf="candidate" 
+        [unit]="candidate"
+        [size]="size/2"
+        [relation]="candidateRelation">
+    </app-board-unit>
 </div>

@@ -35,12 +35,32 @@ export class BoardCellComponent implements OnInit {
     return this.field?.candidate(this.side)
   }
 
+  public get rotation(): string {
+    if(this.side === Side.Red) {
+      return 'rotate(180deg)'; 
+    }
+
+    return '';
+  }
+
   public get unitRelation(): string {
     return this.candidate ? 'unit-under-candidate' : 'unit';
   }
 
   public get candidateRelation(): string {
     return this.field?.current ? 'candidate-over-unit' : 'candidate';
+  }
+
+  public get targetTranslation(): string {
+    if (!this.field?.current && !this.candidate) {
+      return 'translate(150%, 150%)';
+    } else if (this.field?.current && !this.candidate) {
+      return 'translate(150%, -235%)';
+    } else if (!this.field?.current && this.candidate) {
+      return 'translate(150%, -50%)';
+    }
+
+    return '';
   }
 
   public get background(): string {
@@ -125,7 +145,7 @@ export class BoardCellComponent implements OnInit {
   private filterTargets(targets: number[][]): void {
     if(targets.length > 0) {
       const target = targets.filter(target => this.field?.row === target[0] && this.field?.column === target[1]);
-      if(target.length > 0) {
+      if(target.length > 0 && !this.field.candidate(this.side)) {
         this.isTarget = true;
       }
     } else {

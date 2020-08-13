@@ -4,6 +4,7 @@
     [style.height.px]="size"
     [style.background-size.px]="size"
     [style.background-image]="background"
+    [style.transform]="rotation"
     (click)="onClick($event)"
     (dragover)="allowDrop($event)"
     (drop)="onDrop($event)">
@@ -21,27 +22,11 @@
         [relation]="candidateRelation">
     </app-board-unit>
     <div 
-        *ngIf="isTarget && !field?.current && !candidate"
+        *ngIf="isTarget"
         [style.width.px]="size/4"
         [style.height.px]="size/4"
         [style.border-radius.px]="size/4"
         [style.background-color]="side"
-        style="transform:translate(150%, 150%); ">
-    </div>
-    <div 
-        *ngIf="isTarget && field?.current"
-        [style.width.px]="size/4"
-        [style.height.px]="size/4"
-        [style.border-radius.px]="size/4"
-        [style.background-color]="side"
-        style="transform:translate(150%, -235%); ">
-    </div>
-    <div 
-        *ngIf="isTarget && !field?.current && candidate"
-        [style.width.px]="size/4"
-        [style.height.px]="size/4"
-        [style.border-radius.px]="size/4"
-        [style.background-color]="side"
-        style="transform:translate(150%, -50%); ">
+        [style.transform]="targetTranslation">
     </div>
 </div>

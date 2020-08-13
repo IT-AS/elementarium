@@ -10,9 +10,7 @@ export default class Field {
     public column: number;
 
     public current: Unit;
-    public greenLast: Unit;
     public greenCandidate: Unit;
-    public redLast: Unit;
     public redCandidate: Unit;
 
     constructor(row: number, column: number) {
@@ -20,9 +18,7 @@ export default class Field {
         this.column = column;
 
         this.current = null;
-        this.greenLast = null;
         this.greenCandidate = null;
-        this.redLast = null;
         this.redCandidate = null;
     }
 
@@ -32,9 +28,7 @@ export default class Field {
         const field: Field = new Field(source.row, source.column);
 
         field.current = Unit.clone(source.current);
-        field.greenLast = Unit.clone(source.greenLast);
         field.greenCandidate = Unit.clone(source.greenCandidate);
-        field.redLast = Unit.clone(source.redLast);
         field.redCandidate = Unit.clone(source.redCandidate);
 
         return field;
@@ -81,9 +75,6 @@ export default class Field {
     }
 
     public prepare(): void {
-        // Remove previous guys
-        this.redLast = null;
-        this.greenLast = null;
 
         // Unit already on this field is also a candidate
         if (this.current) {
@@ -144,9 +135,6 @@ export default class Field {
 
         this.greenCandidate = null;
         this.redCandidate = null;
-
-        this.greenLast = null;
-        this.redLast = null;
 
         return result;
     }

@@ -64,18 +64,27 @@ export class BoardCellComponent implements OnInit {
       if( this.field && lastMove?.to && lastMove?.from ) {
         if(lastMove.to.row === this.field.row && lastMove.to.column === this.field.column) {
           const newField = Field.clone(this.field);
-          if (this.side === Side.Green) { 
-            newField.greenCandidate = lastMove.from.current;
-          }
-          if (this.side === Side.Red) { 
-            newField.redCandidate = lastMove.from.current; 
+          if (lastMove.from.current) {
+            if (this.side === Side.Green) { 
+              newField.greenCandidate = lastMove.from.current;
+            }
+            if (this.side === Side.Red) { 
+              newField.redCandidate = lastMove.from.current; 
+            }
+          } else {
+            newField.current = lastMove.from.candidate(this.side);
           }
           this.field = newField;
         }
 
         if(lastMove.from.row === this.field.row && lastMove.from.column === this.field.column) {
           const newField = Field.clone(this.field);
-          newField.current = null;
+          if(newField.current?.side === this.side) { 
+            newField.current = null; 
+          } else {
+            newField.greenCandidate = null;
+            newField.redCandidate = null;
+          }
           this.field = newField;
         }
       }

@@ -17,6 +17,9 @@ export class BoardUnitComponent implements OnInit {
   public unit: Unit;
 
   @Input()
+  public candidate: Unit;
+
+  @Input()
   public size: number;
 
   @Output()
@@ -27,15 +30,34 @@ export class BoardUnitComponent implements OnInit {
   private side$: Observable<Side>;
 
   public get class(): string {
-    return `unit ${this.unit.side} ${this.unit.type.toLowerCase()}`;
+    let ret: string = '';
+
+    if(this.unit) { ret = `unit ${this.unit.side} ${this.unit.type.toLowerCase()}` };
+    if(this.candidate) { ret = `candidate ${this.candidate.side} ${this.candidate.type.toLowerCase()}` };
+
+    if(!this.unit && this.candidate) { ret += ' justify'; }
+
+    return ret;
   }
 
   public get image(): string {
     let side: string = '';
-    if(this.unit.side === Side.Green) { side = 'order'; }
-    if(this.unit.side === Side.Red) { side = 'chaos'; }
 
-    return `/assets/${this.unit.type.toLowerCase()}-${side}.png`
+    if(this.unit) {
+      if(this.unit.side === Side.Green) { side = 'order'; }
+      if(this.unit.side === Side.Red) { side = 'chaos'; }
+
+      return `/assets/${this.unit.type.toLowerCase()}-${side}.png`;
+    }
+
+    if(this.candidate) {
+      if(this.candidate.side === Side.Green) { side = 'order'; }
+      if(this.candidate.side === Side.Red) { side = 'chaos'; }
+
+      return `/assets/${this.candidate.type.toLowerCase()}-${side}.png`;
+    }
+
+    return '';
   }
 
   public get rotation(): string {

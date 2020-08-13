@@ -29,7 +29,7 @@ export const InitialState: GameState = {
 const reducer = createReducer(
     InitialState,
     on(GameActions.GameSideAssigned, (state: GameState, action: { payload }) => ({...state, side: action.payload})),
-    on(GameActions.GameReceive, (state: GameState, action: { payload }) => ({...state, game: action.payload})),
+    on(GameActions.GameReceive, (state: GameState, action: { payload }) => ({...state, game: action.payload, moves: 0, history: [], lastMove: null})),
     on(GameActions.FieldActivate, (state: GameState, action: { payload }) => fieldActivate(state, action)),
     on(GameActions.FieldDeactivate, (state: GameState, action: { payload }) => fieldDeactivate(state, action)),
     on(GameActions.FieldMoveHere, (state: GameState, action: { payload }) => fieldMoveHere(state, action)),
@@ -75,29 +75,23 @@ function fieldMoveHere (state: GameState, action: { payload } ) : GameState {
 
 function fieldMoveUndo (state: GameState, action ) : GameState {
 
-    if (state.history.length > 0) {
+    if (state.history.length > 0 && state.lastMove?.from && state.lastMove?.to) {
         const history: Move[] = state.history.filter(m => true);
         const move: Move = history.pop();
-
         const sourceField: Field = Field.clone(state.game.board.fields[move.from[0]][move.from[1]]);
         const targetField: Field = Field.clone(state.game.board.fields[move.to[0]][move.to[1]]);
+        if(state.side === Side.Green) { targetField.greenCandidate = sourceField.current; }
+        if(state.side === Side.Red) { targetField.redCandidate = sourceField.current; }
+        targetField.current = null;
 
-        if (sourceField && targetField) {
-            const unit: Unit = targetField.candidate(move.side);
+        const lastMove = { from: targetField, to: sourceField };
 
-            sourceField.current = unit;
-
-            // We can delete them both without taking care about the side
-            // because only one side will have data here
-            targetField.greenCandidate = null;
-            targetField.redCandidate = null;
-
-            const game: Game = Game.clone(state.game);
-            game.board.fields[sourceField.row][sourceField.column] = sourceField;
-            game.board.fields[targetField.row][targetField.column] = targetField;
-
-            return {...state, selectedField: null, game: game, moves: state.moves - 1, history: history};
-        }
+        return {...state, 
+            selectedField: null, 
+            moves: state.moves - 1, 
+            history: history,
+            lastMove: lastMove
+        };
     }
 
     return state;

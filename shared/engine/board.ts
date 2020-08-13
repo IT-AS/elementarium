@@ -237,11 +237,9 @@ export default class Board {
             if (valid) {
                 if (sourceField.current.side === Side.Green) {
                     targetField.greenCandidate = sourceField.current;
-                    sourceField.greenLast = sourceField.current;
                 }
                 if (sourceField.current.side === Side.Red) {
                     targetField.redCandidate = sourceField.current;
-                    sourceField.redLast = sourceField.current;
                 }
 
                 sourceField.current = null;

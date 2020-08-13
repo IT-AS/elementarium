@@ -1,7 +1,5 @@
+.candidate,
 .unit {
-    text-align: center;
-    margin: auto;
-    margin-top: 2%;
 
     &.fire {
         &.red {
@@ -52,4 +50,7 @@
         background-image: url(/assets/obstacle.png);
     }
   }
-  
+
+  .justify {
+      transform: translate(52%, -150%);
+  }

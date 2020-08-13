@@ -43,6 +43,37 @@ export class BoardCellComponent implements OnInit {
     return this.field?.current ? 'candidate-over-unit' : 'candidate';
   }
 
+  public get background(): string {
+    const max: number = 10;
+    let background: string = '';
+
+    if (this.field?.row === 0) { 
+      if (this.field?.column === 0) {
+        background = 'top-left';
+      } else if (this.field?.column === max) {
+        background = 'top-right';
+      } else {
+        background = 'top';
+      }
+    } else if (this.field?.row === max) {
+      if (this.field?.column === 0) {
+        background = 'bot-left';
+      } else if (this.field?.column === max) {
+        background = 'bot-right';
+      } else {
+        background = 'bot';
+      }
+    } else if (this.field?.column === 0) {
+      background = 'left';
+    } else if (this.field?.column === max) {
+      background = 'right';
+    } else {
+      background = 'cell';
+    }
+
+    return `url(/assets/${background}.png)`;
+  }
+
   private lastMove$: Observable<{ from: Field, to: Field }>;
   private selectedField$: Observable<Field>;
   private targets$: Observable<number[][]>;
@@ -56,59 +87,22 @@ export class BoardCellComponent implements OnInit {
     });
 
     this.targets$ = this.store.pipe(select(selectTargets));
-    this.targets$.subscribe(targets => {
-      if(targets.length > 0) {
-        const target = targets.filter(target => this.field?.row === target[0] && this.field?.column === target[1]);
-        if(target.length > 0) {
-          this.isTarget = true;
-        }
-      } else {
-        this.isTarget = false;
-      }
-    });
+    this.targets$.subscribe(targets => this.filterTargets(targets));
 
     this.lastMove$ = this.store.pipe(select(selectLastMove));
-    this.lastMove$.subscribe(lastMove => {
-      if( this.field && lastMove?.to && lastMove?.from ) {
-        if(lastMove.to.row === this.field.row && lastMove.to.column === this.field.column) {
-          const newField = Field.clone(this.field);
-          if (lastMove.from.current) {
-            if (this.side === Side.Green) { 
-              newField.greenCandidate = lastMove.from.current;
-            }
-            if (this.side === Side.Red) { 
-              newField.redCandidate = lastMove.from.current; 
-            }
-          } else {
-            newField.current = lastMove.from.candidate(this.side);
-          }
-          this.field = newField;
-        }
-
-        if(lastMove.from.row === this.field.row && lastMove.from.column === this.field.column) {
-          const newField = Field.clone(this.field);
-          if(newField.current?.side === this.side) { 
-            newField.current = null; 
-          } else {
-            newField.greenCandidate = null;
-            newField.redCandidate = null;
-          }
-          this.field = newField;
-        }
-      }
-    });
+    this.lastMove$.subscribe(lastMove => this.performMove(lastMove));
   }
 
   public onClick(event) {
-    this.activate();
+    this.activateFields();
   }
 
   public onDrag() {
-    this.activate();
+    this.activateFields();
   }
 
   public onDrop(event) {
-    this.activate();
+    this.activateFields();
     event.preventDefault();
   }
 
@@ -116,7 +110,7 @@ export class BoardCellComponent implements OnInit {
     event.preventDefault();
   }
 
-  private activate() {
+  private activateFields(): void {
     if(this.selectedField && this.isTarget) {
         this.store.dispatch(FieldMoveHere({payload: this.field}));
         this.store.dispatch(FieldDeactivate({payload: this.field}));
@@ -124,6 +118,47 @@ export class BoardCellComponent implements OnInit {
       this.store.dispatch(FieldDeactivate({payload: this.field}));
       if(!this.field?.empty()) {
         this.store.dispatch(FieldActivate({payload: this.field}));
+      }
+    }
+  }
+
+  private filterTargets(targets: number[][]): void {
+    if(targets.length > 0) {
+      const target = targets.filter(target => this.field?.row === target[0] && this.field?.column === target[1]);
+      if(target.length > 0) {
+        this.isTarget = true;
+      }
+    } else {
+      this.isTarget = false;
+    }
+  }
+
+  private performMove(lastMove): void {
+    if( this.field && lastMove?.to && lastMove?.from ) {
+      if(lastMove.to.row === this.field.row && lastMove.to.column === this.field.column) {
+        const newField = Field.clone(this.field);
+        if (lastMove.from.current) {
+          if (this.side === Side.Green) { 
+            newField.greenCandidate = lastMove.from.current;
+          }
+          if (this.side === Side.Red) { 
+            newField.redCandidate = lastMove.from.current; 
+          }
+        } else {
+          newField.current = lastMove.from.candidate(this.side);
+        }
+        this.field = newField;
+      }
+
+      if(lastMove.from.row === this.field.row && lastMove.from.column === this.field.column) {
+        const newField = Field.clone(this.field);
+        if(newField.current?.side === this.side) { 
+          newField.current = null; 
+        } else {
+          newField.greenCandidate = null;
+          newField.redCandidate = null;
+        }
+        this.field = newField;
       }
     }
   }

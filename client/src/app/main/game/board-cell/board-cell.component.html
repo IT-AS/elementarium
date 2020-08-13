@@ -1,12 +1,9 @@
 <div 
     class="board-cell"
-    [style.width.px]="size - 1"
-    [style.height.px]="size - 1"
-    [class.red]="territory === Side.Red && !isTarget"
-    [class.green]="territory === Side.Green && !isTarget"
-    [class.gray]="territory === Side.Gray && !isTarget"
-    [class.target]="isTarget"
+    [style.width.px]="size"
+    [style.height.px]="size"
     [style.background-size.px]="size"
+    [style.background-image]="background"
     (click)="onClick($event)"
     (dragover)="allowDrop($event)"
     (drop)="onDrop($event)">
@@ -23,4 +20,28 @@
         [size]="size/2"
         [relation]="candidateRelation">
     </app-board-unit>
+    <div 
+        *ngIf="isTarget && !field?.current && !candidate"
+        [style.width.px]="size/4"
+        [style.height.px]="size/4"
+        [style.border-radius.px]="size/4"
+        [style.background-color]="side"
+        style="transform:translate(150%, 150%); ">
+    </div>
+    <div 
+        *ngIf="isTarget && field?.current"
+        [style.width.px]="size/4"
+        [style.height.px]="size/4"
+        [style.border-radius.px]="size/4"
+        [style.background-color]="side"
+        style="transform:translate(150%, -235%); ">
+    </div>
+    <div 
+        *ngIf="isTarget && !field?.current && candidate"
+        [style.width.px]="size/4"
+        [style.height.px]="size/4"
+        [style.border-radius.px]="size/4"
+        [style.background-color]="side"
+        style="transform:translate(150%, -50%); ">
+    </div>
 </div>

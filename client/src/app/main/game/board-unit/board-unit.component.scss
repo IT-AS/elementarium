@@ -53,12 +53,17 @@
     }
   }
 
+.unit,
+.unit-under-candidate {
+    transform: translate(3%, 3%);
+}
+
 .candidate {
-    transform: translate(50%, 50%);
+    transform: translate(54%, 54%);
 }
 
 .candidate-over-unit {
-    transform: translate(50%, -150%);
+    transform: translate(54%, -146%);
 }
 
 .unit-under-candidate {

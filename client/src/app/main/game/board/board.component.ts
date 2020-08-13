@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, HostListener } from '@angular/core';
 import Board from '../../../../../../shared/engine/board';
-import Field from '../../../../../../shared/engine/field';
 import { Side } from '../../../../../../shared/engine/enums/side';
 
 @Component({

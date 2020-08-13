@@ -2,8 +2,8 @@
     margin:auto;
     display:block;
 
-    border-left: 1px solid black;
-    border-top: 1px solid black;
+    //border-left: 1px solid black;
+    //border-top: 1px solid black;
 
     background-image: url(/assets/board.png);
     background-position: top left;
@@ -11,4 +11,5 @@
 
 .board-line {
     display: block;
+    margin: auto;
 }

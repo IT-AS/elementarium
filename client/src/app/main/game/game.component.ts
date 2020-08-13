@@ -6,7 +6,7 @@ import GameState from './store/game.reducer';
 import { selectGame, selectSide, selectHistory } from './store/game.selector';
 import { Router } from '@angular/router';
 import { TokenInfo } from '../../../../../shared/lobby/tokenInfo';
-import { GameResume, GameMove, FieldMoveUndo } from './store/game.actions';
+import { GameResume, GameMove, FieldMoveUndo, FieldDeactivate } from './store/game.actions';
 import { Side } from '../../../../../shared/engine/enums/side';
 import { MoveInfo } from '../../../../../shared/lobby/moveInfo';
 import Move from '../../../../../shared/engine/moves/move';
@@ -88,6 +88,7 @@ export class GameComponent implements OnInit {
 
   public undo(): void {
     this.store.dispatch(FieldMoveUndo());
+    this.store.dispatch(FieldDeactivate({payload: null}));
   }
 
   public retreat(): void {

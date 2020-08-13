@@ -1,23 +1,5 @@
 .board-cell {
     display: inline-block;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
-
-    /*
-    &.red {
-        background-color: rgba(255, 170, 170, .5);
-    }
-     
-    &.gray {
-        background-color: rgba(204, 204, 204, .5);
-    }
-      
-    &.green {
-        background-color: rgba(170, 255, 170, .5);
-    }
-    */  
-     
-    &.target {
-        background-color: rgba(85, 85, 85, .8);
-    }  
+    // border-right: 1px solid black;
+    // border-bottom: 1px solid black;
 }

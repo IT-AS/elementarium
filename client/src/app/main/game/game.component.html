@@ -1,7 +1,7 @@
 <div class="game-container background">
     <div class="grid">
         <div class="grid-cell-secondary">
-            <p>Game Name: {{game?.name}}, Turn: {{game?.turn}}, Waiting: {{waiting}}</p>
+            <p>Game Name: {{game?.name}}, Turn: {{game?.turn}}</p>
         </div>
         <div class="grid-cell-primary">
             <app-board [board]="game?.board" [side]="side"></app-board>
@@ -26,14 +26,15 @@
         </div>
     </div>
 </div>
-<div id="game-finalization-container" [class.hidden]="!finished">
+<div id="game-information-container" [class.hidden]="!finished && !waiting">
     <div>
-        <h1>{{outcome}}</h1>
+        <h1 *ngIf="finished && !waiting">{{outcome}}</h1>
+        <h1 *ngIf="!finished && waiting">Waiting for opponent...</h1>
     </div>
     <div>
-        <button class="action-button" (click)="quit()">Quit</button>
+        <button *ngIf="!waiting" class="action-button" (click)="quit()">Quit</button>
     </div>
 </div>
-<div id="game-finalization-overlay" [class.hidden]="!finished" (click)="close()">
+<div id="game-information-overlay" [class.hidden]="!finished && !waiting" (click)="close()">
 </div>
 

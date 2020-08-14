@@ -4,7 +4,6 @@ import Game from '../../../../../../shared/engine/game';
 import { Side } from '../../../../../../shared/engine/enums/side';
 import Field from '../../../../../../shared/engine/field';
 import Move from '../../../../../../shared/engine/moves/move';
-import Unit from '../../../../../../shared/engine/unit';
 
 export default interface GameState {
     game: Game,

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/services/socket.service';
-import { ActionTypes, GameMoveRequest, GameResumeRequest } from './game.actions';
+import { ActionTypes, GameMoveRequest, GameResumeRequest, GameSurrenderRequest } from './game.actions';
  
 @Injectable()
 export class GameEffects {
@@ -20,6 +20,14 @@ export class GameEffects {
     map((action: any) => {
         this.socketService.move(action.payload);
         return GameMoveRequest();
+    }))
+  );
+
+  doSurrender$ = createEffect(() => this.actions$.pipe(
+    ofType(ActionTypes.GameSurrenderAction),
+    map((action: any) => {
+        this.socketService.surrender(action.payload);
+        return GameSurrenderRequest();
     }))
   );
 

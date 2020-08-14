@@ -108,6 +108,25 @@ export default class Socket {
                     }
                 }
             });
+
+            socket.on(SocketEvents.SURRENDER, (tokenInfo: TokenInfo) => {
+
+                // get the game
+                const game: Game = this.lobby.getGame(tokenInfo.gameId);
+
+                // get side by token (addition authorization per move)
+                const side: Side = this.lobby.getSide(tokenInfo.gameId, tokenInfo.token);
+
+                // Ignore not authorized moves
+                if(side !== Side.Gray) {
+
+                    // apply surrender
+                    game.surrender(side);
+                    
+                    // send the game
+                    this.io.emit(this.getGameChannel(tokenInfo.gameId), game);
+                }
+            });
         });
     }
 }

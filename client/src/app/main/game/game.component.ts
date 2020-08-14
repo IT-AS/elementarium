@@ -6,7 +6,7 @@ import GameState from './store/game.reducer';
 import { selectGame, selectSide, selectHistory } from './store/game.selector';
 import { Router } from '@angular/router';
 import { TokenInfo } from '../../../../../shared/lobby/tokenInfo';
-import { GameResume, GameMove, FieldMoveUndo, FieldDeactivate } from './store/game.actions';
+import { GameResume, GameMove, FieldMoveUndo, FieldDeactivate, GameSurrender } from './store/game.actions';
 import { Side } from '../../../../../shared/engine/enums/side';
 import { MoveInfo } from '../../../../../shared/lobby/moveInfo';
 import Move from '../../../../../shared/engine/moves/move';
@@ -46,9 +46,9 @@ export class GameComponent implements OnInit {
   }
 
   public get waiting(): boolean {
-    if(this.game.journal.length <= 0) {return this.clientWaiting; }
+    if(this.game?.journal.length <= 0) {return this.clientWaiting; }
 
-    const turn: Turn = this.game.journal[this.game.turn - 1];
+    const turn: Turn = this.game?.journal[this.game.turn - 1];
 
     if(!turn) { return this.clientWaiting; }
 
@@ -108,8 +108,8 @@ export class GameComponent implements OnInit {
     this.store.dispatch(FieldDeactivate({payload: null}));
   }
 
-  public retreat(): void {
-
+  public surrender(): void {
+    this.store.dispatch(GameSurrender({payload: this.tokenInfo}));
   }
 
   public quit(): void {

@@ -12,6 +12,8 @@ export enum ActionTypes{
   GameReceiveAction = '[Game] Receive',
   GameMoveAction = '[Game] Move',
   GameMoveRequestAction = '[Game] Move Request',
+  GameSurrenderAction = '[Game] Surrender',
+  GameSurrenderRequestAction = '[Game] Surrender Request',
   FieldActivateAction = '[Field] Activate',
   FieldDeactivateAction = '[Field] Dectivate',
   FieldMoveHereAction = '[Field] Move Here',
@@ -44,6 +46,15 @@ export const GameMove = createAction(
 
 export const GameMoveRequest = createAction(
   ActionTypes.GameMoveRequestAction
+);
+
+export const GameSurrender = createAction(
+  ActionTypes.GameSurrenderAction,
+  props<{ payload: TokenInfo }>()
+);
+
+export const GameSurrenderRequest = createAction(
+  ActionTypes.GameSurrenderRequestAction
 );
 
 export const FieldActivate = createAction(

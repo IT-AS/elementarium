@@ -83,6 +83,11 @@ export class SocketService {
     this.socket.emit(SocketEvents.MOVE, moveInfo);
   }
 
+  public surrender(tokenInfo: TokenInfo): void {
+    console.log('SOCKET');
+    this.socket.emit(SocketEvents.SURRENDER, tokenInfo);
+  }
+
   private getGameChannel(gameId: string): string {
     return `${SocketEvents.GAME}${gameId}`;
   }

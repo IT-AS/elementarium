@@ -1,6 +1,7 @@
 <p>{{game.name}}</p>
 <p>{{playerInfo}}</p>
-<p>
+<p *ngIf="game.finished">Game finished</p>
+<p *ngIf="!game.finished">
     <a *ngIf="!getJoined(Side.Green)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Green)">Join As Green</i></a>
     <a *ngIf="!getJoined(Side.Red)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Red)">Join As Red</i></a>
     <a href="javascript:void(0)"><i (click)="openDeleteGame()">Delete</i></a>

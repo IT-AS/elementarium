@@ -5,4 +5,5 @@ export interface GameInfo {
     name: string;
     players: Player[];
     turn: number;
+    finished: boolean;
 };

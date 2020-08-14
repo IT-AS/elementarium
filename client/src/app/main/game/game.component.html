@@ -9,7 +9,7 @@
         <div class="grid-cell-secondary">
             <div *ngIf="!game?.winner">
                 <div>
-                    <button class="action-button" [disabled]="history.length === 0" (click)="retreat()">Retreat</button>
+                    <button class="action-button" (click)="surrender()">Surrender</button>
                 </div>
                 <div>
                     <button class="action-button" [disabled]="history.length === 0" (click)="undo()">Undo</button>

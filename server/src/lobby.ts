@@ -87,7 +87,8 @@ export default class Lobby {
             gameId: g.game.gameId, 
             name: g.game.name, 
             players: g.game.players, 
-            turn: g.game.turn 
+            turn: g.game.turn ,
+            finished: g.game.winner !== null
         } as GameInfo));
     }
 

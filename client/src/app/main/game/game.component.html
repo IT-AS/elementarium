@@ -1,7 +1,7 @@
 <div class="game-container background">
     <div class="grid">
         <div class="grid-cell-secondary">
-            <p>Game Name: {{game?.name}}, Turn: {{game?.turn}}</p>
+            <p>Game Name: {{game?.name}}, Turn: {{game?.turn}}, Waiting: {{waiting}}</p>
         </div>
         <div class="grid-cell-primary">
             <app-board [board]="game?.board" [side]="side"></app-board>

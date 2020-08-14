@@ -10,6 +10,7 @@ import { GameResume, GameMove, FieldMoveUndo, FieldDeactivate } from './store/ga
 import { Side } from '../../../../../shared/engine/enums/side';
 import { MoveInfo } from '../../../../../shared/lobby/moveInfo';
 import Move from '../../../../../shared/engine/moves/move';
+import { Turn } from '../../../../../shared/engine/moves/turn';
 
 @Component({
   selector: 'app-game',
@@ -26,6 +27,7 @@ export class GameComponent implements OnInit {
 
   private tokenInfo: TokenInfo;
   private afterGame: boolean = false;
+  private clientWaiting: boolean = false;
 
   public get outcome(): string {
     if(this.game?.winner === Side.Red) {
@@ -43,6 +45,18 @@ export class GameComponent implements OnInit {
     return '';
   }
 
+  public get waiting(): boolean {
+    if(this.game.journal.length <= 0) {return this.clientWaiting; }
+
+    const turn: Turn = this.game.journal[this.game.turn - 1];
+
+    if(!turn) { return this.clientWaiting; }
+
+    return (this.side === Side.Green && turn.green !== null && !turn.red) ||
+           (this.side === Side.Red && !turn.green && turn.red !== null) ||
+           this.clientWaiting;
+  }
+
   public get finished(): boolean {
     return this.game?.winner && !this.afterGame;
   }
@@ -54,6 +68,7 @@ export class GameComponent implements OnInit {
       this.game$ = this.store.pipe(select(selectGame));
       this.game$.subscribe(game => {
         this.game = Game.clone(game);
+        this.clientWaiting = false;
       });
 
       this.side$ = this.store.pipe(select(selectSide));
@@ -82,6 +97,8 @@ export class GameComponent implements OnInit {
       moves: this.history,
       token: this.tokenInfo.token
     };
+
+    this.clientWaiting = true;
 
     this.store.dispatch(GameMove({payload: moveInfo}));
   }

@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import AsyncNedb from 'nedb-async'
 
 import {GameEntry} from './gameentry';
 import {JoinInfo} from '../../shared/lobby/joininfo';
@@ -11,112 +12,207 @@ import Player from '../../shared/engine/player';
 import AI from './modules/ai/ai';
 import { v4 as uuidv4 } from 'uuid';
 import { Side } from '../../shared/engine/enums/side';
+import { Token } from './token';
 
 export default class Lobby {
-    private games: GameEntry[];
+    private games: any;
 
     constructor() {
-        this.games = [];
+
+        this.games = new AsyncNedb<GameEntry>({ filename: 'games.db', autoload: true });
     }
 
-    public createGame(name: string, password: string): void {
-        const gameId: string = uuidv4();
-        const game: Game = new Game(gameId, name);
-        game.start();
+    public async createGame(name: string, password: string): Promise<Result> {
+        try {
 
-        const tokens: Map<string, Side> = new Map<string, Side>();
-        tokens.set(uuidv4(), Side.Green);
-        tokens.set(uuidv4(), Side.Red);
+            const gameId: string = uuidv4();
+            const game: Game = new Game(gameId, name);
+            game.start();
 
-        const encrypted = bcrypt.hashSync(password, 10);
-        this.games.push({game, password: encrypted, ai: null, tokens} as GameEntry);
-    }
+            const tokens: Token[] = [
+                { token: uuidv4(), side: Side.Green } as Token,
+                { token: uuidv4(), side: Side.Red } as Token
+            ];
 
-    public deleteGame(gameId: string, password: string): Result {
-        const gameEntry: GameEntry = this.getGameEntry(gameId);
-        const gamePassword: string = gameEntry.password;
+            const encrypted = await bcrypt.hash(password, 10);
+            await this.games.asyncInsert({game, password: encrypted, ai: null, tokens } as GameEntry);
 
-        if (bcrypt.compareSync(password, gamePassword)) {
-            this.games = this.games.filter((game) => game.game.gameId !== gameId);
             return {success: true, message: ''} as Result;
-        }
 
-        return {success: false, message: 'Wrong password'} as Result;
+        } catch(error) {
+
+            return {success: false, message: error} as Result;
+        }
+    }
+
+    public async deleteGame(gameId: string, password: string): Promise<Result> {
+        try {
+            const gameEntry: GameEntry = await this.getGameEntry(gameId);
+            const gamePassword: string = gameEntry.password;
+
+            if (await bcrypt.compare(password, gamePassword)) {
+                await this.games.asyncRemove({'game.gameId': gameId});
+
+                return {success: true, message: ''} as Result;
+            }
+    
+            return {success: false, message: 'Wrong password'} as Result;
+        } catch(error) {
+
+            return {success: false, message: error} as Result;
+        }
     }    
 
-    public joinGame(joinInfo: JoinInfo): Result {
-        const gameEntry: GameEntry = this.getGameEntry(joinInfo.gameId);
-        const game: Game = gameEntry.game;
-        const password: string = gameEntry.password;
+    public async updateGame(game: Game): Promise<Result> {
+        try {
+            const gameEntry: GameEntry = await this.getGameEntry(game.gameId);
+            gameEntry.game = game;
 
-        if (joinInfo.playerId === 'CPU') {
-            game.players[joinInfo.playerId] = joinInfo.side;
-            gameEntry.ai = new AI(game.board, joinInfo.side);
+            await this.games.asyncUpdate({'game.gameId': gameEntry.game.gameId}, gameEntry);
 
             return {success: true, message: ''} as Result;
-        } else {
-            if (game && password) {
-                if (bcrypt.compareSync(joinInfo.password, password)) {
-                    game.players.push({name: joinInfo.playerId, side: joinInfo.side} as Player);
-                    return {success: true, message: ''} as Result;
-                } else {
-                    return {success: false, message: 'Wrong password'} as Result;
-                }
+
+        } catch(error) {
+
+            return {success: false, message: error} as Result;
+        }    
+    }
+
+    public async joinGame(joinInfo: JoinInfo): Promise<Result> {
+        try {
+            const gameEntry: GameEntry = await this.getGameEntry(joinInfo.gameId);
+            const game: Game = gameEntry.game;
+            const password: string = gameEntry.password;
+
+            if (joinInfo.playerId === 'CPU') {
+                game.players[joinInfo.playerId] = joinInfo.side;
+                gameEntry.ai = new AI(game.board, joinInfo.side);
+
+                return {success: true, message: ''} as Result;
             } else {
-                return {success: false, message: 'Unknown game'} as Result;
+                if (game && password) {
+                    if (bcrypt.compareSync(joinInfo.password, password)) {
+                        game.players.push({name: joinInfo.playerId, side: joinInfo.side} as Player);
+
+                        await this.games.asyncUpdate({'game.gameId': gameEntry.game.gameId}, gameEntry);
+
+                        return {success: true, message: ''} as Result;
+                    } else {
+                        return {success: false, message: 'Wrong password'} as Result;
+                    }
+                } else {
+                    return {success: false, message: 'Unknown game'} as Result;
+                }
             }
+        } catch(error) {
+
+            return {success: false, message: error} as Result;
         }
     }
 
-    public resumeGame(tokenInfo: TokenInfo): Result {
-        const gameEntry: GameEntry = this.getGameEntry(tokenInfo.gameId);
+    public async resumeGame(tokenInfo: TokenInfo): Promise<Result> {
+        try {
 
-        if(gameEntry && gameEntry.tokens.has(tokenInfo.token)) {
-            return {success: true, message: ''} as Result;
-        }
+            const gameEntry: GameEntry = await this.getGameEntry(tokenInfo.gameId);
 
-        return {success: false, message: 'Unknown token'} as Result;
-    }
-
-    public getGame(gameId: string): Game {
-        return this.getGameEntry(gameId).game;
-    }
-
-    public getGameList(): GameInfo[] {
-        return this.games.map(g => ({
-            gameId: g.game.gameId, 
-            name: g.game.name, 
-            players: g.game.players, 
-            turn: g.game.turn ,
-            finished: g.game.winner !== null
-        } as GameInfo));
-    }
-
-    public getToken(gameId: string, side: Side) {
-        const gameEntry: GameEntry = this.getGameEntry(gameId);
-        let tokenInfo: TokenInfo = null;
-
-        gameEntry.tokens.forEach((value: Side, key: string) => {
-            if(value === side) {
-                tokenInfo = { gameId, token: key };
+            if(gameEntry && gameEntry.tokens.filter(t => t.token === tokenInfo.token).length > 0) {
+                return {success: true, message: ''} as Result;
             }
-        });
 
-        return tokenInfo;
+            return {success: false, message: 'Unknown token'} as Result;
+
+        } catch(error) {
+
+            return {success: false, message: error} as Result;
+        }
     }
 
-    public getSide(gameId: string, token: string) {
-        const gameEntry: GameEntry = this.getGameEntry(gameId);
+    public async getGame(gameId: string): Promise<Game> {
+        try {
+            
+            const gameEntry: GameEntry = await this.getGameEntry(gameId);
+            if(gameEntry) {
+                return gameEntry.game;
+            }
 
-        if(gameEntry.tokens.has(token)) {
-            return gameEntry.tokens.get(token);
+            return null
+
+        } catch(error) {
+
+            return null;
+        }
+    }
+
+    public async getGameList(): Promise<GameInfo[]> {
+        try {
+            const result = await this.games.asyncFind({});
+
+            if(result) {
+                return result.map(g => ({
+                    gameId: g.game.gameId, 
+                    name: g.game.name, 
+                    players: g.game.players, 
+                    turn: g.game.turn ,
+                    finished: g.game.winner !== null
+                } as GameInfo));
+            }
+
+            return null;
+
+        } catch(error) {
+
+            return null;
+        }
+    }
+
+    public async getToken(gameId: string, side: Side): Promise<TokenInfo> {
+        const gameEntry: GameEntry = await this.getGameEntry(gameId);
+
+        if(gameEntry) {
+            console.log(gameEntry);
+            const tokens: Token[] = gameEntry.tokens.filter(t => t.side === side);
+
+            if (tokens?.length > 0) {
+                return { gameId, token: tokens[0].token } as TokenInfo;
+            }
+
+            return null;
         }
 
-        return Side.Gray;
+        return null;
     }
 
-    private getGameEntry(gameId: string) {
-        const filtered = this.games.filter(g => g.game.gameId === gameId);
-        return filtered[0];
+    public async getSide(gameId: string, token: string): Promise<Side> {
+        try {
+
+            const gameEntry: GameEntry = await this.getGameEntry(gameId);
+            const tokens: Token[] = gameEntry.tokens.filter(t => t.token === token);
+
+            if(tokens?.length > 0) {
+                return tokens[0].side;
+            }
+    
+            return null;
+
+        } catch (error) {
+
+            return null;
+        }
+    }
+
+    private async getGameEntry(gameId: string): Promise<GameEntry> {
+        try {
+            const result = await this.games.asyncFind({ 'game.gameId': gameId })
+
+            if(result?.length > 0) {
+                return result[0];
+            }
+
+            return null;
+
+        } catch(error) {
+            
+            return null;
+        }
     }
 }

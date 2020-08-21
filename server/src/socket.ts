@@ -10,6 +10,7 @@ import Lobby from './lobby';
 import Game from '../../shared/engine/game';
 import { TokenInfo } from '../../shared/lobby/tokeninfo';
 import { Side } from '../../shared/engine/enums/side';
+import { GameEntry } from './gameentry';
 
 export default class Socket {
     private readonly server: http.Server;
@@ -33,89 +34,101 @@ export default class Socket {
         this.io.on(SocketEvents.CONNECTION, (socket: any) => {
             console.log('connected');
 
-            socket.on(SocketEvents.LIST, () => {
+            socket.on(SocketEvents.LIST, async () => {
 
                 // Send updated list of games to clients
-                this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+                this.io.emit(SocketEvents.LIST, await this.lobby.getGameList());
             });
 
-            socket.on(SocketEvents.GAME, (name: string, password: string) => {
+            socket.on(SocketEvents.GAME, async (name: string, password: string) => {
 
                 // create game
-                this.lobby.createGame(name, password);
+                await this.lobby.createGame(name, password);
 
                 // Send updated list of games to clients
-                this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+                this.io.emit(SocketEvents.LIST, await this.lobby.getGameList());
             });
 
-            socket.on(SocketEvents.DELETE, (gameId: string, password: string) => {
+            socket.on(SocketEvents.DELETE, async (gameId: string, password: string) => {
+
+                console.log('DELETE');
 
                 // create game
-                this.lobby.deleteGame(gameId, password);
+                await this.lobby.deleteGame(gameId, password);
 
                 // Send updated list of games to clients
-                this.io.emit(SocketEvents.LIST, this.lobby.getGameList());
+                this.io.emit(SocketEvents.LIST, await this.lobby.getGameList());
             });
 
-            socket.on(SocketEvents.JOIN, (joiner: JoinInfo) => {
+            socket.on(SocketEvents.JOIN, async (joiner: JoinInfo) => {
 
                 // join game
-                const result: Result = this.lobby.joinGame(joiner);
+                const result: Result = await this.lobby.joinGame(joiner);
 
                 if (result.success) {
 
-                    const tokenInfo: TokenInfo = this.lobby.getToken(joiner.gameId, joiner.side)
+                    const tokenInfo: TokenInfo = await this.lobby.getToken(joiner.gameId, joiner.side)
 
-                    // Send token info to client
-                    socket.emit(this.getGameChannel(joiner.gameId), tokenInfo);
-                    
-                    // Send updated list of games to clients
-                    this.io.emit(SocketEvents.LIST, this.lobby.getGameList());                    
+                    if(tokenInfo) {
+                        // Send token info to client
+                        socket.emit(this.getGameChannel(joiner.gameId), tokenInfo);
+                        
+                        // Send updated list of games to clients
+                        this.io.emit(SocketEvents.LIST, await this.lobby.getGameList());         
+
+                    } else {
+
+                        socket.emit(SocketEvents.PROBLEM, 'No token available');
+                    }
                 } else {
                     socket.emit(SocketEvents.PROBLEM, result.message);
                 }
             });
 
-            socket.on(SocketEvents.RESUME, (tokenInfo: TokenInfo) => {
+            socket.on(SocketEvents.RESUME, async (tokenInfo: TokenInfo) => {
 
                 // resume game
-                const result: Result = this.lobby.resumeGame(tokenInfo);
+                const result: Result = await this.lobby.resumeGame(tokenInfo);
 
                 if (result.success) {
                     // Send side to client
-                    socket.emit(this.getGameChannel(tokenInfo.gameId), this.lobby.getSide(tokenInfo.gameId, tokenInfo.token));
+                    socket.emit(this.getGameChannel(tokenInfo.gameId), await this.lobby.getSide(tokenInfo.gameId, tokenInfo.token));
                     
                     // Send game to client
-                    socket.emit(this.getGameChannel(tokenInfo.gameId), this.lobby.getGame(tokenInfo.gameId));
+                    socket.emit(this.getGameChannel(tokenInfo.gameId), await this.lobby.getGame(tokenInfo.gameId));
                 } else {
                     socket.emit(SocketEvents.PROBLEM, result.message);
                 }
             });
 
-            socket.on(SocketEvents.MOVE, (moves: MoveInfo) => {
+            socket.on(SocketEvents.MOVE, async (moves: MoveInfo) => {
                 // get the game
-                const game: Game = this.lobby.getGame(moves.gameId);
+                const game: Game = Game.clone(await this.lobby.getGame(moves.gameId));
 
                 // get side by token (addition authorization per move)
-                const side: Side = this.lobby.getSide(moves.gameId, moves.token);
+                const side: Side = await this.lobby.getSide(moves.gameId, moves.token);
 
                 // Ignore not authorized moves
                 if(side !== Side.Gray) {
 
                     // do the move
                     if (game.next(side, moves.moves)) {
+
                         this.io.emit(this.getGameChannel(moves.gameId), game);
                     }
+
+                    // save to db
+                    this.lobby.updateGame(game);
                 }
             });
 
-            socket.on(SocketEvents.SURRENDER, (tokenInfo: TokenInfo) => {
+            socket.on(SocketEvents.SURRENDER, async (tokenInfo: TokenInfo) => {
 
                 // get the game
-                const game: Game = this.lobby.getGame(tokenInfo.gameId);
+                const game: Game = Game.clone(await this.lobby.getGame(tokenInfo.gameId));
 
                 // get side by token (addition authorization per move)
-                const side: Side = this.lobby.getSide(tokenInfo.gameId, tokenInfo.token);
+                const side: Side = await this.lobby.getSide(tokenInfo.gameId, tokenInfo.token);
 
                 // Ignore not authorized moves
                 if(side !== Side.Gray) {
@@ -123,6 +136,9 @@ export default class Socket {
                     // apply surrender
                     game.surrender(side);
                     
+                    // save to db
+                    this.lobby.updateGame(game);
+
                     // send the game
                     this.io.emit(this.getGameChannel(tokenInfo.gameId), game);
                 }

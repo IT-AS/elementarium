@@ -55,7 +55,7 @@ export default class Board {
         this.targets = this.findAllMoves();
     }
 
-    public resolve(): TurnEvent {
+    public resolve(light: boolean = false): TurnEvent {
         const spawns: FieldEvent[] = [];
         const captures: FieldEvent[] = [];
 
@@ -184,7 +184,9 @@ export default class Board {
             }
         }
 
-        this.targets = this.findAllMoves();
+        if(!light) {
+            this.targets = this.findAllMoves();
+        }
 
         return {
             winner: this.conclude(),
@@ -194,7 +196,7 @@ export default class Board {
     }
 
 
-    public move(sourceRow: number, sourceCol: number, targetRow: number, targetCol: number): void {
+    public move(sourceRow: number, sourceCol: number, targetRow: number, targetCol: number, check: boolean = true): void {
         const sourceField: Field = this.fields[sourceRow][sourceCol];
         const targetField: Field = this.fields[targetRow][targetCol];
 
@@ -203,23 +205,25 @@ export default class Board {
             let valid: boolean = true;
 
             // Check if move was in list of possible moves
-            const targets = this.targets.filter(f =>
-                f &&
-                f.side === side &&
-                f.from[0] === sourceField.row && f.from[1] === sourceField.column
-            )[0];
+            if(check) {
+                const targets = this.targets.filter(f =>
+                    f &&
+                    f.side === side &&
+                    f.from[0] === sourceField.row && f.from[1] === sourceField.column
+                )[0];
 
-            if (targets) {
-                const target = targets.to.filter(t =>
-                    t[0] === targetField.row && t[1] === targetField.column);
+                if (targets) {
+                    const target = targets.to.filter(t =>
+                        t[0] === targetField.row && t[1] === targetField.column);
 
-                if (!target) {
+                    if (!target) {
+                        valid = false;
+                    }
+                } else {
                     valid = false;
                 }
-            } else {
-                valid = false;
             }
-
+            
             // Check if dynamic preconditions are met (such as putting a piece on a place where a piece was previously)
             if (!targetField.empty()) {
                 if (targetField.current.side === Side.Gray) {
@@ -327,8 +331,8 @@ export default class Board {
 
     private spawn(candidate: Field, target: Field, corner1: Field, corner2: Field, type: UnitType): FieldEvent {
         // Check corners empty or friendly
-        if (corner1.empty() || corner1.current.friendly(candidate.current) &&
-            corner2.empty() || corner2.current.friendly(candidate.current)) {
+        if (corner1.empty() || corner1.current?.friendly(candidate.current) &&
+            corner2.empty() || corner2.current?.friendly(candidate.current)) {
             // Check territory
             if (candidate.current?.side !== candidate.territory() && candidate.territory() !== Side.Gray &&
                 corner1.current?.side !== corner1.territory() && corner1.territory() !== Side.Gray &&

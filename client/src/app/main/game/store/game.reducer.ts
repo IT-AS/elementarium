@@ -59,7 +59,7 @@ function fieldMoveHere (state: GameState, action: { payload } ) : GameState {
     
     if(sourceField.current.type) {
         const history: Move[] = state.history.filter(m => true);
-        history.push({ from: [sourceField.row, sourceField.column], to: [targetField.row, targetField.column], side: state.side } as Move);
+        history.push({ from: [sourceField.row, sourceField.column], to: [targetField.row, targetField.column] } as Move);
 
         return {...state, 
             selectedField: null, 

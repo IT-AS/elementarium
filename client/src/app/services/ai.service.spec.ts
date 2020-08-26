@@ -15,7 +15,7 @@ fdescribe('AiService', () => {
     expect(service).toBeTruthy();
   });
 
-  fit('should be tested', () => {
+  it('should be tested', () => {
     const game: Game = new Game('123', '123');
     game.start();
 

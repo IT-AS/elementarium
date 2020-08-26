@@ -102,15 +102,15 @@ export class BoardCellComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedField$ = this.store.pipe(select(selectSelectedField));
-    this.selectedField$.subscribe(selectedField => {
+    this.selectedField$?.subscribe(selectedField => {
       this.selectedField = selectedField;
     });
 
     this.targets$ = this.store.pipe(select(selectTargets));
-    this.targets$.subscribe(targets => this.filterTargets(targets));
+    this.targets$?.subscribe(targets => this.filterTargets(targets));
 
     this.lastMove$ = this.store.pipe(select(selectLastMove));
-    this.lastMove$.subscribe(lastMove => this.performMove(lastMove));
+    this.lastMove$?.subscribe(lastMove => this.performMove(lastMove));
   }
 
   public onClick(event) {
@@ -143,9 +143,9 @@ export class BoardCellComponent implements OnInit {
   }
 
   private filterTargets(targets: number[][]): void {
-    if(targets.length > 0) {
+    if(targets?.length > 0) {
       const target = targets.filter(target => this.field?.row === target[0] && this.field?.column === target[1]);
-      if(target.length > 0 && !this.field.candidate(this.side)) {
+      if(target?.length > 0 && !this.field.candidate(this.side)) {
         this.isTarget = true;
       }
     } else {

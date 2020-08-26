@@ -1,14 +1,22 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GameJoiningComponent } from './game-joining.component';
+import { Store } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 
 describe('GameJoiningComponent', () => {
   let component: GameJoiningComponent;
   let fixture: ComponentFixture<GameJoiningComponent>;
 
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
-      declarations: [ GameJoiningComponent ]
+      declarations: [ GameJoiningComponent ],
+      providers: [
+        {
+          provide: Store,
+          useValue: provideMockStore
+        }
+      ]
     })
     .compileComponents();
   }));

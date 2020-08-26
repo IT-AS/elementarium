@@ -1,20 +1,26 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GamesListComponent } from './game-list.component';
+import { GameListComponent } from './game-list.component';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { InitialState } from '../store/lobby.reducer';
 
-describe('GamesListComponent', () => {
-  let component: GamesListComponent;
-  let fixture: ComponentFixture<GamesListComponent>;
+describe('GameListComponent', () => {
+  let component: GameListComponent;
+  let fixture: ComponentFixture<GameListComponent>;
+  let store: MockStore;
 
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
-      declarations: [ GamesListComponent ]
+      declarations: [ GameListComponent ],
+      providers: [ provideMockStore({ initialState: InitialState }) ]
     })
     .compileComponents();
+
+    store = TestBed.inject(MockStore);
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GamesListComponent);
+    fixture = TestBed.createComponent(GameListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

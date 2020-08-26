@@ -29,19 +29,19 @@ export class GameEntryComponent implements OnInit {
     let red: string = '??';
     
     if(this.getJoined(Side.Green)) {
-      green = this.game.players.filter(player => player.side === Side.Green)[0].name + '(Green)';
+      green = this.game?.players.filter(player => player.side === Side.Green)[0].name + '(Green)';
     }
 
     if(this.getJoined(Side.Red)) {
-      red = this.game.players.filter(player => player.side === Side.Red)[0].name + '(Red)';
+      red = this.game?.players.filter(player => player.side === Side.Red)[0].name + '(Red)';
     }
 
     return green + ' vs ' + red;
   }
 
   public getJoined(side: Side): boolean {
-    return ( this.game.players[0] && this.game.players[0].side === side ) ||
-           ( this.game.players[1] && this.game.players[1].side === side );
+    return ( this.game?.players[0] && this.game?.players[0].side === side ) ||
+           ( this.game?.players[1] && this.game?.players[1].side === side );
   }
 
   public openDeleteGame(): void {

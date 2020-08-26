@@ -5,14 +5,14 @@ export const selectGameState = createFeatureSelector<GameState>('game');
 export const selectGame = createSelector(
     selectGameState,
     (state) => {
-        return state.game;
+        return state?.game;
     }
 );
 
 export const selectSelectedField = createSelector(
     selectGameState,
     (state) => {
-        return state.selectedField;
+        return state?.selectedField;
     }
 );
 
@@ -20,7 +20,7 @@ export const selectSelectedField = createSelector(
 export const selectLastMove = createSelector(
     selectGameState,
     (state) => {
-        return state.lastMove;
+        return state?.lastMove;
     }
 );
 
@@ -28,7 +28,7 @@ export const selectLastMove = createSelector(
 export const selectTargets = createSelector(
     selectGameState,
     (state) => {
-        return state.targets;
+        return state?.targets;
     }
 );
 
@@ -36,13 +36,13 @@ export const selectTargets = createSelector(
 export const selectSide = createSelector(
     selectGameState,
     (state) => {
-        return state.side;
+        return state?.side;
     }
 );
 
 export const selectHistory = createSelector(
     selectGameState,
     (state) => {
-        return state.history;
+        return state?.history;
     }
 );

@@ -454,12 +454,12 @@ export default class Board {
         if (result.length > 0) {
             return {from: [row, col], to: result, side: sourceField.current.side} as Direction;
         } else {
-            return {from: [row, col], to: result, side: Side.Gray} as Direction;
+            return null; //{from: [row, col], to: result, side: Side.Gray} as Direction;
         }
     }
 
     public findAllMoves(): Direction[] {
-        return [].concat.apply([], [].concat.apply([], this.fields.map(l => l.map(f => this.findMoves(f)))));
+        return [].concat.apply([], [].concat.apply([], this.fields.map(l => l.map(f => this.findMoves(f)).filter(m => m !== null))));
     }
 
 }

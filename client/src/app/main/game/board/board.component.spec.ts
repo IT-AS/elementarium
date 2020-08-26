@@ -6,7 +6,7 @@ describe('BoardComponent', () => {
   let component: BoardComponent;
   let fixture: ComponentFixture<BoardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
       declarations: [ BoardComponent ]
     })

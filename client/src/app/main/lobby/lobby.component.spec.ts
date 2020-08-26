@@ -6,7 +6,7 @@ describe('LobbyComponent', () => {
   let component: LobbyComponent;
   let fixture: ComponentFixture<LobbyComponent>;
 
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
       declarations: [ LobbyComponent ]
     })

@@ -66,18 +66,18 @@ export class GameComponent implements OnInit {
     private router: Router) { 
 
       this.game$ = this.store.pipe(select(selectGame));
-      this.game$.subscribe(game => {
+      this.game$?.subscribe(game => {
         this.game = Game.clone(game);
         this.clientWaiting = false;
       });
 
       this.side$ = this.store.pipe(select(selectSide));
-      this.side$.subscribe(side => {
+      this.side$?.subscribe(side => {
         this.side = side as Side;
       });
 
       this.history$ = this.store.pipe(select(selectHistory));
-      this.history$.subscribe(history => {
+      this.history$?.subscribe(history => {
         this.history = history as Move[];
       });
    }
@@ -85,7 +85,7 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     const url: string[] = this.router.url.split('/');
 
-    if(url.length >= 4 && url[1] === 'game') {
+    if(url?.length >= 4 && url[1] === 'game') {
       this.tokenInfo = { gameId: url[2], token: url[3] };
       this.store.dispatch(GameResume({payload: this.tokenInfo}));
     }

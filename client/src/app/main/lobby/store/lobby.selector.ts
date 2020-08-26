@@ -5,6 +5,6 @@ export const selectLobbyState = createFeatureSelector<LobbyState>('lobby');
 export const selectGames = createSelector(
     selectLobbyState,
     (state) => {
-        return state.games;
+        return state?.games;
     }
 );

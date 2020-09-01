@@ -24,7 +24,7 @@ export default class Rules {
             Side.Gray
         ];
 
-    static  opponent(side: Side): Side {
+    static opponent(side: Side): Side {
         switch (side) {
             case Side.Green:
                 return Side.Red;

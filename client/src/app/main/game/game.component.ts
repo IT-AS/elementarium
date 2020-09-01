@@ -11,6 +11,7 @@ import { Side } from '../../../../../shared/engine/enums/side';
 import { MoveInfo } from '../../../../../shared/lobby/moveInfo';
 import Move from '../../../../../shared/engine/moves/move';
 import { Turn } from '../../../../../shared/engine/moves/turn';
+import { AiService } from 'src/app/services/ai.service';
 
 @Component({
   selector: 'app-game',
@@ -63,7 +64,8 @@ export class GameComponent implements OnInit {
 
   constructor(
     private store: Store<GameState>,
-    private router: Router) { 
+    private router: Router,
+    private aiService: AiService) { 
 
       this.game$ = this.store.pipe(select(selectGame));
       this.game$?.subscribe(game => {
@@ -95,7 +97,8 @@ export class GameComponent implements OnInit {
     const moveInfo: MoveInfo = { 
       gameId: this.game.gameId,
       moves: this.history,
-      token: this.tokenInfo.token
+      token: this.tokenInfo.token,
+      ai: this.aiService.next(this.game.board, this.game.movesPerTurn, this.side)
     };
 
     this.clientWaiting = true;

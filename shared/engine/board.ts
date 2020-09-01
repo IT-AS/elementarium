@@ -29,6 +29,17 @@ export default class Board {
         return board;
     }
 
+    public dirty_restore(source: Board) {
+        this.fields = [];
+        for (let row = 0, n = this.dimension; row < n; row++) {
+            const line: Field[] = [];
+            for (let column = 0; column < n; column++) {
+                line.push(Field.clone(source.fields[row][column]));
+            }
+            this.fields.push(line);
+        }
+    }
+
     public initialize(): void {
         this.fields = [];
 
@@ -55,7 +66,7 @@ export default class Board {
         this.targets = this.findAllMoves();
     }
 
-    public resolve(light: boolean = false): TurnEvent {
+    public resolve(): TurnEvent {
         const spawns: FieldEvent[] = [];
         const captures: FieldEvent[] = [];
 
@@ -64,7 +75,10 @@ export default class Board {
                 const field: Field = this.fields[row][column];
 
                 field.prepare();
-                captures.concat(field.clash());
+                const clashes = field.clash();
+                for(let i=0, n=clashes.length; i<n; i++) {
+                    captures.push(clashes[i]);
+                }
             }
         }
 
@@ -184,9 +198,7 @@ export default class Board {
             }
         }
 
-        if(!light) {
-            this.targets = this.findAllMoves();
-        }
+        this.targets = this.findAllMoves();
 
         return {
             winner: this.conclude(),
@@ -195,8 +207,147 @@ export default class Board {
         } as TurnEvent;
     }
 
+    public dirty_resolve(spawnline_begin: number, spawnline_end: number): TurnEvent {
+        const spawns: FieldEvent[] = [];
+        const captures: FieldEvent[] = [];
 
-    public move(sourceRow: number, sourceCol: number, targetRow: number, targetCol: number, check: boolean = true): void {
+        for (let row = spawnline_begin; row < spawnline_end; row++) {
+            for (let column = 0; column < this.dimension; column++) {
+                const field: Field = this.fields[row][column];
+
+                field.prepare();
+                const clashes = field.clash();
+                for(let i=0, n=clashes.length; i<n; i++) {
+                    captures.push(clashes[i]);
+                }
+            }
+        }
+
+        // Find spawns (horizontal)
+        for (let row = spawnline_begin; row < spawnline_end; row++) {
+            for (let col = 0; col < this.dimension - 2; col++) {
+                const field: Field = this.fields[row][col];
+                const candidateLeft: Unit = field.current;
+                const candidateRight: Unit = this.fields[row][col + 2].current;
+                const target: Field = this.fields[row][col + 1];
+
+                // Skip empty fields directly
+                if (!candidateLeft || !candidateRight) { continue; }
+
+                // Find (X 0 X) pattern
+                if (!field.empty() && candidateLeft.friendly(candidateRight) && (target.empty() || target.goal(candidateLeft.side))) {
+
+                    // Check upper candidate
+                    if (row > spawnline_begin) {
+                        const candidateUpper: Unit = this.fields[row - 1][col + 1].current;
+                        if (candidateLeft.same(candidateRight) && candidateLeft.same(candidateUpper)) {
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row - 1][col], this.fields[row - 1][col + 2], candidateLeft.type)
+                            );
+                        }
+                        if (candidateLeft.spawnable(candidateUpper) && candidateUpper.spawnable(candidateRight) && candidateRight.spawnable(candidateLeft)) {
+                            const newType: UnitType = Rules.types.filter(t => !([UnitType.Source, UnitType.Obstacle, candidateLeft.type, candidateRight.type, candidateUpper.type].includes(t)))[0];
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row - 1][col], this.fields[row - 1][col + 2], newType)
+                            );
+                        }
+                    }
+
+                    // Check lower candidate
+                    if (row < spawnline_end - 1) {
+                        const candidateLower: Unit = this.fields[row + 1][col + 1].current;
+
+                        if (candidateLeft.same(candidateRight) && candidateLeft.same(candidateLower)) {
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row + 1][col], this.fields[row + 1][col + 2], candidateLeft.type)
+                            );
+                        }
+                        if (candidateLeft.spawnable(candidateLower) && candidateLower.spawnable(candidateRight) && candidateRight.spawnable(candidateLeft)) {
+                            const newType: UnitType = Rules.types.filter(t => !([UnitType.Source, UnitType.Obstacle, candidateLeft.type, candidateRight.type, candidateLower.type].includes(t)))[0];
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row + 1][col], this.fields[row + 1][col + 2], newType)
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        // Find spawns (vertical)
+        for (let col = 0; col < this.dimension; col++) {
+            for (let row = spawnline_begin; row < spawnline_end - 2; row++) {
+                const field: Field = this.fields[row][col];
+                const candidateUpper: Unit = field.current;
+                const candidateLower: Unit = this.fields[row + 2][col].current;
+                const target: Field = this.fields[row + 1][col];
+
+                // Skip empty fields directly
+                if (!candidateUpper || !candidateLower) { continue; }
+
+                // Find (X 0 X) pattern
+                if (!field.empty() && candidateUpper.friendly(candidateLower) && (target.empty() || target.goal(candidateUpper.side))) {
+
+                    // Check left candidate
+                    if (col > 0) {
+                        const candidateLeft: Unit = this.fields[row + 1][col - 1].current;
+                        if (candidateUpper.same(candidateLower) && candidateUpper.same(candidateLeft)) {
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col - 1], this.fields[row + 2][col - 1], candidateUpper.type)
+                            );
+                        }
+                        if (candidateUpper.spawnable(candidateLeft) && candidateLeft.spawnable(candidateLower) && candidateLower.spawnable(candidateUpper)) {
+                            const newType: UnitType = Rules.types.filter(t => !([UnitType.Source, UnitType.Obstacle, candidateUpper.type, candidateLeft.type, candidateLower.type].includes(t)))[0];
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col - 1], this.fields[row + 2][col - 1], newType)
+                            );
+                        }
+                    }
+
+                    // Check right candidate
+                    if (col < this.dimension - 1) {
+                        const candidateRight: Unit = this.fields[row + 1][col + 1].current;
+                        if (candidateUpper.same(candidateLower) && candidateUpper.same(candidateRight)) {
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col + 1], this.fields[row + 2][col + 1], candidateUpper.type)
+                            );
+                        }
+                        if (candidateUpper.spawnable(candidateRight) && candidateRight.spawnable(candidateLower) && candidateLower.spawnable(candidateUpper)) {
+                            const newType: UnitType = Rules.types.filter(t => !([UnitType.Source, UnitType.Obstacle, candidateUpper.type, candidateRight.type, candidateLower.type].includes(t)))[0];
+                            spawns.push(
+                                this.spawn(field, target, this.fields[row][col + 1], this.fields[row + 2][col + 1], newType)
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        // Find spawns (corners)
+        for (const corner of Rules.corners) {
+            const target: Field = this.fields[corner[0][0]][corner[0][1]];
+            const candidate1: Field = this.fields[corner[1][0]][corner[1][1]];
+            const candidate2: Field = this.fields[corner[2][0]][corner[2][1]];
+            const enemy: Field = this.fields[corner[3][0]][corner[3][1]];
+            if (!candidate1.empty() &&
+                candidate1.current.same(candidate2.current) &&
+                (target.empty() || target.goal(candidate1.current.side)) &&
+                (enemy.empty() || candidate1.current.friendly(enemy.current)) &&
+                candidate1.current.side !== candidate1.territory()) {
+
+                target.current = new Unit(candidate1.current.type, candidate1.current.side);
+                spawns.push({row: target.row, column: target.column, unit: target.current} as FieldEvent);
+            }
+        }
+
+        return {
+            winner: this.conclude(),
+            spawns: spawns,
+            captures: captures
+        } as TurnEvent;
+    }
+
+
+    public move(sourceRow: number, sourceCol: number, targetRow: number, targetCol: number): void {
         const sourceField: Field = this.fields[sourceRow][sourceCol];
         const targetField: Field = this.fields[targetRow][targetCol];
 
@@ -205,25 +356,23 @@ export default class Board {
             let valid: boolean = true;
 
             // Check if move was in list of possible moves
-            if(check) {
-                const targets = this.targets.filter(f =>
-                    f &&
-                    f.side === side &&
-                    f.from[0] === sourceField.row && f.from[1] === sourceField.column
-                )[0];
+            const targets = this.targets.filter(f =>
+                f &&
+                f.side === side &&
+                f.from[0] === sourceField.row && f.from[1] === sourceField.column
+            )[0];
 
-                if (targets) {
-                    const target = targets.to.filter(t =>
-                        t[0] === targetField.row && t[1] === targetField.column);
+            if (targets) {
+                const target = targets.to.filter(t =>
+                    t[0] === targetField.row && t[1] === targetField.column);
 
-                    if (!target) {
-                        valid = false;
-                    }
-                } else {
+                if (!target) {
                     valid = false;
                 }
+            } else {
+                valid = false;
             }
-            
+
             // Check if dynamic preconditions are met (such as putting a piece on a place where a piece was previously)
             if (!targetField.empty()) {
                 if (targetField.current.side === Side.Gray) {
@@ -251,6 +400,23 @@ export default class Board {
                 // console.log("Move from " + sourceField.coord() + " to " + targetField.coord() + " considered invalid!");
             }
         }
+    }
+
+    public dirty_move(sourceRow: number, sourceCol: number, targetRow: number, targetCol: number): boolean {
+        const sourceField: Field = this.fields[sourceRow][sourceCol];
+        const targetField: Field = this.fields[targetRow][targetCol];
+
+        if (sourceField.current.side === Side.Green) {
+            if (targetField.greenCandidate !== null ) { return false; }
+            targetField.greenCandidate = sourceField.current;
+        }
+        if (sourceField.current.side === Side.Red) {
+            if (targetField.redCandidate !== null ) { return false; }
+            targetField.redCandidate = sourceField.current;
+        }
+
+        sourceField.current = null;
+        return true;
     }
 
     public inside(row: number, col: number): boolean {
@@ -281,28 +447,54 @@ export default class Board {
         let redSourceFound: boolean = false;
         let greenSourceFound: boolean = false;
 
-        // Find sources
-        for (let row = 0; row < this.dimension; row++) {
+        // Search for red source on red territory
+        for (let row = 0, n = Rules.territory[Side.Red]; row < n; row++) {
             for (let column = 0; column < this.dimension; column++) {
                 const field = this.fields[row][column];
-                if (field.current?.type === UnitType.Source) {
-                    if (field.current.side === Side.Red) {
-                        redSourceFound = true;
-                    }
-                    if (field.current.side === Side.Green) {
-                        greenSourceFound = true;
-                    }
+                if (field.current?.type === UnitType.Source && field.current?.side === Side.Red) {
+                    redSourceFound = true;
+                    break;
                 }
             }
+
+            if(redSourceFound) { break; }
         }
+
+        // Search for green source on green territory (backwards, cause its more likely for the source to be on the ground)
+        for (let row = this.dimension - 1, n = Rules.territory[Side.Green]; row >= n; row--) {
+            for (let column = 0; column < this.dimension; column++) {
+                const field = this.fields[row][column];
+                if (field.current?.type === UnitType.Source && field.current?.side === Side.Green) {
+                    greenSourceFound = true;
+                    break;
+                }
+            }
+
+            if(greenSourceFound) { break; }
+        }
+
 
         // Detect end of game
         if (redSourceFound && greenSourceFound) {
             // Detect draw conditions
             // At least one side needs to have either two units of the same type
             // or at least three units of different type (source not included)
-            const redUnits: Field[] = [].concat.apply([], this.fields.map(line => line.filter(field => field.current !== null && field.current.side === Side.Red && field.current.type !== UnitType.Source)));
-            const greenUnits: Field[] = [].concat.apply([], this.fields.map(line => line.filter(field => field.current !== null && field.current.side === Side.Green && field.current.type !== UnitType.Source)));
+            const redUnits: Field[] = [];
+            const greenUnits: Field[] = [];
+            for(let row = 0, n = this.dimension; row < n; row++) {
+                for(let col = 0; col < n; col++) {
+                    const field = this.fields[row][col];
+
+                    if (field.current !== null && field.current.type !== UnitType.Source) {
+                        if(field.current.side === Side.Red) { redUnits.push(field); }
+                        if(field.current.side === Side.Green) { greenUnits.push(field); }
+                    }
+
+                    if(redUnits.length > 2 || greenUnits.length > 2) { break; }
+                }
+
+                if(redUnits.length > 2 || greenUnits.length > 2) { break; }
+            }
 
             if(redUnits.length < 3 && greenUnits.length < 3) {
                 if(redUnits.length < 2 && greenUnits.length < 2) {
@@ -462,8 +654,41 @@ export default class Board {
         }
     }
 
+    public dirty_moves(side: Side): number {
+        let result = 0;
+
+        for(let row = 0, n = this.fields.length; row < n; row++) {
+            for (let col = 0; col < n; col++) {
+                const field = this.fields[row][col];
+                if (field.current?.side === side) {
+                    const direction = this.findMoves(this.fields[row][col]);
+                    if (direction !== null) {
+                        result += direction.to.length;
+                    }
+                }   
+            }
+        }
+
+        return result;
+    }
+
     public findAllMoves(): Direction[] {
-        return [].concat.apply([], [].concat.apply([], this.fields.map(l => l.map(f => this.findMoves(f)).filter(m => m !== null))));
+        const result: Direction[] = [];
+
+        // No map()/filter()/concat() used here because of performance
+        for(let row = 0, n = this.fields.length; row < n; row++) {
+            for (let col = 0; col < n; col++) {
+                const direction = this.findMoves(this.fields[row][col]);
+                if (direction !== null) {
+                    result.push(direction);
+                }
+            }
+        }
+
+        return result;
+
+        // for reference only:
+        //return [].concat.apply([], [].concat.apply([], this.fields.map(l => l.map(f => this.findMoves(f)).filter(m => m !== null))));        
     }
 
 }

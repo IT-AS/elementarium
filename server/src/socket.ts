@@ -11,6 +11,7 @@ import Game from '../../shared/engine/game';
 import { TokenInfo } from '../../shared/lobby/tokeninfo';
 import { Side } from '../../shared/engine/enums/side';
 import { GameEntry } from './gameentry';
+import Rules from '../../shared/engine/rules';
 
 export default class Socket {
     private readonly server: http.Server;
@@ -50,8 +51,6 @@ export default class Socket {
             });
 
             socket.on(SocketEvents.DELETE, async (gameId: string, password: string) => {
-
-                console.log('DELETE');
 
                 // create game
                 await this.lobby.deleteGame(gameId, password);
@@ -101,20 +100,32 @@ export default class Socket {
                 }
             });
 
-            socket.on(SocketEvents.MOVE, async (moves: MoveInfo) => {
+            socket.on(SocketEvents.MOVE, async (moveInfo: MoveInfo) => {
+
                 // get the game
-                const game: Game = Game.clone(await this.lobby.getGame(moves.gameId));
+                const game: Game = Game.clone(await this.lobby.getGame(moveInfo.gameId));
 
                 // get side by token (addition authorization per move)
-                const side: Side = await this.lobby.getSide(moves.gameId, moves.token);
+                const side: Side = await this.lobby.getSide(moveInfo.gameId, moveInfo.token);
+
+                // check if ai is activated
+                const ai: boolean = await this.lobby.getAI(moveInfo.gameId);
 
                 // Ignore not authorized moves
                 if(side !== Side.Gray) {
 
                     // do the move
-                    if (game.next(side, moves.moves)) {
+                    if (game.next(side, moveInfo.moves)) {
 
-                        this.io.emit(this.getGameChannel(moves.gameId), game);
+                        this.io.emit(this.getGameChannel(moveInfo.gameId), game);
+                    } else if (ai) {
+
+                        console.log('Applying AI moves');
+                        // TODO: This one should be refactored!
+                        if (game.next(Rules.opponent(side), moveInfo.ai)) {
+
+                            this.io.emit(this.getGameChannel(moveInfo.gameId), game);
+                        }
                     }
 
                     // save to db

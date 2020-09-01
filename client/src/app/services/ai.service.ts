@@ -15,8 +15,13 @@ export class AiService {
 
   public next(board: Board, movesPerTurn: number, side: Side) : Move[] {
     const randomizer: number = 3;
+
     const t1 = performance.now();
-    const turns: Move[][] = this.turns(board.targets.filter(d => d.side === side), movesPerTurn);
+
+      const turns: Move[][] = this.turns(board.targets.filter(d => d.side === side), movesPerTurn);
+
+    const t2 = performance.now();
+    console.log("turns() needs " + (t2 - t1) + " milliseconds.")
 
     let spawnline_begin = 0;
     let spawnline_end = board.dimension;
@@ -33,29 +38,59 @@ export class AiService {
     
     const b: Board = Board.clone(board);
     const candidates: {moves: Move[], score: number}[] = [];
+
+    let msmove = 0;
+    let msresolve = 0;
+    let mseval = 0;
+    let msrestore = 0;
+
     for(let turn = 0, n = turns.length; turn < n; turn++) {
 
       let valid = true;
+
+      const tmove0 = performance.now();
       for(const move of turns[turn]) {
         valid = b.dirty_move(move.from[0], move.from[1], move.to[0], move.to[1])
         if(!valid) { break; }
       }
+      const tmove1 = performance.now();
+      msmove += tmove1 - tmove0;
 
       if (valid) {
-        const result: TurnEvent = b.dirty_resolve(spawnline_begin, spawnline_end);
-        const evaluation: number = this.evaluate(b, result, side);
+        
+        const tresolve0 = performance.now();
+          const result: TurnEvent = b.dirty_resolve(spawnline_begin, spawnline_end);
+        const tresolve1 = performance.now();
+        msresolve += tresolve1 - tresolve0;
+
+        const teval0 = performance.now();
+          const evaluation: number = this.evaluate(b, result, side);
+        const teval1 = performance.now();
+        mseval += teval1 - teval0;
 
         candidates.push({moves: turns[turn], score: evaluation});
       }
 
-      b.dirty_restore(board);
+      const trestore0 = performance.now();
+        b.dirty_restore(board);
+      const trestore1 = performance.now();
+      msrestore += trestore1 - trestore0;
     }
 
-    candidates.sort((a,b) => b.score - a.score);
+    const tsort0 = performance.now();
+      candidates.sort((a,b) => b.score - a.score);
+    const tsort1 = performance.now();
 
-    const t2 = performance.now();
-    console.log("complete() needs " + (t2 - t1) + " milliseconds.")
-    
+    const t10 = performance.now();
+
+    console.log("move() needs " + msmove + " milliseconds.")
+    console.log("resolve() needs " + msresolve + " milliseconds.")
+    console.log("evaluate() needs " + mseval + " milliseconds.")
+    console.log("restore() needs " + msrestore + " milliseconds.")
+    console.log("sort() needs " + (tsort1 - tsort0) + " milliseconds.")
+
+    console.log("complete() needs " + (t10 - t1) + " milliseconds.")
+
     /*
     for(const candidate of candidates.slice(0,5)) {
       for(const move of candidate.moves) {
@@ -98,6 +133,8 @@ export class AiService {
     // Spawn = +1000n
     // Capture = +1000n
     // Total targets = +10n
+    // Blocked own source = -100
+    // Blocked enemy source = +100
 
     // More ideas:
     // Total piecess on enemy zone = +1n
@@ -108,9 +145,11 @@ export class AiService {
     // If we have more units, seek for aggressive play and maximize unit count in enemy zone
     // IF we have less units, seek for defensive play and maximize unit count in own and neutral zone
 
+    const opponent = Rules.opponent(side);
+
     // Check win/lose
-    if(turn.winner === side) { result = 999999; }
-    if(turn.winner === Rules.opponent(side) ) { result = -999999; }
+    if(turn.winner === side) { return 999999; }
+    if(turn.winner === opponent ) { return -999999; }
     
     // Check spawns
     for(let i = 0; i < turn.spawns.length; i++) {
@@ -124,8 +163,21 @@ export class AiService {
       if(turn.captures[i].unit?.side !== side) { result += 1000; }
     }
 
+    // Check moveability of sources
+    if (board.sources[side]) {
+      if (board.dirty_moves(board.sources[side]) <= 0) {
+        result -= 100;
+      }
+    }
+
+    if (board.sources[opponent]) {
+      if (board.dirty_moves(board.sources[opponent]) <= 0) {
+        result += 100;
+      }
+    }
+
     // Check unit activity
-    result += board.dirty_moves(side) * 10;
+    result += board.dirty_all_moves(side) * 10;
 
     return result;
   }

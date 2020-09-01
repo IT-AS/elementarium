@@ -84,7 +84,6 @@ export class SocketService {
   }
 
   public surrender(tokenInfo: TokenInfo): void {
-    console.log('SOCKET');
     this.socket.emit(SocketEvents.SURRENDER, tokenInfo);
   }
 

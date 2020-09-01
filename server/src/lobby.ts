@@ -9,7 +9,6 @@ import {TokenInfo} from '../../shared/lobby/tokeninfo';
 
 import Game from '../../shared/engine/game';
 import Player from '../../shared/engine/player';
-import AI from './modules/ai/ai';
 import { v4 as uuidv4 } from 'uuid';
 import { Side } from '../../shared/engine/enums/side';
 import { Token } from './token';
@@ -84,25 +83,19 @@ export default class Lobby {
             const game: Game = gameEntry.game;
             const password: string = gameEntry.password;
 
-            if (joinInfo.playerId === 'CPU') {
-                game.players[joinInfo.playerId] = joinInfo.side;
-                gameEntry.ai = new AI(game.board, joinInfo.side);
+            if (game && password) {
+                if (bcrypt.compareSync(joinInfo.password, password)) {
+                    game.players.push({name: joinInfo.playerId, side: joinInfo.side} as Player);
+                    gameEntry.ai = joinInfo.playerId === 'CPU';
 
-                return {success: true, message: ''} as Result;
-            } else {
-                if (game && password) {
-                    if (bcrypt.compareSync(joinInfo.password, password)) {
-                        game.players.push({name: joinInfo.playerId, side: joinInfo.side} as Player);
+                    await this.games.asyncUpdate({'game.gameId': gameEntry.game.gameId}, gameEntry);
 
-                        await this.games.asyncUpdate({'game.gameId': gameEntry.game.gameId}, gameEntry);
-
-                        return {success: true, message: ''} as Result;
-                    } else {
-                        return {success: false, message: 'Wrong password'} as Result;
-                    }
+                    return {success: true, message: ''} as Result;
                 } else {
-                    return {success: false, message: 'Unknown game'} as Result;
+                    return {success: false, message: 'Wrong password'} as Result;
                 }
+            } else {
+                return {success: false, message: 'Unknown game'} as Result;
             }
         } catch(error) {
 
@@ -169,7 +162,6 @@ export default class Lobby {
         const gameEntry: GameEntry = await this.getGameEntry(gameId);
 
         if(gameEntry) {
-            console.log(gameEntry);
             const tokens: Token[] = gameEntry.tokens.filter(t => t.side === side);
 
             if (tokens?.length > 0) {
@@ -197,6 +189,22 @@ export default class Lobby {
         } catch (error) {
 
             return null;
+        }
+    }
+
+    public async getAI(gameId: string): Promise<boolean> {
+        try {
+            const gameEntry: GameEntry = await this.getGameEntry(gameId);
+
+            if(gameEntry) {
+                return gameEntry.ai;
+            }
+
+            return false;
+
+        } catch(error) {
+            
+            return false;
         }
     }
 

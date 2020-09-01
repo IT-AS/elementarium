@@ -12,6 +12,7 @@ import { MoveInfo } from '../../../../../shared/lobby/moveInfo';
 import Move from '../../../../../shared/engine/moves/move';
 import { Turn } from '../../../../../shared/engine/moves/turn';
 import { AiService } from 'src/app/services/ai.service';
+import Rules from '../../../../../shared/engine/rules';
 
 @Component({
   selector: 'app-game',
@@ -98,7 +99,7 @@ export class GameComponent implements OnInit {
       gameId: this.game.gameId,
       moves: this.history,
       token: this.tokenInfo.token,
-      ai: this.aiService.next(this.game.board, this.game.movesPerTurn, this.side)
+      ai: this.aiService.next(this.game.board, this.game.movesPerTurn, Rules.opponent(this.side))
     };
 
     this.clientWaiting = true;

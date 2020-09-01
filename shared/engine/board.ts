@@ -13,6 +13,8 @@ export default class Board {
     public targets: Direction[];
     public dimension: number;
 
+    public sources: {};
+
     constructor(dimension: number) {
         this.dimension = dimension;
     }
@@ -30,13 +32,12 @@ export default class Board {
     }
 
     public dirty_restore(source: Board) {
-        this.fields = [];
         for (let row = 0, n = this.dimension; row < n; row++) {
-            const line: Field[] = [];
             for (let column = 0; column < n; column++) {
-                line.push(Field.clone(source.fields[row][column]));
+                this.fields[row][column].current = source.fields[row][column].current;
+                this.fields[row][column].greenCandidate = null;
+                this.fields[row][column].redCandidate = null;
             }
-            this.fields.push(line);
         }
     }
 
@@ -447,12 +448,15 @@ export default class Board {
         let redSourceFound: boolean = false;
         let greenSourceFound: boolean = false;
 
+        this.sources = {};
+
         // Search for red source on red territory
         for (let row = 0, n = Rules.territory[Side.Red]; row < n; row++) {
             for (let column = 0; column < this.dimension; column++) {
                 const field = this.fields[row][column];
                 if (field.current?.type === UnitType.Source && field.current?.side === Side.Red) {
                     redSourceFound = true;
+                    this.sources[Side.Red] = field;
                     break;
                 }
             }
@@ -466,13 +470,13 @@ export default class Board {
                 const field = this.fields[row][column];
                 if (field.current?.type === UnitType.Source && field.current?.side === Side.Green) {
                     greenSourceFound = true;
+                    this.sources[Side.Green] = field;
                     break;
                 }
             }
 
             if(greenSourceFound) { break; }
         }
-
 
         // Detect end of game
         if (redSourceFound && greenSourceFound) {
@@ -654,7 +658,7 @@ export default class Board {
         }
     }
 
-    public dirty_moves(side: Side): number {
+    public dirty_all_moves(side: Side): number {
         let result = 0;
 
         for(let row = 0, n = this.fields.length; row < n; row++) {
@@ -670,6 +674,15 @@ export default class Board {
         }
 
         return result;
+    }
+
+    public dirty_moves(field: Field): number {
+        const direction = this.findMoves(field);
+        if (direction !== null) {
+            return direction.to.length;
+        }
+
+        return 0;
     }
 
     public findAllMoves(): Direction[] {

@@ -64,7 +64,7 @@ export class AiService {
         msresolve += tresolve1 - tresolve0;
 
         const teval0 = performance.now();
-          const evaluation: number = this.evaluate(b, result, side);
+          const evaluation: number = this.evaluate(b, turns[turn], result, side);
         const teval1 = performance.now();
         mseval += teval1 - teval0;
 
@@ -124,7 +124,7 @@ export class AiService {
     return turns;
   }
 
-  private evaluate(board: Board, turn: TurnEvent, side: Side): number {
+  private evaluate(board: Board, moves: Move[], turnEvent: TurnEvent, side: Side): number {
 
     let result: number = 0;
 
@@ -148,19 +148,19 @@ export class AiService {
     const opponent = Rules.opponent(side);
 
     // Check win/lose
-    if(turn.winner === side) { return 999999; }
-    if(turn.winner === opponent ) { return -999999; }
+    if(turnEvent.winner === side) { return 999999; }
+    if(turnEvent.winner === opponent ) { return -999999; }
     
     // Check spawns
-    for(let i = 0; i < turn.spawns.length; i++) {
-      if(turn.spawns[i].unit?.side === side) { result += 1000; }
-      if(turn.spawns[i].unit?.side !== side) { result -= 1000; }
+    for(let i = 0; i < turnEvent.spawns.length; i++) {
+      if(turnEvent.spawns[i]?.unit?.side === side) { result += 1000; }
+      if(turnEvent.spawns[i]?.unit?.side !== side) { result -= 1000; }
     }
 
     // Check captures
-    for(let i = 0; i < turn.captures.length; i++) {
-      if(turn.captures[i].unit?.side === side) { result -= 1000; }
-      if(turn.captures[i].unit?.side !== side) { result += 1000; }
+    for(let i = 0; i < turnEvent.captures.length; i++) {
+      if(turnEvent.captures[i]?.unit?.side === side) { result -= 1000; }
+      if(turnEvent.captures[i]?.unit?.side !== side) { result += 1000; }
     }
 
     // Check moveability of sources
@@ -177,7 +177,7 @@ export class AiService {
     }
 
     // Check unit activity
-    result += board.dirty_all_moves(side) * 10;
+    result += board.dirty_all_moves(side, moves) * 10;
 
     return result;
   }

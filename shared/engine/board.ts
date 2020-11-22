@@ -7,6 +7,7 @@ import {Side} from "./enums/side";
 import Rules from "./rules";
 import Field from "./field";
 import Unit from "./unit";
+import Move from './moves/move';
 
 export default class Board {
     public fields: Field[][];
@@ -658,18 +659,38 @@ export default class Board {
         }
     }
 
-    public dirty_all_moves(side: Side): number {
+    private near(row1: number, col1: number, row2: number, col2: number): boolean {
+        return row1 >= (row2 - 1) &&
+               row1 <= (row2 + 1) &&
+               col1 >= (col2 - 1) &&
+               col1 <= (col2 + 1)
+    }
+
+    public dirty_all_moves(side: Side, moves: Move[]): number {
         let result = 0;
 
         for(let row = 0, n = this.fields.length; row < n; row++) {
             for (let col = 0; col < n; col++) {
-                const field = this.fields[row][col];
-                if (field.current?.side === side) {
-                    const direction = this.findMoves(this.fields[row][col]);
-                    if (direction !== null) {
-                        result += direction.to.length;
+                // TODO: CONTINUE WORK HERE
+                let calculate = true;
+
+                for (const move of moves) {
+                    if (this.near(row, col, move.from[0], move.from[1]) ||
+                        this.near(row, col, move.to[0], move.to[1])) {
+                        calculate = true;
+                        break;
                     }
-                }   
+                }
+
+                if (calculate) {
+                    const field = this.fields[row][col];
+                    if (field.current?.side === side) {
+                        const direction = this.findMoves(this.fields[row][col]);
+                        if (direction !== null) {
+                            result += direction.to.length;
+                        }
+                    }
+                }
             }
         }
 

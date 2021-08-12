@@ -44,6 +44,8 @@ export class AiService {
     let mseval = 0;
     let msrestore = 0;
 
+    console.log('Total combos ', turns.length);
+
     for(let turn = 0, n = turns.length; turn < n; turn++) {
 
       let valid = true;
@@ -64,7 +66,7 @@ export class AiService {
         msresolve += tresolve1 - tresolve0;
 
         const teval0 = performance.now();
-          const evaluation: number = this.evaluate(b, turns[turn], result, side);
+          const evaluation: number = this.evaluate(b, board, turns[turn], result, side);
         const teval1 = performance.now();
         mseval += teval1 - teval0;
 
@@ -91,16 +93,17 @@ export class AiService {
 
     console.log("complete() needs " + (t10 - t1) + " milliseconds.")
 
-    /*
-    for(const candidate of candidates.slice(0,5)) {
-      for(const move of candidate.moves) {
-        console.log(move);
-      }
+    
+    for(const candidate of candidates.slice(0,100)) {
+      //for(const move of candidate.moves) {
+        //console.log(move);
+      //}
       console.log(candidate.score);
     }    
-    */
+    
 
     const choice: number = Math.round(Math.random() * randomizer);
+    console.log(candidates[choice].moves);
     return candidates[choice].moves;
   }
 
@@ -124,7 +127,7 @@ export class AiService {
     return turns;
   }
 
-  private evaluate(board: Board, moves: Move[], turnEvent: TurnEvent, side: Side): number {
+  private evaluate(board: Board, initialBoard: Board, moves: Move[], turnEvent: TurnEvent, side: Side): number {
 
     let result: number = 0;
 
@@ -137,13 +140,13 @@ export class AiService {
     // Blocked enemy source = +100
 
     // More ideas:
-    // Total piecess on enemy zone = +1n
+    // Total pieces on enemy zone = +1n
     // Fields around own source protected = +10
     // Fields around enemy source attacked = -10
 
     // Strategy ideas:
     // If we have more units, seek for aggressive play and maximize unit count in enemy zone
-    // IF we have less units, seek for defensive play and maximize unit count in own and neutral zone
+    // If we have less units, seek for defensive play and maximize unit count in own and neutral zone
 
     const opponent = Rules.opponent(side);
 
@@ -153,6 +156,7 @@ export class AiService {
     
     // Check spawns
     for(let i = 0; i < turnEvent.spawns.length; i++) {
+      console.log('spawn detected', turnEvent.spawns.length);
       if(turnEvent.spawns[i]?.unit?.side === side) { result += 1000; }
       if(turnEvent.spawns[i]?.unit?.side !== side) { result -= 1000; }
     }
@@ -163,21 +167,27 @@ export class AiService {
       if(turnEvent.captures[i]?.unit?.side !== side) { result += 1000; }
     }
 
-    // Check moveability of sources
-    if (board.sources[side]) {
-      if (board.dirty_moves(board.sources[side]) <= 0) {
+    // Check sources
+    const ownSource = board.sources[side];
+    if (ownSource) {
+      // Check moveability of source
+      if (board.dirty_moves(ownSource) <= 0) {
         result -= 100;
       }
     }
 
-    if (board.sources[opponent]) {
-      if (board.dirty_moves(board.sources[opponent]) <= 0) {
+    const opponentSource = board.sources[opponent];
+    if (opponentSource) {
+      if (board.dirty_moves(opponentSource) <= 0) {
         result += 100;
       }
+
+      // Check distance to source
+      result += board.dirty_eval(side, opponent);
     }
 
     // Check unit activity
-    result += board.dirty_all_moves(side, moves) * 10;
+    //result += board.dirty_all_moves(side, moves) * 10;
 
     return result;
   }
@@ -187,8 +197,6 @@ export class AiService {
   }
 
   private resolve(moves: Move[][]): Move[][] {
-    const result: Move[][] = [];
-
     if(moves?.length === 0) { return [] };
     if(moves?.length === 1) { return moves };
     if(moves?.length === 2) { return [].concat(...moves[0].map(d => moves[1].map(e => [].concat(d, e)))); }

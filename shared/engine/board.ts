@@ -343,7 +343,7 @@ export default class Board {
 
         return {
             winner: this.conclude(),
-            spawns: spawns,
+            spawns: spawns.filter(s => s !== null),
             captures: captures
         } as TurnEvent;
     }
@@ -666,13 +666,29 @@ export default class Board {
                col1 <= (col2 + 1)
     }
 
+    public dirty_eval(side: Side, opponent: Side): number {
+        let score = 0;
+
+        for(let row = 0, n = this.dimension; row < n; row++) {
+            for (let col = 0; col < n; col++) {
+                const field = this.fields[row][col];
+                if (field.current?.side === side) {
+                    score += (field.territory() === Side.Gray ? 100 : 0); // unit on neutral territory
+                    score += (field.territory() === opponent ? 200 : 0); // unit on enemy territory
+                }
+            }
+        }
+
+        return score;
+    }
+
     public dirty_all_moves(side: Side, moves: Move[]): number {
         let result = 0;
 
-        for(let row = 0, n = this.fields.length; row < n; row++) {
+        for(let row = 0, n = this.dimension; row < n; row++) {
             for (let col = 0; col < n; col++) {
                 // TODO: CONTINUE WORK HERE
-                let calculate = true;
+                let calculate = false;
 
                 for (const move of moves) {
                     if (this.near(row, col, move.from[0], move.from[1]) ||

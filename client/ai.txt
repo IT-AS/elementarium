@@ -1,0 +1,19 @@
+- Collect all units on board inside resolve()
+
+Phase 1: Immediate win/loss
+- Option 1: Source is blocked and 2 more fields near source are threatened
+	- Threat can be defended
+	- Threat can't be defended
+- Option 2: 3 or more fields near source are threatened
+	- Threat can be defended
+	- Threat can't be defended
+
+Phase 2: Tactical decisions
+- Threatened units (units in <to> from opponents target)
+- Attacking units (opponents unit in <to> from own target)
+- Potential spawns
+
+Phase 3: Strategical development
+- Advancing units (units nearer to neutral and enemy territory)
+- Protected units (own unit in <to> from own target)
+- Unit activity (Maximize own directions)

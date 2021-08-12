@@ -6,7 +6,7 @@ import Field from '../../../../../../shared/engine/field';
 import { Side } from '../../../../../../shared/engine/enums/side';
 
 export enum ActionTypes{
-  GameSideAssignedAction = "[Game] Side Assigned",
+  GameSideAssignedAction = '[Game] Side Assigned',
   GameResumeAction = '[Game] Resume',
   GameResumeRequestAction = '[Game] Resume Request',
   GameReceiveAction = '[Game] Receive',
@@ -18,6 +18,7 @@ export enum ActionTypes{
   FieldDeactivateAction = '[Field] Dectivate',
   FieldMoveHereAction = '[Field] Move Here',
   FieldMoveUndoAction = '[Field] Move Undo',
+  TokenChangedAction = '[Token] Changed',
 };
 
 export const GameSideAssigned = createAction(
@@ -74,4 +75,9 @@ export const FieldMoveHere = createAction(
 
 export const FieldMoveUndo = createAction(
   ActionTypes.FieldMoveUndoAction,
+);
+
+export const TokenChanged = createAction(
+  ActionTypes.TokenChangedAction,
+  props<{ payload: TokenInfo }>()
 );

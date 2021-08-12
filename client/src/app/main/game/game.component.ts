@@ -3,7 +3,7 @@ import { Store, select } from '@ngrx/store';
 import Game from '../../../../../shared/engine/game';
 import { Observable } from 'rxjs';
 import GameState from './store/game.reducer';
-import { selectGame, selectSide, selectHistory } from './store/game.selector';
+import { selectGame, selectSide, selectHistory, selectTokenInfo } from './store/game.selector';
 import { Router } from '@angular/router';
 import { TokenInfo } from '../../../../../shared/lobby/tokenInfo';
 import { GameResume, GameMove, FieldMoveUndo, FieldDeactivate, GameSurrender } from './store/game.actions';
@@ -19,15 +19,16 @@ import Rules from '../../../../../shared/engine/rules';
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit {
+export class GameComponent {
   public game: Game;
   public side: Side;
   public history: Move[];
+  public tokenInfo: TokenInfo;
   private game$: Observable<Game>;
   private side$: Observable<Side>;
   private history$: Observable<Move[]>;
+  private tokenInfo$: Observable<TokenInfo>;
 
-  private tokenInfo: TokenInfo;
   private afterGame: boolean = false;
   private clientWaiting: boolean = false;
 
@@ -68,30 +69,30 @@ export class GameComponent implements OnInit {
     private router: Router,
     private aiService: AiService) { 
 
-      this.game$ = this.store.pipe(select(selectGame));
-      this.game$?.subscribe(game => {
-        this.game = Game.clone(game);
-        this.clientWaiting = false;
-      });
+    this.game$ = this.store.pipe(select(selectGame));
+    this.game$?.subscribe(game => {
+      this.game = Game.clone(game);
+      this.clientWaiting = false;
+    });
 
-      this.side$ = this.store.pipe(select(selectSide));
-      this.side$?.subscribe(side => {
-        this.side = side as Side;
-      });
+    this.side$ = this.store.pipe(select(selectSide));
+    this.side$?.subscribe(side => {
+      this.side = side as Side;
+    });
 
-      this.history$ = this.store.pipe(select(selectHistory));
-      this.history$?.subscribe(history => {
-        this.history = history as Move[];
-      });
-   }
+    this.history$ = this.store.pipe(select(selectHistory));
+    this.history$?.subscribe(history => {
+      this.history = history as Move[];
+    });
 
-  ngOnInit(): void {
-    const url: string[] = this.router.url.split('/');
-
-    if(url?.length >= 4 && url[1] === 'game') {
-      this.tokenInfo = { gameId: url[2], token: url[3] };
-      this.store.dispatch(GameResume({payload: this.tokenInfo}));
-    }
+    this.tokenInfo$ = this.store.pipe(select(selectTokenInfo));
+    this.tokenInfo$?.subscribe(tokenInfo => {
+      this.tokenInfo = tokenInfo;
+      
+      if(tokenInfo?.gameId && tokenInfo?.token) {
+        this.store.dispatch(GameResume({payload: tokenInfo}));
+      }
+    });
   }
 
   public submit(): void {

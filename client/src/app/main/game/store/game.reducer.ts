@@ -4,6 +4,7 @@ import Game from '../../../../../../shared/engine/game';
 import { Side } from '../../../../../../shared/engine/enums/side';
 import Field from '../../../../../../shared/engine/field';
 import Move from '../../../../../../shared/engine/moves/move';
+import { TokenInfo } from '../../../../../../shared/lobby/tokenInfo';
 
 export default interface GameState {
     game: Game,
@@ -12,7 +13,8 @@ export default interface GameState {
     side: Side,
     selectedField: Field,
     targets: number[][],
-    lastMove: { from: Field, to: Field }
+    lastMove: { from: Field, to: Field },
+    tokenInfo: TokenInfo,
 };
 
 export const InitialState: GameState = {
@@ -22,7 +24,8 @@ export const InitialState: GameState = {
     side: Side.Gray,
     selectedField: null,
     targets: [],
-    lastMove: null
+    lastMove: null,
+    tokenInfo: null,
 }
 
 const reducer = createReducer(
@@ -33,6 +36,7 @@ const reducer = createReducer(
     on(GameActions.FieldDeactivate, (state: GameState, action: { payload }) => fieldDeactivate(state, action)),
     on(GameActions.FieldMoveHere, (state: GameState, action: { payload }) => fieldMoveHere(state, action)),
     on(GameActions.FieldMoveUndo, (state: GameState, action) => fieldMoveUndo(state, action)),
+    on(GameActions.TokenChanged, (state: GameState, action: { payload }) => ({...state, tokenInfo: action.payload})),
 );
   
 export function GameReducer(state: GameState | undefined, action: Action) {

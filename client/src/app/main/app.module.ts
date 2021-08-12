@@ -23,6 +23,7 @@ import { BoardComponent } from './game/board/board.component';
 import { BoardCellComponent } from './game/board-cell/board-cell.component';
 import { GameEffects } from './game/store/game.effects';
 import { BoardUnitComponent } from './game/board-unit/board-unit.component';
+import { NavigationService } from '../services/navigation.service';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,7 @@ import { BoardUnitComponent } from './game/board-unit/board-unit.component';
     StoreModule.forRoot({lobby: LobbyReducer, game: GameReducer}),
     EffectsModule.forRoot([LobbyEffects, GameEffects]),
   ],
-  providers: [SocketService],
+  providers: [SocketService, NavigationService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

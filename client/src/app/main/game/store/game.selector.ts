@@ -46,3 +46,10 @@ export const selectHistory = createSelector(
         return state?.history;
     }
 );
+
+export const selectTokenInfo = createSelector(
+    selectGameState,
+    (state) => {
+        return state?.tokenInfo;
+    }
+);

@@ -42,7 +42,7 @@ import { NavigationService } from '../services/navigation.service';
   imports: [
     BrowserModule,
     FormsModule,
-    RouterModule.forRoot(APP_ROUTES),
+    RouterModule.forRoot(APP_ROUTES, { relativeLinkResolution: 'legacy' }),
     SharedModule.forRoot(),
     StoreModule.forRoot({lobby: LobbyReducer, game: GameReducer}),
     EffectsModule.forRoot([LobbyEffects, GameEffects]),

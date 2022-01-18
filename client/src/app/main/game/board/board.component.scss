@@ -2,11 +2,19 @@
     margin:auto;
     display:block;
 
-    //border-left: 1px solid black;
-    //border-top: 1px solid black;
-
     background-image: url(/assets/board.png);
     background-position: top left;
+}
+
+.board-outer {
+    margin: auto;
+    display:block;
+
+    background-image: url(/assets/border.png);
+    background-position: top left;
+    background-repeat: no-repeat;
+
+    padding-top: 10px;
 }
 
 .board-line {

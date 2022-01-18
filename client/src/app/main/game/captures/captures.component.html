@@ -1,0 +1,18 @@
+<div *ngIf="any">
+    <p>Captured last move:</p>
+    <div *ngFor="let capture of turn?.green?.captures">
+        <app-board-unit 
+            *ngIf="capture?.unit" 
+            [unit]="capture?.unit"
+            [size]="size">
+        </app-board-unit>
+    </div>
+
+    <div *ngFor="let capture of turn?.red?.captures">
+        <app-board-unit 
+            *ngIf="capture?.unit" 
+            [unit]="capture?.unit"
+            [size]="size">
+        </app-board-unit>
+    </div>
+</div>

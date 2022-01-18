@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import Unit from '../../../../../../shared/engine/unit';
 import { Side } from '../../../../../../shared/engine/enums/side';
 import { Observable } from 'rxjs';
@@ -17,7 +17,7 @@ export class BoardUnitComponent implements OnInit {
   public unit: Unit;
 
   @Input()
-  public relation: string;
+  public relation: string = 'unit';
 
   @Input()
   public size: number;

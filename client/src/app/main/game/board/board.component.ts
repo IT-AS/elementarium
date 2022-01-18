@@ -17,6 +17,10 @@ export class BoardComponent implements OnInit {
 
   private baseSize: number;
 
+  public get borderSize(): number {
+    return this.boardSize + 20;
+  }
+
   public get boardSize(): number {
     return this.cellSize * this.board?.dimension;
   }

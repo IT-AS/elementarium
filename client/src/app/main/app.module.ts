@@ -24,6 +24,7 @@ import { BoardCellComponent } from './game/board-cell/board-cell.component';
 import { GameEffects } from './game/store/game.effects';
 import { BoardUnitComponent } from './game/board-unit/board-unit.component';
 import { NavigationService } from '../services/navigation.service';
+import { CapturesComponent } from './game/captures/captures.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { NavigationService } from '../services/navigation.service';
     GameComponent,
     BoardComponent,
     BoardCellComponent,
-    BoardUnitComponent
+    BoardUnitComponent,
+    CapturesComponent
   ],
   imports: [
     BrowserModule,

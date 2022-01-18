@@ -96,6 +96,14 @@ export default class Game {
         }
     }
 
+    public last(): Turn {
+        if( this.turn < 2) {
+            return null;
+        }
+
+        return this.journal[this.turn - 2];        
+    }
+
     private execute(moves: Move[]) {
         for (const move of moves) {
             this.board.move(move.from[0], move.from[1], move.to[0], move.to[1]);

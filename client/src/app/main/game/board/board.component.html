@@ -1,22 +1,28 @@
 <div 
-    class="board" 
-    [style.width.px]="boardSize"
-    [style.height.px]="boardSize"
-    [style.background-size.px]="boardSize"
-    [style.transform]="rotation">
+    class="board-outer"
+    [style.width.px]="borderSize"
+    [style.height.px]="borderSize"
+    [style.background-size.px]="borderSize">
     <div 
-        *ngFor="let line of board?.fields"
-        class="board-line" 
-        [style.height.px]="cellSize"
-        [style.width.px]="boardSize">
-        <app-board-cell 
-            *ngFor="let field of line" 
-            class="board-cell-container" 
-            [style.width.px]="cellSize"
+        class="board" 
+        [style.width.px]="boardSize"
+        [style.height.px]="boardSize"
+        [style.background-size.px]="boardSize"
+        [style.transform]="rotation">
+        <div 
+            *ngFor="let line of board?.fields"
+            class="board-line" 
             [style.height.px]="cellSize"
-            [field]="field"
-            [side]="side" 
-            [size]="cellSize">
-        </app-board-cell>
+            [style.width.px]="boardSize">
+            <app-board-cell 
+                *ngFor="let field of line" 
+                class="board-cell-container" 
+                [style.width.px]="cellSize"
+                [style.height.px]="cellSize"
+                [field]="field"
+                [side]="side" 
+                [size]="cellSize">
+            </app-board-cell>
+        </div>
     </div>
 </div>

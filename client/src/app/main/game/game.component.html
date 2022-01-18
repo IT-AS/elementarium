@@ -2,6 +2,7 @@
     <div class="grid">
         <div class="grid-cell-secondary">
             <p>Game Name: {{game?.name}}, Turn: {{game?.turn}}, Targets: {{game?.board?.targets.length}}</p>
+            <app-captures [dimension]="game?.board?.dimension" [turn]="game?.last()" ></app-captures>
         </div>
         <div class="grid-cell-primary">
             <app-board [board]="game?.board" [side]="side"></app-board>

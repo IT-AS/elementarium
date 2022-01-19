@@ -5,6 +5,7 @@ import { Direction } from '../../../../shared/engine/moves/direction';
 import { Side } from '../../../../shared/engine/enums/side';
 import Rules from '../../../../shared/engine/rules';
 import { TurnEvent } from '../../../../shared/engine/events/turnEvent';
+import { UnitType } from '../../../../shared/engine/enums/unittype';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,123 @@ export class AiService {
 
   constructor() {   }
 
+  private prepareTurns(board: Board, side: Side, movesPerTurn: number): Move[][][] {
+    const t1 = performance.now();
+
+    const attackingdirections: Direction[] = [];
+    const threatdirections: Direction[] = [];
+
+    const escapedirections: Direction[] = [];
+    const preventiondirections: Direction[] = [];
+
+    const mymoves = board.targets.filter(d => d.side === side);
+    const enemymoves = board.targets.filter(d => d.side !== side);
+
+    for(const direction of mymoves) {
+      const tos: number[][] = [];
+      for(const to of direction.to) {
+        const sourceUnit = board.fields[direction.from[0]][direction.from[1]].current;
+        const targetUnit = board.fields[to[0]][to[1]].current;
+        if(targetUnit) {
+          if(targetUnit.side === Rules.opponent(side)) {
+            if(sourceUnit.type === UnitType.Source || Rules.clashes[sourceUnit.type][0] === targetUnit.type) {
+              tos.push(to);
+            }
+          }
+        }
+      }
+
+      if(tos.length > 0) {
+        attackingdirections.push(<Direction>{ from: direction.from, to: tos, side: side});
+      }
+    }
+
+    for(const direction of attackingdirections) {
+      for(const from of direction.to) {
+        if(!escapedirections.find(x => x.from[0] === from[0] && x.from[1] === from[1])) {
+          const tos: number[][] = [];
+          const targets = board.targets.filter(d => d.from[0] === from[0] && d.from[1] === from[1]);
+          if( targets?.length > 0 ) {
+            for(const to of targets[0].to ) {
+              if(!board.fields[to[0]][to[1]].current) {
+                tos.push(to);
+              }
+            }
+          }
+
+          if(tos.length > 0) {
+            escapedirections.push(<Direction>{ from: from, to: tos, side: Rules.opponent(side)});
+          }
+        }
+      }
+    }
+
+    for(const direction of enemymoves) {
+      const tos: number[][] = [];
+      for(const to of direction.to) {
+        const sourceUnit = board.fields[direction.from[0]][direction.from[1]].current;
+        const targetUnit = board.fields[to[0]][to[1]].current;
+        if(targetUnit) {
+          if(targetUnit.side === side) {
+            if(sourceUnit.type === UnitType.Source || Rules.clashes[sourceUnit.type][0] === targetUnit.type) {
+              tos.push(to);
+            }
+          }
+        }
+      }
+      
+      if(tos.length > 0) {
+        threatdirections.push(<Direction>{ from: direction.from, to: tos, side: Rules.opponent(side)});
+      }
+    }
+
+    for(const direction of threatdirections) {
+      for(const from of direction.to) {
+        if(!preventiondirections.find(x => x.from[0] === from[0] && x.from[1] === from[1])) {
+          const tos: number[][] = [];
+          const targets = board.targets.filter(d => d.from[0] === from[0] && d.from[1] === from[1]);
+          if( targets?.length > 0 ) {
+            for(const to of targets[0].to ) {
+              if(!board.fields[to[0]][to[1]].current) {
+                tos.push(to);
+              }
+            }
+          }
+
+          if(tos.length > 0) {
+            preventiondirections.push(<Direction>{ from: from, to: tos, side: side});
+          }
+        }
+      }
+    }
+
+    console.log('attacking dir', attackingdirections);
+    console.log('threat dir', threatdirections);
+    console.log('escape dir', escapedirections);
+    console.log('prevention dir', preventiondirections);
+
+    const turns1 = this.turns([].concat(attackingdirections, preventiondirections), movesPerTurn);
+    const turns2 = this.turns([].concat(threatdirections, escapedirections), movesPerTurn);
+
+    console.log('my combos', turns1.length);
+    console.log('enemy combos', turns2.length);
+    console.log('combo product', turns1.length * turns2.length);
+
+    const t2 = performance.now();
+    console.log("prepareTurns() needs " + (t2 - t1) + " milliseconds.");
+
+    return [turns1, turns2];
+  }
+
   public next(board: Board, movesPerTurn: number, side: Side) : Move[] {
     const randomizer: number = 3;
 
     const t1 = performance.now();
 
-      const turns: Move[][] = this.turns(board.targets.filter(d => d.side === side), movesPerTurn);
+    //const turns: Move[][] = this.turns(board.targets.filter(d => d.side === side), movesPerTurn);
+    const turns: Move[][][] = this.prepareTurns(board, side, movesPerTurn);
+    const myturns = turns[0];
+    const enemyturns = turns[1];
 
     const t2 = performance.now();
     console.log("turns() needs " + (t2 - t1) + " milliseconds.")
@@ -44,39 +156,50 @@ export class AiService {
     let mseval = 0;
     let msrestore = 0;
 
-    console.log('Total combos ', turns.length);
+    for(let turn = 0, n = myturns.length; turn < n; turn++) {
 
-    for(let turn = 0, n = turns.length; turn < n; turn++) {
-
-      let valid = true;
+      let myvalid = true;
 
       const tmove0 = performance.now();
-      for(const move of turns[turn]) {
-        valid = b.dirty_move(move.from[0], move.from[1], move.to[0], move.to[1])
-        if(!valid) { break; }
+      for(const move of myturns[turn]) {
+        myvalid = b.dirty_move(move.from[0], move.from[1], move.to[0], move.to[1])
+        if(!myvalid) { break; }
       }
       const tmove1 = performance.now();
       msmove += tmove1 - tmove0;
 
-      if (valid) {
-        
-        const tresolve0 = performance.now();
-          const result: TurnEvent = b.dirty_resolve(spawnline_begin, spawnline_end);
-        const tresolve1 = performance.now();
-        msresolve += tresolve1 - tresolve0;
+      if(!myvalid) { continue; }
 
-        const teval0 = performance.now();
-          const evaluation: number = this.evaluate(b, board, turns[turn], result, side);
-        const teval1 = performance.now();
-        mseval += teval1 - teval0;
+      for(let xturn = 0, n = enemyturns.length; xturn < n; xturn++) {
+        let xvalid = true;
 
-        candidates.push({moves: turns[turn], score: evaluation});
+        const tmove0 = performance.now();
+        for(const xmove of enemyturns[xturn]) {
+          xvalid = b.dirty_move(xmove.from[0], xmove.from[1], xmove.to[0], xmove.to[1])
+          if(!xvalid) { break; }
+        }
+        const tmove1 = performance.now();
+        msmove += tmove1 - tmove0;
+
+        if (xvalid) {
+          const tresolve0 = performance.now();
+            const result: TurnEvent = b.dirty_resolve(spawnline_begin, spawnline_end);
+          const tresolve1 = performance.now();
+          msresolve += tresolve1 - tresolve0;
+
+          const teval0 = performance.now();
+            const evaluation: number = this.evaluate(b, result, side);
+          const teval1 = performance.now();
+          mseval += teval1 - teval0;
+
+          candidates.push({moves: myturns[turn], score: evaluation});
+        }
+
+        const trestore0 = performance.now();
+          b.dirty_restore(board);
+        const trestore1 = performance.now();
+        msrestore += trestore1 - trestore0;
       }
-
-      const trestore0 = performance.now();
-        b.dirty_restore(board);
-      const trestore1 = performance.now();
-      msrestore += trestore1 - trestore0;
     }
 
     const tsort0 = performance.now();
@@ -95,16 +218,14 @@ export class AiService {
 
     
     for(const candidate of candidates.slice(0,100)) {
-      //for(const move of candidate.moves) {
-        //console.log(move);
-      //}
       console.log(candidate.score);
     }    
     
 
     const choice: number = Math.round(Math.random() * randomizer);
     console.log(candidates[choice].moves);
-    return candidates[choice].moves;
+    //return candidates[choice].moves;
+    return [];
   }
 
   private turns(targets: Direction[], moves: number): Move[][] {
@@ -127,7 +248,7 @@ export class AiService {
     return turns;
   }
 
-  private evaluate(board: Board, initialBoard: Board, moves: Move[], turnEvent: TurnEvent, side: Side): number {
+  private evaluate(board: Board, turnEvent: TurnEvent, side: Side): number {
 
     let result: number = 0;
 
@@ -135,18 +256,10 @@ export class AiService {
     // Lose = -999999
     // Spawn = +1000n
     // Capture = +1000n
-    // Total targets = +10n
     // Blocked own source = -100
     // Blocked enemy source = +100
-
-    // More ideas:
-    // Total pieces on enemy zone = +1n
-    // Fields around own source protected = +10
-    // Fields around enemy source attacked = -10
-
-    // Strategy ideas:
-    // If we have more units, seek for aggressive play and maximize unit count in enemy zone
-    // If we have less units, seek for defensive play and maximize unit count in own and neutral zone
+    // Unit on neutral territory = +100
+    // Unit on enemy territory = +200
 
     const opponent = Rules.opponent(side);
 
@@ -156,7 +269,6 @@ export class AiService {
     
     // Check spawns
     for(let i = 0; i < turnEvent.spawns.length; i++) {
-      console.log('spawn detected', turnEvent.spawns.length);
       if(turnEvent.spawns[i]?.unit?.side === side) { result += 1000; }
       if(turnEvent.spawns[i]?.unit?.side !== side) { result -= 1000; }
     }

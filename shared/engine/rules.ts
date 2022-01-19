@@ -119,6 +119,7 @@ export default class Rules {
 */
 
     static readonly clashes: Readonly<any> = {
+        // Defeats, Loses, Neutral
         "Earth": ["Water", "Air", "Fire"],
         "Air": ["Earth", "Fire", "Water"],
         "Fire": ["Air", "Water", "Earth"],

@@ -408,11 +408,11 @@ export default class Board {
         const sourceField: Field = this.fields[sourceRow][sourceCol];
         const targetField: Field = this.fields[targetRow][targetCol];
 
-        if (sourceField.current.side === Side.Green) {
+        if (sourceField.current?.side === Side.Green) {
             if (targetField.greenCandidate !== null ) { return false; }
             targetField.greenCandidate = sourceField.current;
         }
-        if (sourceField.current.side === Side.Red) {
+        if (sourceField.current?.side === Side.Red) {
             if (targetField.redCandidate !== null ) { return false; }
             targetField.redCandidate = sourceField.current;
         }

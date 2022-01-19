@@ -17,3 +17,21 @@ Phase 3: Strategical development
 - Advancing units (units nearer to neutral and enemy territory)
 - Protected units (own unit in <to> from own target)
 - Unit activity (Maximize own directions)
+- Own distance to enemy source
+- Own distance to own source
+- Enemy distance to your source
+
+Evaluation:
+- Number of units
+- Number of unit types
+- Distribution of unit types
+
+
+Priority of moves:
+- Spawn on source/Defend source
+- Pre-spawn on source
+- Block source
+V Attack/Defend
+- Spawn/Prevent spawns
+- Pre-spawn
+- Move to neutral territory

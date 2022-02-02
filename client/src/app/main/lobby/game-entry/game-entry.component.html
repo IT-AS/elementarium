@@ -1,10 +1,12 @@
-<p>{{game?.name}}</p>
-<p>{{playerInfo}}</p>
-<p *ngIf="game?.finished">Game finished</p>
-<p *ngIf="!game?.finished">
-    <a *ngIf="!getJoined(Side.Green)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Green)">Join As Green</i></a>
-    <a *ngIf="!getJoined(Side.Red)" href="javascript:void(0)"><i (click)="openJoinGame(Side.Red)">Join As Red</i></a>
-    <a href="javascript:void(0)"><i (click)="openDeleteGame()">Delete</i></a>
-</p>
+<div class="entry">
+    <h2>{{game?.name}}</h2>
+    <p>{{playerInfo}}</p>
+    <p *ngIf="game?.finished">Game finished</p>
+    <p *ngIf="!game?.finished">
+        <button class="metal-button" *ngIf="!getJoined(Side.Green)" (click)="openJoinGame(Side.Green)">Join As Green</button>
+        <button class="metal-button" (click)="openDeleteGame()">Delete</button>
+        <button class="metal-button" *ngIf="!getJoined(Side.Red)" (click)="openJoinGame(Side.Red)">Join As Red</button>
+    </p>
+</div>
 <app-game-deletion [visible]="deleteGame" [gameId]="game?.gameId" [gameName]="game?.name" (closing)="closeDeleteGame()"></app-game-deletion>
 <app-game-joining [visible]="joinGame" [gameId]="game?.gameId" [gameName]="game?.name" [side]="joinSide" (closing)="closeJoinGame()"></app-game-joining>

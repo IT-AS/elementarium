@@ -1,5 +1,22 @@
-<p>Lobby starts here</p>
-<app-game-list></app-game-list>
-<a href="javascript:void(0)"><i (click)="openNewGame()">New game</i></a>
-<p>Lobby ends here</p>
+<div class="grid">
+    <div class="grid-cell-secondary">
+    </div>
+    <div class="grid-cell-primary">
+        <div class="lobby"
+            [style.width.px]="lobbySize"
+            [style.height.px]="lobbySize"
+            [style.background-size.px]="lobbySize">
+            <div class="list"
+                [style.height.px]="listSize">
+                <app-game-list></app-game-list>
+            </div>
+            <div class="actions">
+                <button class="metal-button" (click)="openNewGame()">New game</button>
+            </div>
+        </div>
+    </div>
+    <div class="grid-cell-secondary">
+    </div>
+</div>
+
 <app-game-creation [visible]="newGame" (closing)="closeNewGame()"></app-game-creation>

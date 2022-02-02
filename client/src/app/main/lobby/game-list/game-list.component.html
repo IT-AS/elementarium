@@ -1,8 +1,9 @@
-<p>game-list starts here</p>
-<ul>
+<h1>Game List</h1>
+<div class="game-list-container">
+  <ul>
     <li *ngFor="let game of games">
       <app-game-entry [game]="game">
       </app-game-entry>
     </li>
-  </ul>
-<p>game-list ends here</p>
+</ul>
+</div>

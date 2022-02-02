@@ -1,0 +1,11 @@
+.game-list-container {
+
+    overflow-y: scroll;
+    height:95%;
+
+    ul {
+        list-style: none;
+        margin: auto;
+        padding: 0;
+    }
+}

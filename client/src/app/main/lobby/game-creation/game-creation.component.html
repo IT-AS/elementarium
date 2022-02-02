@@ -5,10 +5,9 @@
     
         <label id="game-creation-gamePassword-label" for="game-creation-gamePassword-input">Game Password</label>
         <input id="game-creation-gamePassword-input" name="game-creation-gamePassword-input" type="text" [(ngModel)]="gamePassword" />
-    
-        <a href="javascript:void(0)"><i (click)="createGame()">Create</i></a>
-        <a href="javascript:void(0)"><i (click)="close()">Close</i></a>
     </form>
+    <button class="metal-button" (click)="createGame()">Create</button>
+    <button class="metal-button" (click)="close()">Close</button>
 </div>
 <div id="game-creation-overlay" [class]="visibility()" (click)="close()">
 </div>

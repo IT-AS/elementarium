@@ -1,0 +1,30 @@
+.grid {
+    display: flex;
+    flex-flow: nowrap;
+}
+
+.grid-cell-primary {
+    flex: 3;
+}
+
+.grid-cell-secondary {
+    flex: 1;
+}
+
+.footer {
+    margin: auto;
+    display: block;
+
+    background-image: url(/assets/border.png);
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    background-color: rgba(51, 51, 51, .8);    /*  40% opaque green */
+
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+    margin: 1em;
+}

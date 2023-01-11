@@ -1,1 +1,15 @@
-<div class="header">header works!</div>
+<header [style.height.px]="headerHeight">
+    <div class="grid">
+        <div class="grid-cell-secondary">
+        </div>
+        <div class="grid-cell-primary">
+            <div class="header"
+                [style.width.px]="headerWidth"
+                [style.height.px]="headerHeight"
+                [style.background-size.px]="headerWidth">
+            </div>
+        </div>
+        <div class="grid-cell-secondary">
+        </div>
+    </div>
+</header>

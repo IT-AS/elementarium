@@ -38,6 +38,6 @@ export class GameDeletionComponent implements OnInit {
   }
 
   public visibility(): string {
-    return this.visible ? 'show' : 'hidden';
+    return this.visible ? 'block' : 'none';
   }  
 }

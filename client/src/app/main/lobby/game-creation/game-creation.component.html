@@ -1,13 +1,15 @@
-<div id="game-creation-container" [class]="visibility()">
+<div id="game-creation-container" class="popup-container" [style.display]="visibility()">
     <form id="game-creation-form">
-        <div style="display:grid; grid-template-columns: 50% 50%;">
-            <div style="grid-column-start: 1; grid-column-end: 3; place-self: center;">
+        <div class="popup-form-content">
+            <div class="popup-form-two-col">
                 <label id="game-creation-gameName-label" for="game-creation-gameName-input">Game Name</label>
-                <input id="game-creation-gameName-input" name="game-creation-gameName-input" type="text" [(ngModel)]="gameName" />
-            </div>       
-            <div style="grid-column-start: 1; grid-column-end: 3; place-self: center;">
+                <input id="game-creation-gameName-input" name="game-creation-gameName-input" type="text"
+                    [(ngModel)]="gameName" />
+            </div>
+            <div class="popup-form-two-col">
                 <label id="game-creation-gamePassword-label" for="game-creation-gamePassword-input">Game Password</label>
-                <input id="game-creation-gamePassword-input" name="game-creation-gamePassword-input" type="text" [(ngModel)]="gamePassword" />
+                <input id="game-creation-gamePassword-input" name="game-creation-gamePassword-input" type="text"
+                    [(ngModel)]="gamePassword" />
             </div>
             <div>
                 <button class="metal-button" (click)="createGame()">Create</button>
@@ -18,5 +20,5 @@
         </div>
     </form>
 </div>
-<div id="game-creation-overlay" [class]="visibility()" (click)="close()">
+<div id="game-creation-overlay" class="popup-overlay" [style.display]="visibility()" (click)="close()">
 </div>

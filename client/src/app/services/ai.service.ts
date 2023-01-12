@@ -223,7 +223,7 @@ export class AiService {
     
 
     const choice: number = Math.round(Math.random() * randomizer);
-    console.log(candidates[choice].moves);
+    //console.log(candidates[choice].moves);
     //return candidates[choice].moves;
     return [];
   }

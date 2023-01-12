@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { StringGeneratorService } from 'src/app/services/string-generator.service';
 import { LobbyGameCreate } from '../store/lobby.actions';
 import LobbyState from '../store/lobby.reducer';
 
@@ -19,9 +20,11 @@ export class GameCreationComponent implements OnInit {
   public gameName: string = 'Game';
   public gamePassword: string = '12345';
 
-  constructor(private store: Store<LobbyState>) { }
+  constructor(private store: Store<LobbyState>, private stringGeneratorService: StringGeneratorService) { }
 
   ngOnInit(): void {
+    this.gameName = this.stringGeneratorService.generateName();
+    this.gamePassword = this.stringGeneratorService.generatePassword(8);  
   }
 
   public close(): void {
@@ -29,6 +32,8 @@ export class GameCreationComponent implements OnInit {
   }
 
   public createGame(): void {
+
+
     this.store.dispatch(LobbyGameCreate({ gameName: this.gameName, gamePassword: this.gamePassword}));
     this.closing.emit();
   }

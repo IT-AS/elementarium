@@ -2,7 +2,7 @@
 <div class="game-list-container">
   <ul>
     <li *ngFor="let game of games">
-      <app-game-entry [game]="game">
+      <app-game-entry *ngIf="!game.finished" [game]="game">
       </app-game-entry>
     </li>
 </ul>

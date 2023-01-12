@@ -1,41 +1,47 @@
 <div class="game-container background">
     <div class="grid">
-        <div class="grid-cell-secondary">
-            <p>Game Name: {{game?.name}}, Turn: {{game?.turn}}, Targets: {{game?.board?.targets.length}}</p>
-            <app-captures [dimension]="game?.board?.dimension" [turn]="game?.last()" ></app-captures>
+        <div class="grid-cell-secondary left">
+            <div class="side-box">
+                <h2>Game Name: <strong>{{game?.name}}</strong></h2>
+                <h2>Turn {{game?.turn}}</h2>
+                <app-captures [dimension]="game?.board?.dimension" [turn]="game?.last()" ></app-captures>
+            </div>
         </div>
         <div class="grid-cell-primary">
             <app-board [board]="game?.board" [side]="side"></app-board>
         </div>
-        <div class="grid-cell-secondary">
-            <div *ngIf="!game?.winner">
-                <div>
-                    <button class="action-button" (click)="surrender()">Surrender</button>
+        <div class="grid-cell-secondary right">
+            <div class="side-box">
+                <div *ngIf="!game?.winner">
+                    <div>
+                        <button class="metal-button" (click)="surrender()">Surrender</button>
+                    </div>
+                    <div>
+                        <button class="metal-button" [disabled]="history?.length === 0" (click)="undo()">Undo</button>
+                    </div>
+                    <div>
+                        <button class="metal-button" (click)="submit()">Move!</button>
+                    </div>
                 </div>
-                <div>
-                    <button class="action-button" [disabled]="history?.length === 0" (click)="undo()">Undo</button>
-                </div>
-                <div>
-                    <button class="action-button" (click)="submit()">Move!</button>
-                </div>
-            </div>
-            <div *ngIf="game?.winner">
-                <div>
-                    <button class="action-button" (click)="quit()">Quit</button>
+                <div *ngIf="game?.winner">
+                    <div>
+                        <button class="metal-button" (click)="quit()">Quit</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div id="game-information-container" [class.hidden]="!finished && !waiting">
+<div id="game-information-container" class="popup-container" [class.hidden]="!finished && !waiting">
     <div>
         <h1 *ngIf="finished && !waiting">{{outcome}}</h1>
+        <h2 *ngIf="finished && !waiting">({{game?.winner}} wins)</h2>
         <h1 *ngIf="!finished && waiting">Waiting for opponent...</h1>
     </div>
     <div>
-        <button *ngIf="!waiting" class="action-button" (click)="quit()">Quit</button>
+        <button *ngIf="!waiting" class="metal-button" (click)="quit()">Quit</button>
     </div>
 </div>
-<div id="game-information-overlay" [class.hidden]="!finished && !waiting" (click)="close()">
+<div id="game-information-overlay" class="popup-overlay" [class.hidden]="!finished && !waiting" (click)="close()">
 </div>
 

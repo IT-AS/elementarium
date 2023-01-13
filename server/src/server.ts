@@ -20,7 +20,7 @@ export default class Server {
     private createApp(): void {
         this.app = express();
         this.app.use(cors());
-        this.app.use(express.static('../client'))
+        this.app.options('*', cors());
     }
 
     private createServer(): void {

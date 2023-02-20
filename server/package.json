@@ -1,5 +1,5 @@
 {
-  "name": "socket-webserver",
+  "name": "elementarium-server",
   "version": "1.0.0",
   "description": "elementarium",
   "main": "app.js",

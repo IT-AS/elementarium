@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Event, NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { TokenInfo } from "../../../../shared/lobby/tokenInfo";
+import { TokenInfo } from "../../../../shared/lobby/tokeninfo";
 import { Store } from '@ngrx/store';
 import GameState from "../main/game/store/game.reducer";
 import { TokenChanged } from "../main/game/store/game.actions";

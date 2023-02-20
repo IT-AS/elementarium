@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  world: 'https://elw1.admiral.access.ly'
 };

@@ -5,14 +5,14 @@ import { SocketEvents } from "../../../../shared/engine/enums/socketevents";
 import { LobbyGamesUpdate, LobbyGameJoined } from '../main/lobby/store/lobby.actions';
 import { Store } from '@ngrx/store';
 import LobbyState from '../main/lobby/store/lobby.reducer';
-import { JoinInfo } from '../../../../shared/lobby/joinInfo';
+import { JoinInfo } from '../../../../shared/lobby/joininfo';
 import { GameInfo } from '../../../../shared/lobby/gameinfo';
 import Game from '../../../../shared/engine/game';
 import GameState from '../main/game/store/game.reducer';
 import { GameReceive, GameSideAssigned } from '../main/game/store/game.actions';
-import { TokenInfo } from '../../../../shared/lobby/tokenInfo';
+import { TokenInfo } from '../../../../shared/lobby/tokeninfo';
 import { Side } from '../../../../shared/engine/enums/side';
-import { MoveInfo } from '../../../../shared/lobby/moveInfo';
+import { MoveInfo } from '../../../../shared/lobby/moveinfo';
 
 @Injectable({
   providedIn: 'root'

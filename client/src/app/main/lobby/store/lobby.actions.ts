@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import { GameInfo } from '../../../../../../shared/lobby/gameinfo';
-import { JoinInfo } from '../../../../../../shared/lobby/joinInfo';
-import { TokenInfo } from '../../../../../../shared/lobby/tokenInfo';
+import { JoinInfo } from '../../../../../../shared/lobby/joininfo';
+import { TokenInfo } from '../../../../../../shared/lobby/tokeninfo';
 
 export enum ActionTypes{
   LobbyGamesGetAction = '[Lobby] Games Get',

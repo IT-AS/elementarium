@@ -4,7 +4,7 @@ import Game from '../../../../../../shared/engine/game';
 import { Side } from '../../../../../../shared/engine/enums/side';
 import Field from '../../../../../../shared/engine/field';
 import Move from '../../../../../../shared/engine/moves/move';
-import { TokenInfo } from '../../../../../../shared/lobby/tokenInfo';
+import { TokenInfo } from '../../../../../../shared/lobby/tokeninfo';
 
 export default interface GameState {
     game: Game,

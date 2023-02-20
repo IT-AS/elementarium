@@ -10,7 +10,6 @@ import Lobby from './lobby';
 import Game from '../../shared/engine/game';
 import { TokenInfo } from '../../shared/lobby/tokeninfo';
 import { Side } from '../../shared/engine/enums/side';
-import { GameEntry } from './gameentry';
 import Rules from '../../shared/engine/rules';
 
 export default class Socket {

@@ -14,6 +14,7 @@ export default class Server {
         this.config(port);
         this.createServer();
         this.initControllers(controllers);
+        this.initStaticFiles();
         this.listen();
     }
 
@@ -31,6 +32,10 @@ export default class Server {
         controllers.forEach((controller) => {
             this.app.use("/", controller.router);
         });
+    }
+
+    public initStaticFiles() {
+        this.app.use("/", express.static("client"));
     }
 
     private config(port): void {

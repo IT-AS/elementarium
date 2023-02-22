@@ -22,7 +22,7 @@ export class GameJoiningComponent implements OnInit {
   public gameId: string;
   @Input()
   public gameName: string;
-  public gamePassword: string = '12345';
+  public gamePassword: string = '';
   public playerName: string = 'Player1';
   @Input()
   public side: Side = Side.Green;

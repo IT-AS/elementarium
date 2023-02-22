@@ -1,5 +1,10 @@
 .board-cell {
     display: inline-block;
-    // border-right: 1px solid black;
-    // border-bottom: 1px solid black;
+}
+
+.clash {
+    border: 1px solid  #FFA500;
+    border-radius: 50%;
+    box-shadow: 0 0 25px  #FF5E13, inset 0 0 25px #FFA500 ;
+    -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0002);
 }

@@ -1,19 +1,12 @@
-<footer>
-    <div class="grid">
-        <div class="grid-cell-secondary">
+<footer [style.height.px]="footerHeight" class="grid">
+    <div class="grid-cell-secondary">
+    </div>
+    <div class="grid-cell-primary">
+        <div class="links" [style.width.px]="footerWidth">
+            <a href="#">Privacy policy</a>
+            <a href="#">Contact</a>
         </div>
-        <div class="grid-cell-primary">
-            <div class="footer"
-                [style.width.px]="footerWidth"
-                [style.height.px]="footerHeight"
-                [style.background-size.px]="footerWidth">
-                <div class="links">
-                    <a href="#">Privacy policy</a>
-                    <a href="#">Contact</a>
-                </div>
-            </div>
-        </div>
-        <div class="grid-cell-secondary">
-        </div>
+    </div>
+    <div class="grid-cell-secondary">
     </div>
 </footer>

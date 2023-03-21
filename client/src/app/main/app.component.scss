@@ -6,4 +6,6 @@
     color: white;
 
     height: 100%;
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
 }

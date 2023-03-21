@@ -1,40 +1,40 @@
-<div id="game-joining-container" class="popup-container" [style.display]="visibility()">
-    <form id="game-joining-form">
-        <div class="popup-form-content">
-            <div class="popup-form-two-col">
-                <label id="game-joining-gameId-label" for="game-joining-gameId-input">Game Id</label>
-                <input id="game-joining-gameId-input" name="game-joining-gameId-input" type="text" [(ngModel)]="gameId"
-                    disabled="disabled" />
-            </div>
-            <div class="popup-form-two-col">
-                <label id="game-creation-gameName-label" for="game-creation-gameName-input">Game Name</label>
-                <input id="game-creation-gameName-input" name="game-creation-gameName-input" type="text"
-                    [(ngModel)]="gameName" disabled="disabled" />
-            </div>
-            <div class="popup-form-two-col">
-                <label id="game-joining-gamePassword-label" for="game-joining-gamePassword-input">Game Password</label>
-                <input id="game-joining-gamePassword-input" name="game-joining-gamePassword-input" type="text"
-                    [(ngModel)]="gamePassword" />
-            </div>
-            <div class="popup-form-two-col">
-                <label id="game-joining-playerName-label" for="game-joining-playerName-input">Player Name</label>
-                <input id="game-joining-playerName-input" name="game-joining-playerName-input" type="text"
-                    [(ngModel)]="playerName" />
-            </div>
-            <div class="popup-form-two-col">
-                <label id="game-joining-side-label" for="game-joining-side-input">Side</label>
-                <input id="game-joining-side-input" name="game-joining-side-input" type="text" [(ngModel)]="side"
-                    disabled="disabled" />
-            </div>
+<div id="game-joining-overlay" class="popup-overlay" [style.display]="visibility('grid')" (click)="close()">
+    <div id="game-joining-container" class="popup-container" [style.display]="visibility('inline-block')" (click)="$event.stopPropagation()">
+        <form id="game-joining-form">
+            <div class="popup-form-content">
+                <div class="popup-form-two-col">
+                    <label id="game-joining-gameId-label" for="game-joining-gameId-input">Game Id</label>
+                    <input id="game-joining-gameId-input" name="game-joining-gameId-input" type="text" [(ngModel)]="gameId"
+                        disabled="disabled" />
+                </div>
+                <div class="popup-form-two-col">
+                    <label id="game-creation-gameName-label" for="game-creation-gameName-input">Game Name</label>
+                    <input id="game-creation-gameName-input" name="game-creation-gameName-input" type="text"
+                        [(ngModel)]="gameName" disabled="disabled" />
+                </div>
+                <div class="popup-form-two-col">
+                    <label id="game-joining-gamePassword-label" for="game-joining-gamePassword-input">Game Password</label>
+                    <input id="game-joining-gamePassword-input" name="game-joining-gamePassword-input" type="text"
+                        [(ngModel)]="gamePassword" />
+                </div>
+                <div class="popup-form-two-col">
+                    <label id="game-joining-playerName-label" for="game-joining-playerName-input">Player Name</label>
+                    <input id="game-joining-playerName-input" name="game-joining-playerName-input" type="text"
+                        [(ngModel)]="playerName" />
+                </div>
+                <div class="popup-form-two-col">
+                    <label id="game-joining-side-label" for="game-joining-side-input">Side</label>
+                    <input id="game-joining-side-input" name="game-joining-side-input" type="text" [(ngModel)]="side"
+                        disabled="disabled" />
+                </div>
 
-            <div>
-                <button class="metal-button" (click)="joinGame()">Join</button>
+                <div>
+                    <button class="metal-button" (click)="joinGame()">Join</button>
+                </div>
+                <div>
+                    <button class="metal-button" (click)="close()">Close</button>
+                </div>
             </div>
-            <div>
-                <button class="metal-button" (click)="close()">Close</button>
-            </div>
-        </div>
-    </form>
-</div>
-<div id="game-joining-overlay" class="popup-overlay" [style.display]="visibility()" (click)="close()">
+        </form>
+    </div>
 </div>

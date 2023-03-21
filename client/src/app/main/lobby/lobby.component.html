@@ -3,9 +3,9 @@
     </div>
     <div class="grid-cell-primary">
         <div class="lobby"
-            [style.width.px]="lobbySize"
-            [style.height.px]="lobbySize"
-            [style.background-size.px]="lobbySize">
+            [style.width.px]="lobbyWidth"
+            [style.height.px]="lobbyHeight"
+            [style.background-size]="lobbyWidth + 'px ' + lobbyHeight + 'px'">
             <div class="list"
                 [style.height.px]="listSize">
                 <app-game-list></app-game-list>

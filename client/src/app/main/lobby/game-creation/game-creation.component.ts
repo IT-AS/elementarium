@@ -38,7 +38,7 @@ export class GameCreationComponent implements OnInit {
     this.closing.emit();
   }
 
-  public visibility(): string {
-    return this.visible ? 'block' : 'none';
+  public visibility(style: string): string {
+    return this.visible ? style : 'none';
   }
 }

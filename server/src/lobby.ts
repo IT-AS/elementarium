@@ -147,7 +147,7 @@ export default class Lobby {
                     players: g.game.players, 
                     turn: g.game.turn ,
                     finished: g.game.winner !== null
-                } as GameInfo));
+                } as GameInfo)).filter(g => !g.finished && !(g.players[0] && g.players[1]));
             }
 
             return null;

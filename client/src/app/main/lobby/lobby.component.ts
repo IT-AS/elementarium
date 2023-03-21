@@ -11,12 +11,17 @@ export class LobbyComponent implements OnInit {
 
   private baseSize: number;
 
-  public get lobbySize(): number {
+  public get lobbyHeight(): number {
+    return window.innerHeight * 0.9;
+  }
+
+  public get lobbyWidth(): number {
     return this.baseSize * 0.9;
   }
 
+
   public get listSize(): number {
-    return this.lobbySize * 0.85;
+    return this.lobbyHeight * 0.85;
   }
 
   constructor() {

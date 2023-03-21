@@ -32,16 +32,16 @@
         </div>
     </div>
 </div>
-<div id="game-information-container" class="popup-container" [class.hidden]="!finished && !waiting">
-    <div>
-        <h1 *ngIf="finished && !waiting">{{outcome}}</h1>
-        <h2 *ngIf="finished && !waiting">({{game?.winner}} wins)</h2>
-        <h1 *ngIf="!finished && waiting">Waiting for opponent...</h1>
-    </div>
-    <div>
-        <button *ngIf="!waiting" class="metal-button" (click)="quit()">Quit</button>
-    </div>
-</div>
 <div id="game-information-overlay" class="popup-overlay" [class.hidden]="!finished && !waiting" (click)="close()">
+    <div id="game-information-container" class="popup-container" [class.hidden]="!finished && !waiting">
+        <div>
+            <h1 *ngIf="finished && !waiting">{{outcome}}</h1>
+            <h2 *ngIf="finished && !waiting">({{game?.winner}} wins)</h2>
+            <h1 *ngIf="!finished && waiting">Waiting for opponent...</h1>
+        </div>
+        <div>
+            <button *ngIf="!waiting" class="metal-button" (click)="quit()">Quit</button>
+        </div>
+    </div>
 </div>
 

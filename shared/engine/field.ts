@@ -8,6 +8,7 @@ import Unit from "./unit";
 export default class Field {
     public row: number;
     public column: number;
+    public clashed: boolean;
 
     public current: Unit;
     public greenCandidate: Unit;
@@ -16,6 +17,7 @@ export default class Field {
     constructor(row: number, column: number) {
         this.row = row;
         this.column = column;
+        this.clashed = false;
 
         this.current = null;
         this.greenCandidate = null;
@@ -27,6 +29,7 @@ export default class Field {
 
         const field: Field = new Field(source.row, source.column);
 
+        field.clashed = source.clashed;
         field.current = Unit.clone(source.current);
         field.greenCandidate = Unit.clone(source.greenCandidate);
         field.redCandidate = Unit.clone(source.redCandidate);
@@ -124,6 +127,8 @@ export default class Field {
                     }
                 }
             }
+
+            this.clashed = true;
         } else {
             if (this.greenCandidate !== null) {
                 this.current = this.greenCandidate;

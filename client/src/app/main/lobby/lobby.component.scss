@@ -1,19 +1,12 @@
 .grid {
-    display: flex;
-    flex-flow: nowrap;
-}
-
-.grid-cell-primary {
-    flex: 3;
-}
-
-.grid-cell-secondary {
-    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
 }
 
 .lobby {
     margin: auto;
-    display: block;
+    display: grid;
+    grid-auto-rows: minmax(100px, auto);
 
     background-image: url(/assets/border.png);
     background-position: top left;

@@ -1,31 +1,31 @@
-<div id="game-deletion-container" class="popup-container" [style.display]="visibility()">
-    <form id="game-deletion-form">
-        <div class="popup-form-content">
-            <div class="popup-form-two-col">
-                <label id="game-deletion-gameId-label" for="game-deletion-gameId-input">Game Id</label>
-                <input id="game-deletion-gameId-input" name="game-deletion-gameId-input" type="text"
-                    [(ngModel)]="gameId" disabled="disabled" />
-            </div>
-            <div class="popup-form-two-col">
-                <label id="game-creation-gameName-label" for="game-creation-gameName-input">Game Name</label>
-                <input id="game-creation-gameName-input" name="game-creation-gameName-input" type="text"
-                    [(ngModel)]="gameName" disabled="disabled" />
-            </div>
-            <div class="popup-form-two-col">
+<div id="game-deletion-overlay" class="popup-overlay" [style.display]="visibility('grid')" (click)="close()">
+    <div id="game-deletion-container" class="popup-container" [style.display]="visibility('inline-block')" (click)="$event.stopPropagation()">
+        <form id="game-deletion-form">
+            <div class="popup-form-content">
+                <div class="popup-form-two-col">
+                    <label id="game-deletion-gameId-label" for="game-deletion-gameId-input">Game Id</label>
+                    <input id="game-deletion-gameId-input" name="game-deletion-gameId-input" type="text"
+                        [(ngModel)]="gameId" disabled="disabled" />
+                </div>
+                <div class="popup-form-two-col">
+                    <label id="game-creation-gameName-label" for="game-creation-gameName-input">Game Name</label>
+                    <input id="game-creation-gameName-input" name="game-creation-gameName-input" type="text"
+                        [(ngModel)]="gameName" disabled="disabled" />
+                </div>
+                <div class="popup-form-two-col">
 
-                <label id="game-deletion-gamePassword-label" for="game-deletion-gamePassword-input">Game Password</label>
-                <input id="game-deletion-gamePassword-input" name="game-deletion-gamePassword-input" type="text"
-                    [(ngModel)]="gamePassword" />
-            </div>
+                    <label id="game-deletion-gamePassword-label" for="game-deletion-gamePassword-input">Game Password</label>
+                    <input id="game-deletion-gamePassword-input" name="game-deletion-gamePassword-input" type="text"
+                        [(ngModel)]="gamePassword" />
+                </div>
 
-            <div>
-                <button class="metal-button" (click)="deleteGame()">Delete</button>
+                <div>
+                    <button class="metal-button" (click)="deleteGame()">Delete</button>
+                </div>
+                <div>
+                    <button class="metal-button" (click)="close()">Close</button>
+                </div>
             </div>
-            <div>
-                <button class="metal-button" (click)="close()">Close</button>
-            </div>
-        </div>
-    </form>
-</div>
-<div id="game-deletion-overlay"  class="popup-overlay" [style.display]="visibility()" (click)="close()">
+        </form>
+    </div>
 </div>

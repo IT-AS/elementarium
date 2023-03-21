@@ -2,3 +2,11 @@
     width:fit-content; 
     margin:auto;
 }
+
+
+@media screen and (max-width: 1560px) {
+    .captured {
+        display:inline-block; 
+        width: auto;        
+    }
+}

@@ -9,10 +9,6 @@ export class HeaderComponent implements OnInit {
 
   private baseSize: number;
 
-  public get headerWidth(): number {
-    return this.baseSize * 0.9;
-  }
-
   public get headerHeight(): number {
     return this.baseSize * 0.05;
   }

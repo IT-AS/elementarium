@@ -13,16 +13,14 @@
                         [(ngModel)]="gameName" disabled="disabled" />
                 </div>
                 <div class="popup-form-two-col">
-
                     <label id="game-deletion-gamePassword-label" for="game-deletion-gamePassword-input">Game Password</label>
                     <input id="game-deletion-gamePassword-input" name="game-deletion-gamePassword-input" type="text"
                         [(ngModel)]="gamePassword" />
                 </div>
-
-                <div>
+                <div class="button-wrapper">
                     <button class="metal-button" (click)="deleteGame()">Delete</button>
                 </div>
-                <div>
+                <div class="button-wrapper">
                     <button class="metal-button" (click)="close()">Close</button>
                 </div>
             </div>

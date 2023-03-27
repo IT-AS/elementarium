@@ -25,6 +25,7 @@ import { GameEffects } from './game/store/game.effects';
 import { BoardUnitComponent } from './game/board-unit/board-unit.component';
 import { NavigationService } from '../services/navigation.service';
 import { CapturesComponent } from './game/captures/captures.component';
+import { StaticComponent } from '../static/static.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { CapturesComponent } from './game/captures/captures.component';
     BoardComponent,
     BoardCellComponent,
     BoardUnitComponent,
-    CapturesComponent
+    CapturesComponent,
+    StaticComponent
   ],
   imports: [
     BrowserModule,

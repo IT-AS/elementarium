@@ -15,6 +15,7 @@ export const APP_ROUTES: Routes = [
   },
   { path: 'story', component: StaticComponent },
   { path: 'howto', component: StaticComponent },
+  { path: 'rules', component: StaticComponent },
   { path: 'privacy', component: StaticComponent },
   { path: '**', component: LobbyComponent },
 ];

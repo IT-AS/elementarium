@@ -23,5 +23,13 @@
             line-height: 2em;
             font-size: 1.2em;
         }
+
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    }
+
+    .format1::-webkit-scrollbar { /* WebKit */
+        width: 0;
+        height: 0;
     }
 }

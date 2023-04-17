@@ -17,7 +17,7 @@
                 <p>As the eternal conflict between Order and Chaos rages on, the world of Elementarium is in a constant state of flux. The borderlands between the two realms, known as the Fractured Expanse, are particularly volatile, as the elements collide and merge in a dazzling display of nature's raw power. It is here that the Ordinari and Chaotari engage in epic battles, each seeking to tip the balance in their favor and assert their influence over Elementarium.</p>
                 <p>Step into the world of Elementarium, and bear witness to a place where Order and Chaos wage an unending battle for supremacy, using the very essence of nature itself as their weapons. This is a realm where the balance of power is forever shifting, where elemental forces shape not only the landscape but the very souls of those who call it home.</p>
             </div>
-            <div class="format1" *ngIf="currentRoute === '/howto'">
+            <div class="format1" *ngIf="currentRoute === '/rules'">
                 <h1>What is this game about</h1>
                 <p>Elementarium is a board game where two players play against each other by moving units of different types. The moves are made simultaneously and hidden from each other, maximum 3 moves per turn, one move per unit per turn. After the moves are targeted on both sides, the moves are revealed and the clashes resolved. Unless one of the players has won, the next turn begins.</p>
                 <p>You can win the game by either capturing all enemy units or by dissolve the enemies' Source. If no pair of units of the same type exists on any side, the game is drawn.</p>
@@ -39,6 +39,19 @@
                 <p>Spawning can be prevented, when an enemy unit is on the spawning field or on adjacent fields to the spawn-structure.</p>
                 <h2>Source</h2>
                 <p>The Source is a special unit in this game. You only one of it and it is the weakest and the most important piece at the same time. The Source can only move one field in any direction, but it can only move on your allied territory. The Source always wins a clash. When any enemy unit is near the Source, the Source is blocked and can't move. When you spawn an element onto the Source, it gets dissolved and you win the game.</p>
+            </div>
+            <div class="format1" *ngIf="currentRoute === '/howto'">
+                <h1>How to start a game</h1>
+                <p>Since the AI for this game is currently not finished yet, you'll need a bro who you want to play with/against. </p>
+                <p>Go to the <a href="/">lobby</a> and click on "New Game". Give the game a name and a password (or take the provided one, but remember/copy it, because you won't be able to see it anymore) and click on "Create".</p>
+                <p>Now find your game in the Game List and click on "Join as Green" (to play for Order) or "Join as Red" (to play for Chaos). Enter your name/nick and the password you copied/remembered earlier. Click on "Join". You'll see the board in its starting position.</p>
+                <p>You opponent needs to join as well and you then can start playing.</p>
+                <h1>How to make moves</h1>
+                <p>You have 3 moves per turn. Simply click on a unit or drag it and you will see the fields where you can move it being highlighted. Click on the target field or drop the unit and the move is "targeted".</p>
+                <p>When you're finished targeting your move, click on "Move!" and the moves are executed. From here on, they can't be undone. If you haven't clicked "Move" yet, you can undo your moves one by one by clicking on "Undo".</p>
+                <p>If you see no chance to win, you can surrender by clicking on "Surrender". Warning! Currently there is no confirmation window, so you'll lose immediately after clicking.</p>
+                <h1>Resuming the game</h1>
+                <p>The url you see in the address bar of your browser can be used as a resume-link. Just navigate it with your browser and (unless it has already finished) you will continue right where you stopped playing.</p>
             </div>
             <div class="format1" *ngIf="currentRoute === '/privacy'">
                 <h1>Privacy Policy</h1>

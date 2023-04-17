@@ -13,7 +13,7 @@ export default class Server {
         this.createApp();
         this.config(port);
         this.createServer();
-        //this.initControllers(controllers);
+        this.initControllers(controllers);
         this.initStaticFiles();
         this.listen();
     }
@@ -30,16 +30,13 @@ export default class Server {
 
     public initControllers(controllers) {
         controllers.forEach((controller) => {
-            this.app.use("/", controller.router);
+            this.app.use("/ping", controller.router);
         });
     }
 
     public initStaticFiles() {
         this.app.use("/", express.static("client"));
-        this.app.use("/game", express.static("client"));
-        this.app.use("/story", express.static("client"));
-        this.app.use("/howto", express.static("client"));
-        this.app.use("/privacy", express.static("client"));
+        this.app.use("*", express.static("client"));
     }
 
     private config(port): void {

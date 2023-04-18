@@ -20,25 +20,69 @@
             <div class="format1" *ngIf="currentRoute === '/rules'">
                 <h1>What is this game about</h1>
                 <p>Elementarium is a board game where two players play against each other by moving units of different types. The moves are made simultaneously and hidden from each other, maximum 3 moves per turn, one move per unit per turn. After the moves are targeted on both sides, the moves are revealed and the clashes resolved. Unless one of the players has won, the next turn begins.</p>
-                <p>You can win the game by either capturing all enemy units or by dissolve the enemies' Source. If no pair of units of the same type exists on any side, the game is drawn.</p>
+                <p>You can win the game by either capturing all enemy units or by dissolvштп the enemies' Source. If no pair of units of the same type exists on any side, the game is drawn.</p>
                 <h1>Basic mechanics</h1>
                 <p>The game features some mechanics on how the units interact with each other on the board. This mechanics include Movement, Capturing, Spawning and the Source. In the next sections they're explained in detail.</p>
                 <h2>Board</h2>
                 <p>The board is a 11x11 board. The bottom 4 rows are the allied territory, the top 4 rows are the territory of your enemy. The 3 rows in between are considered neutral. On the left and right side of the neutral territory there are some obstacles which can't be removed.</p>
+                <img src="assets/howto/board.png" />
                 <h2>Units</h2>
                 <p>There are five types of units in this game. Four unit types representing the elemental forces: Air, Earth, Fire, Water. And one unit is the Source. Each of the unit types has its own movement pattern. Units can't jump over other units and obstacles, except the Air unit type.</p>
+                <div class="unit">
+                    <img src="assets/air-order.png" />
+                    <img src="assets/air-chaos.png" />
+                    Air
+                </div>
+                <div class="unit">
+                    <img src="assets/earth-order.png" />
+                    <img src="assets/earth-chaos.png" />
+                    Earth
+                </div>
+                <div class="unit">
+                    <img src="assets/fire-order.png" />
+                    <img src="assets/fire-chaos.png" />
+                    Fire
+                </div>
+                <div class="unit">
+                    <img src="assets/water-order.png" />
+                    <img src="assets/water-chaos.png" />
+                    Water
+                </div>
+                <div class="unit">
+                    <img src="assets/source-order.png" />
+                    <img src="assets/source-chaos.png" />
+                    Source
+                </div>
+                <p>&nbsp;</p>
                 <h2>Movement</h2>
                 <p>You can move any unit once per turn according to their movement pattern by clicking on it and on the target field or by using drag&drop. You can move max 3 units per turn.</p>
                 <h2>Capturing</h2>
                 <p>When two units of you and your enemy land on the same field when the moves are revealed, a clash happens. Each unit type defeats one another type of units, gets defeated by one another type of units and is neutral to the third type of units and to the same type.</p>
                 <p>When your unit defeats an enemy unit, the enemy unit gets captured and is removed from the board. When your unit gets defeated by an enemy unit, your unit gets captured and is removed from the board. In all other cases, both units get captured and are both removed from the board.</p>
                 <p>The units are in total balance. Air defeats Earth. Earth defeats Water. Water defeats Fire. And Fire defeats Air.</p>
+                <div class="clash">
+                    <img src="assets/air-order.png" />
+                    <img src="assets/howto/gt.png" />
+                    <img src="assets/earth-chaos.png" />
+                    <img src="assets/howto/gt.png" />
+                    <img src="assets/fire-order.png" />
+                    <img src="assets/howto/gt.png" />
+                    <img src="assets/water-chaos.png" />
+                    <img src="assets/howto/gt.png" />
+                    <img src="assets/air-order.png" />
+                </div>
                 <h2>Spawning</h2>
                 <p>By arranging your units in specific patterns on enemies' territory you can spawn new units. Arrange either 3 units of the same type or 3 units all of different types in a triangle pattern. When arranging 3 units of the same type, a unit of the same type is spawned. When arraning 3 units all of different types, a unit of the missing type is spawned.</p>
                 <p>There is a special case where only 2 units of same type are needed to spawn a unit. In the upper left and right corners you need only two units to enclose the corner field and then a unit will spawn in the corner.</p>
                 <p>Spawning can be prevented, when an enemy unit is on the spawning field or on adjacent fields to the spawn-structure.</p>
                 <h2>Source</h2>
                 <p>The Source is a special unit in this game. You only one of it and it is the weakest and the most important piece at the same time. The Source can only move one field in any direction, but it can only move on your allied territory. The Source always wins a clash. When any enemy unit is near the Source, the Source is blocked and can't move. When you spawn an element onto the Source, it gets dissolved and you win the game.</p>
+                <div class="unit">
+                    <img src="assets/source-order.png" />
+                    <img src="assets/source-chaos.png" />
+                    Source
+                </div>
+                <p>&nbsp;</p>
             </div>
             <div class="format1" *ngIf="currentRoute === '/howto'">
                 <h1>How to start a game</h1>

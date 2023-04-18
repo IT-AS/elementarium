@@ -24,6 +24,30 @@
             font-size: 1.2em;
         }
 
+        .unit {
+            display: inline-block;
+            text-align: center;
+            max-width: 15%;
+
+            img {
+                width: 100%;
+            }
+        }
+
+        .clash {
+            text-align: center;
+
+            img {
+                width: 10%;
+            }
+        }
+
+        img {
+            max-width: 80%;
+        }
+
+
+
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none;  /* Internet Explorer 10+ */
     }

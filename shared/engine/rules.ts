@@ -48,7 +48,7 @@ export default class Rules {
         "green": 7.
     }
 
-
+/*
     static readonly units: Readonly<any> = {
         "red": {
             "Earth": [[0, 3], [0, 7], [1, 4], [1, 5], [1, 6]],
@@ -63,6 +63,25 @@ export default class Rules {
             "Fire": [[10, 1], [10, 9], [9, 2], [9, 8], [10, 6]],
             "Water": [[10, 0], [9, 1], [10, 10], [9, 9], [10, 4]],
             "Source": [[10, 5]],
+        },
+        "gray": {
+            "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]
+        }
+    };
+*/
+
+    // For checking spawns
+    static readonly units: Readonly<any> = {
+        "red": {
+            "Water": [[9, 3], [8, 4], [9, 10], [9, 9], [9, 5]],
+            "Fire": [[7, 0], [8, 1], [9, 0]],
+            "Source": [[3, 5]],
+        },
+        "green": {
+            "Water": [[0, 5], [1, 10], [0, 9]],
+            "Fire": [[2, 5]],
+            "Air": [[1, 4]],
+            "Source": [[7, 5]],
         },
         "gray": {
             "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]

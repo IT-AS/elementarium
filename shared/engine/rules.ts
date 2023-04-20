@@ -48,7 +48,7 @@ export default class Rules {
         "green": 7.
     }
 
-/*
+
     static readonly units: Readonly<any> = {
         "red": {
             "Earth": [[0, 3], [0, 7], [1, 4], [1, 5], [1, 6]],
@@ -68,8 +68,8 @@ export default class Rules {
             "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]
         }
     };
-*/
 
+/*
     // For checking spawns
     static readonly units: Readonly<any> = {
         "red": {
@@ -87,7 +87,7 @@ export default class Rules {
             "Obstacle": [[4, 0], [4, 1], [5, 1], [6, 0], [6, 1], [4, 10], [4, 9], [5, 9], [6, 10], [6, 9]]
         }
     };
-
+*/
 /*
     // For checking draw-condition by destroying both sources
     static readonly units: Readonly<any> = {

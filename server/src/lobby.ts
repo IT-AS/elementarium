@@ -8,6 +8,7 @@ import {GameInfo} from '../../shared/lobby/gameinfo';
 import {TokenInfo} from '../../shared/lobby/tokeninfo';
 
 import Game from '../../shared/engine/game';
+import Rules from '../../shared/engine/rules';
 import Player from '../../shared/engine/player';
 import { v4 as uuidv4 } from 'uuid';
 import { Side } from '../../shared/engine/enums/side';
@@ -88,6 +89,10 @@ export default class Lobby {
                     game.players.push({name: joinInfo.playerId, side: joinInfo.side} as Player);
                     gameEntry.ai = joinInfo.ai;
 
+                    if (joinInfo.ai) {
+                        game.players.push({name: 'AI', side: Rules.opponent(joinInfo.side)} as Player);
+                    }
+
                     await this.games.asyncUpdate({'game.gameId': gameEntry.game.gameId}, gameEntry);
 
                     return {success: true, message: ''} as Result;
@@ -139,6 +144,8 @@ export default class Lobby {
     public async getGameList(): Promise<GameInfo[]> {
         try {
             const result = await this.games.asyncFind({});
+
+            console.log(result);
 
             if(result) {
                 return result.map(g => ({

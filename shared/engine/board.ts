@@ -7,7 +7,6 @@ import {Side} from "./enums/side";
 import Rules from "./rules";
 import Field from "./field";
 import Unit from "./unit";
-import Move from './moves/move';
 
 export default class Board {
     public fields: Field[][];
@@ -18,6 +17,7 @@ export default class Board {
 
     constructor(dimension: number) {
         this.dimension = dimension;
+        this.sources = {};
     }
 
     static clone(source: Board): Board {
@@ -660,13 +660,6 @@ export default class Board {
         }
     }
 
-    private near(row1: number, col1: number, row2: number, col2: number): boolean {
-        return row1 >= (row2 - 1) &&
-               row1 <= (row2 + 1) &&
-               col1 >= (col2 - 1) &&
-               col1 <= (col2 + 1)
-    }
-
     public dirty_eval(side: Side, opponent: Side): number {
         let score = 0;
 
@@ -698,9 +691,14 @@ export default class Board {
         // No map()/filter()/concat() used here because of performance
         for(let row = 0, n = this.fields.length; row < n; row++) {
             for (let col = 0; col < n; col++) {
-                const direction = this.findMoves(this.fields[row][col]);
+                const field = this.fields[row][col]
+                const direction = this.findMoves(field);
                 if (direction !== null) {
                     result.push(direction);
+                }
+
+                if(field?.current?.type === UnitType.Source) {
+                    this.sources[field.current.side] = field;
                 }
             }
         }

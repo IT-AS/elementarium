@@ -342,6 +342,13 @@ export class AiService {
     return result;
   }
 
+  private near(row1: number, col1: number, row2: number, col2: number): boolean {
+    return row1 >= (row2 - 1) &&
+           row1 <= (row2 + 1) &&
+           col1 >= (col2 - 1) &&
+           col1 <= (col2 + 1)
+  }
+
   private distance(sourcePos: number[], targetPos: number[]): number {
     return Math.sqrt(Math.pow(sourcePos[0] - targetPos[0], 2) + Math.pow(sourcePos[1] - targetPos[1], 2));;
   }

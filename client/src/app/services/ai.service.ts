@@ -32,8 +32,6 @@ export class AiService {
     const factor = side == Side.Red ? 1 : -1;
     const opponentSide = Rules.opponent(side);
 
-    console.log(board.sources);
-
     const opponentSource = board.sources[opponentSide];
 
     for(const direction of mymoves) {

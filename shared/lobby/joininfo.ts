@@ -5,4 +5,5 @@ export class JoinInfo {
     playerId: string;
     password: string;
     side: Side;
+    ai: boolean;
 }

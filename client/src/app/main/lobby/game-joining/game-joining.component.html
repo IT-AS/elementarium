@@ -27,6 +27,10 @@
                     <input id="game-joining-side-input" name="game-joining-side-input" type="text" [(ngModel)]="side"
                         disabled="disabled" />
                 </div>
+                <div class="popup-form-two-col">
+                    <label id="game-joining-cpu-label" for="game-joining-cpu-input">Play vs. CPU</label>
+                    <input id="game-joining-cpu-input" name="game-joining-cpu-input" type="checkbox" [(ngModel)]="ai"/>
+                </div>
                 <div class="button-wrapper">
                     <button class="metal-button" (click)="joinGame()">Join</button>
                 </div>

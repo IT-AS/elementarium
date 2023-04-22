@@ -86,7 +86,7 @@ export default class Lobby {
             if (game && password) {
                 if (bcrypt.compareSync(joinInfo.password, password)) {
                     game.players.push({name: joinInfo.playerId, side: joinInfo.side} as Player);
-                    gameEntry.ai = joinInfo.playerId === 'CPU';
+                    gameEntry.ai = joinInfo.ai;
 
                     await this.games.asyncUpdate({'game.gameId': gameEntry.game.gameId}, gameEntry);
 

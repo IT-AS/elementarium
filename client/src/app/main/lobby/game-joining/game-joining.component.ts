@@ -4,6 +4,7 @@ import LobbyState from '../store/lobby.reducer';
 import { LobbyGameJoin } from '../store/lobby.actions';
 import { Side } from '../../../../../../shared/engine/enums/side';
 import { JoinInfo } from '../../../../../../shared/lobby/joininfo';
+import { StringGeneratorService } from 'src/app/services/string-generator.service';
 
 @Component({
   selector: 'app-game-joining',
@@ -24,10 +25,13 @@ export class GameJoiningComponent implements OnInit {
   public gameName: string;
   public gamePassword: string = '';
   public playerName: string = 'Player1';
+  public ai: boolean = false;
   @Input()
   public side: Side = Side.Green;
 
-  constructor(private store: Store<LobbyState>) { }
+  constructor(private store: Store<LobbyState>, private stringGeneratorService: StringGeneratorService) {
+    this.playerName = this.stringGeneratorService.generatePlayerName();
+  }
 
   ngOnInit(): void {
   }
@@ -37,7 +41,7 @@ export class GameJoiningComponent implements OnInit {
   }
 
   public joinGame(): void {
-    const joinInfo: JoinInfo = { gameId: this.gameId, password: this.gamePassword, playerId: this.playerName, side: this.side };
+    const joinInfo: JoinInfo = { gameId: this.gameId, password: this.gamePassword, playerId: this.playerName, side: this.side, ai: this.ai };
     this.store.dispatch(LobbyGameJoin({payload: joinInfo}));
     this.closing.emit();
   }

@@ -23,7 +23,7 @@ export class GameCreationComponent implements OnInit {
   constructor(private store: Store<LobbyState>, private stringGeneratorService: StringGeneratorService) { }
 
   ngOnInit(): void {
-    this.gameName = this.stringGeneratorService.generateName();
+    this.gameName = this.stringGeneratorService.generateGameName();
     this.gamePassword = this.stringGeneratorService.generatePassword(8);  
   }
 

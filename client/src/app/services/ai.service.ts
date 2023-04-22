@@ -23,25 +23,46 @@ export class AiService {
     const escapedirections: Direction[] = [];
     const preventiondirections: Direction[] = [];
 
+    const mymovingdirections: Direction[] = [];
+    const enemymovingdirections: Direction[] = [];
+
     const mymoves = board.targets.filter(d => d.side === side);
     const enemymoves = board.targets.filter(d => d.side !== side);
 
+    const factor = side == Side.Red ? 1 : -1;
+    const opponentSide = Rules.opponent(side);
+
+    console.log(board.sources);
+
+    const opponentSource = board.sources[opponentSide];
+
     for(const direction of mymoves) {
-      const tos: number[][] = [];
+      const attackingTos: number[][] = [];
+      const movingTos: number[][] = [];
       for(const to of direction.to) {
         const sourceUnit = board.fields[direction.from[0]][direction.from[1]].current;
         const targetUnit = board.fields[to[0]][to[1]].current;
         if(targetUnit) {
-          if(targetUnit.side === Rules.opponent(side)) {
+          if(targetUnit.side === opponentSide) {
             if(sourceUnit.type === UnitType.Source || Rules.clashes[sourceUnit.type][0] === targetUnit.type) {
-              tos.push(to);
+              attackingTos.push(to);
             }
+          }
+        } else {
+          if(direction.from[0] * factor < to[0] * factor) {
+            movingTos.push(to);
           }
         }
       }
 
-      if(tos.length > 0) {
-        attackingdirections.push(<Direction>{ from: direction.from, to: tos, side: side});
+      if(attackingTos.length > 0) {
+        attackingTos.sort((a, b) => this.distance(a, [opponentSource.row, opponentSource.column]) - this.distance(b, [opponentSource.row, opponentSource.column]));
+        attackingdirections.push(<Direction>{ from: direction.from, to: attackingTos, side: side});
+      }
+
+      if(movingTos.length > 0) {
+        movingTos.sort((a, b) => this.distance(a, [opponentSource.row, opponentSource.column]) - this.distance(b, [opponentSource.row, opponentSource.column]));
+        mymovingdirections.push(<Direction>{ from: direction.from, to: movingTos, side: side});
       }
     }
 
@@ -59,6 +80,7 @@ export class AiService {
           }
 
           if(tos.length > 0) {
+            tos.sort((a, b) => this.distance(a, [opponentSource.row, opponentSource.column]) - this.distance(b, [opponentSource.row, opponentSource.column]));
             escapedirections.push(<Direction>{ from: from, to: tos, side: Rules.opponent(side)});
           }
         }
@@ -66,21 +88,30 @@ export class AiService {
     }
 
     for(const direction of enemymoves) {
-      const tos: number[][] = [];
+      const threatTos: number[][] = [];
+      const movingTos: number[][] = [];
       for(const to of direction.to) {
         const sourceUnit = board.fields[direction.from[0]][direction.from[1]].current;
         const targetUnit = board.fields[to[0]][to[1]].current;
         if(targetUnit) {
           if(targetUnit.side === side) {
             if(sourceUnit.type === UnitType.Source || Rules.clashes[sourceUnit.type][0] === targetUnit.type) {
-              tos.push(to);
+              threatTos.push(to);
             }
+          }
+        } else {
+          if(direction.from[0] * factor > to[0] * factor) {
+            movingTos.push(to);
           }
         }
       }
       
-      if(tos.length > 0) {
-        threatdirections.push(<Direction>{ from: direction.from, to: tos, side: Rules.opponent(side)});
+      if(threatTos.length > 0) {
+        threatdirections.push(<Direction>{ from: direction.from, to: threatTos, side: Rules.opponent(side)});
+      }
+
+      if(movingTos.length > 0) {
+        enemymovingdirections.push(<Direction>{ from: direction.from, to: movingTos, side: side});
       }
     }
 
@@ -108,18 +139,18 @@ export class AiService {
     console.log('threat dir', threatdirections);
     console.log('escape dir', escapedirections);
     console.log('prevention dir', preventiondirections);
+    console.log('my moving dir', mymovingdirections);
+    console.log('enemy moving dir', enemymovingdirections);
 
-    const turns1 = this.turns([].concat(attackingdirections, preventiondirections), movesPerTurn);
-    const turns2 = this.turns([].concat(threatdirections, escapedirections), movesPerTurn);
+    const turns1 = this.turns([].concat(attackingdirections, preventiondirections, mymovingdirections), movesPerTurn);
+    const turns2 = this.turns([].concat(threatdirections, escapedirections, enemymovingdirections), movesPerTurn);
 
-    console.log('my combos', turns1.length);
-    console.log('enemy combos', turns2.length);
-    console.log('combo product', turns1.length * turns2.length);
+    console.log(turns1);
 
     const t2 = performance.now();
     console.log("prepareTurns() needs " + (t2 - t1) + " milliseconds.");
 
-    return [turns1, turns2];
+    return [turns1.slice(0,20), turns2.slice(0,20)];
   }
 
   public next(board: Board, movesPerTurn: number, side: Side) : Move[] {
@@ -127,13 +158,12 @@ export class AiService {
 
     const t1 = performance.now();
 
-    //const turns: Move[][] = this.turns(board.targets.filter(d => d.side === side), movesPerTurn);
     const turns: Move[][][] = this.prepareTurns(board, side, movesPerTurn);
     const myturns = turns[0];
     const enemyturns = turns[1];
 
     const t2 = performance.now();
-    console.log("turns() needs " + (t2 - t1) + " milliseconds.")
+    console.log("prepareTurns() needs " + (t2 - t1) + " milliseconds.")
 
     let spawnline_begin = 0;
     let spawnline_end = board.dimension;
@@ -216,16 +246,17 @@ export class AiService {
 
     console.log("complete() needs " + (t10 - t1) + " milliseconds.")
 
-    
-    for(const candidate of candidates.slice(0,100)) {
+
+    console.log(candidates);
+    const slicedCandidates = candidates.slice(0,100);
+    console.log(slicedCandidates);
+
+    for(const candidate of slicedCandidates) {
       console.log(candidate.score);
     }    
     
-
     const choice: number = Math.round(Math.random() * randomizer);
-    //console.log(candidates[choice].moves);
-    //return candidates[choice].moves;
-    return [];
+    return slicedCandidates[choice].moves;
   }
 
   private turns(targets: Direction[], moves: number): Move[][] {
@@ -241,6 +272,18 @@ export class AiService {
 
       const turn = this.resolve(targetCombi);
       for(let i=0, n=turn.length; i<n; i++) {
+
+        // Skip impossible combinations where two moves target the same field
+        // TODO: This code won't work with other number of moves than 3!
+        if( (turn[i][0].to[0] === turn[i][1].to[0] 
+          && turn[i][0].to[1] === turn[i][1].to[1]) || 
+            (turn[i][1].to[0] === turn[i][2].to[0] 
+          && turn[i][1].to[1] === turn[i][2].to[1]) ||
+            (turn[i][2].to[0] === turn[i][0].to[0] 
+          && turn[i][2].to[1] === turn[i][0].to[1])) {
+            continue;
+        }
+
         turns.push(turn[i]);
       }
     }
@@ -298,10 +341,11 @@ export class AiService {
       result += board.dirty_eval(side, opponent);
     }
 
-    // Check unit activity
-    //result += board.dirty_all_moves(side, moves) * 10;
-
     return result;
+  }
+
+  private distance(sourcePos: number[], targetPos: number[]): number {
+    return Math.sqrt(Math.pow(sourcePos[0] - targetPos[0], 2) + Math.pow(sourcePos[1] - targetPos[1], 2));;
   }
 
   private flatten(target: Direction): Move[] {

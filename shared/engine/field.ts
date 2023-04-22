@@ -79,6 +79,9 @@ export default class Field {
 
     public prepare(): void {
 
+        // Reset clash flag
+        this.clashed = false;
+
         // Unit already on this field is also a candidate
         if (this.current) {
             if (this.current.side === Side.Red) {

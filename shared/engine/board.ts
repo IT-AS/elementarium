@@ -28,6 +28,7 @@ export default class Board {
 
         board.targets = source.targets;
         board.fields = source.fields.map(line => line.map(field => Field.clone(field)));
+        board.sources = source.sources;
 
         return board;
     }
@@ -682,37 +683,6 @@ export default class Board {
         return score;
     }
 
-    public dirty_all_moves(side: Side, moves: Move[]): number {
-        let result = 0;
-
-        for(let row = 0, n = this.dimension; row < n; row++) {
-            for (let col = 0; col < n; col++) {
-                // TODO: CONTINUE WORK HERE
-                let calculate = false;
-
-                for (const move of moves) {
-                    if (this.near(row, col, move.from[0], move.from[1]) ||
-                        this.near(row, col, move.to[0], move.to[1])) {
-                        calculate = true;
-                        break;
-                    }
-                }
-
-                if (calculate) {
-                    const field = this.fields[row][col];
-                    if (field.current?.side === side) {
-                        const direction = this.findMoves(this.fields[row][col]);
-                        if (direction !== null) {
-                            result += direction.to.length;
-                        }
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
     public dirty_moves(field: Field): number {
         const direction = this.findMoves(field);
         if (direction !== null) {
@@ -736,9 +706,5 @@ export default class Board {
         }
 
         return result;
-
-        // for reference only:
-        //return [].concat.apply([], [].concat.apply([], this.fields.map(l => l.map(f => this.findMoves(f)).filter(m => m !== null))));        
     }
-
 }
